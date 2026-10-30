@@ -43,7 +43,10 @@ describe('routes (contracts/web-routes.md)', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Dabar rodomi filmai' }),
     ).toBeInTheDocument();
-    expect(document.documentElement.lang).toBe('lt');
+    // Set in an effect, which runs just after the render that shows the heading.
+    await waitFor(() => {
+      expect(document.documentElement.lang).toBe('lt');
+    });
   });
 
   test('the shell renders in English and sets <html lang>', async () => {
@@ -52,7 +55,10 @@ describe('routes (contracts/web-routes.md)', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Now showing' }),
     ).toBeInTheDocument();
-    expect(document.documentElement.lang).toBe('en');
+    // Set in an effect, which runs just after the render that shows the heading.
+    await waitFor(() => {
+      expect(document.documentElement.lang).toBe('en');
+    });
   });
 
   test('an unknown page shows "not found" with a link back to the movie list', async () => {

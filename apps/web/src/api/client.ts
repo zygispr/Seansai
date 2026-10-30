@@ -90,15 +90,16 @@ export function getMovie(
   return request(moviePath(movieId), { city }, MovieDetailResponseSchema, signal);
 }
 
+/** `date` null asks for today as the server sees it; the response says which date that is. */
 export function getScreenings(
   movieId: string,
   city: string,
-  date: string,
+  date: string | null,
   signal?: AbortSignal,
 ): Promise<ScreeningsResponse> {
   return request(
     `${moviePath(movieId)}/screenings`,
-    { city, date },
+    date === null ? { city } : { city, date },
     ScreeningsResponseSchema,
     signal,
   );

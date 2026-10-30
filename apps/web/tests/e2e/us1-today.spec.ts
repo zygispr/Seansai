@@ -1,10 +1,15 @@
 import { expect, test } from '@playwright/test';
-import { answerExternalRequestsLocally, expectNoAccessibilityViolations } from './helpers.ts';
+import {
+  answerExternalRequestsLocally,
+  expectNoAccessibilityViolations,
+  waitForSources,
+} from './helpers.ts';
 
 /** Quickstart US1 against the fixture data (see helpers.ts for the fixture clock). */
 
-test.beforeEach(async ({ context }) => {
+test.beforeEach(async ({ context, request }) => {
   await answerExternalRequestsLocally(context);
+  await waitForSources(request);
 });
 
 test('US1: today’s screenings of a movie across all cinemas in the city', async ({ page }) => {

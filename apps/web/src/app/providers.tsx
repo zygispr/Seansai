@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { ApiError } from '../api/client.ts';
 import { CityProvider } from './city.tsx';
 
@@ -19,8 +19,13 @@ export function createQueryClient(): QueryClient {
   });
 }
 
-export function AppProviders({ children }: { children: ReactNode }) {
-  const [queryClient] = useState(createQueryClient);
+export function AppProviders({
+  queryClient,
+  children,
+}: {
+  queryClient: QueryClient;
+  children: ReactNode;
+}) {
   return (
     <QueryClientProvider client={queryClient}>
       <CityProvider>{children}</CityProvider>

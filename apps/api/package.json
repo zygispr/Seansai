@@ -12,6 +12,7 @@
     "fixtures:capture": "node scripts/capture-fixtures.ts"
   },
   "dependencies": {
+    "@fastify/compress": "^9.3.0",
     "@fastify/etag": "^6.2.1",
     "@fastify/static": "^10.1.8",
     "@seansai/shared": "*",

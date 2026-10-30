@@ -1,5 +1,6 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
+import { brotliCompressSync, gunzipSync } from 'node:zlib';
 import { join } from 'node:path';
 import { ErrorResponseSchema } from '@seansai/shared';
 import type { FastifyInstance } from 'fastify';
@@ -73,6 +74,27 @@ describe('buildServer', () => {
     expect(ErrorResponseSchema.parse(response.json()).error.code).toBe('not_found');
   });
 
+  test('compresses API answers for clients that accept it', async () => {
+    // Registered as a plugin, like the real routes, so it loads after the compression plugin.
+    void app.register((scope, _options, done) => {
+      scope.get('/api/v1/test/big', () => ({
+        items: Array.from({ length: 500 }, (_, i) => `item ${String(i)}`),
+      }));
+      done();
+    });
+
+    const plain = await app.inject('/api/v1/test/big');
+    const gzipped = await app.inject({
+      url: '/api/v1/test/big',
+      headers: { 'accept-encoding': 'gzip' },
+    });
+
+    expect(plain.headers['content-encoding']).toBeUndefined();
+    expect(gzipped.headers['content-encoding']).toBe('gzip');
+    expect(gzipped.headers.vary).toContain('accept-encoding');
+    expect(gunzipSync(gzipped.rawPayload).toString()).toBe(plain.body);
+  });
+
   test('list responses are cacheable for 5 minutes and carry an ETag', async () => {
     const first = await app.inject('/api/v1/test/list');
 
@@ -110,6 +132,23 @@ describe('serving the web app', () => {
     expect(response.headers['cache-control']).toBe('public, max-age=31536000, immutable');
   });
 
+  test('serves the precompressed copy of an asset when the browser accepts it', async () => {
+    writeFileSync(
+      join(webDistDir, 'assets', 'index-abc123.js.br'),
+      brotliCompressSync('console.log(1)'),
+    );
+
+    const response = await app.inject({
+      url: '/assets/index-abc123.js',
+      headers: { 'accept-encoding': 'br, gzip' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['content-encoding']).toBe('br');
+    expect(response.headers['content-type']).toContain('javascript');
+    expect(response.headers['cache-control']).toBe('public, max-age=31536000, immutable');
+  });
+
   test('falls back to index.html for app routes', async () => {
     const response = await app.inject('/lt/movie/digger-2026?date=2026-10-31');
 
@@ -124,5 +163,28 @@ describe('serving the web app', () => {
 
     expect(response.statusCode).toBe(404);
     expect(response.json()).toMatchObject({ error: { code: 'not_found' } });
+  });
+  test.each([
+    ['the app page', '/lt/'],
+    ['a script', '/assets/index-abc123.js'],
+    ['an API answer', '/api/v1/health'],
+    ['an error', '/api/v1/test/boom'],
+  ])('%s carries the security headers', async (_, url) => {
+    const response = await app.inject(url);
+
+    expect(response.headers['x-content-type-options']).toBe('nosniff');
+    expect(response.headers['referrer-policy']).toBe('strict-origin-when-cross-origin');
+    const policy = String(response.headers['content-security-policy']);
+    for (const directive of [
+      "default-src 'self'",
+      "script-src 'self'",
+      "style-src 'self'",
+      "img-src 'self' https: data:",
+      "object-src 'none'",
+      "frame-ancestors 'none'",
+    ]) {
+      expect(policy).toContain(directive);
+    }
+    expect(policy).not.toContain('unsafe-inline');
   });
 });

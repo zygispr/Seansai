@@ -96,6 +96,10 @@ if the id is unknown.
 
 ## `GET /api/v1/movies/{movieId}/screenings?city={city}&date={date}`
 
+`date` is optional and defaults to today (Europe/Vilnius, server clock), so the web app can ask
+for today's screenings in parallel with the movie details instead of waiting for
+`availableDates`; the response's `date` says which day was answered.
+
 All screenings of the movie on that date in the city, as one timeline sorted by `startsAt`, ties
 by cinema name (FR-006). For today, screenings that have already started are excluded (FR-007).
 

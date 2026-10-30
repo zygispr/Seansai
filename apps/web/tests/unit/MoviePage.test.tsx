@@ -25,9 +25,8 @@ test('shows the movie, today’s timeline and when the data was updated', async 
   ).toBeInTheDocument();
   expect(await screen.findByRole('list', { name: 'Screenings' })).toBeInTheDocument();
   expect(screen.getByRole('contentinfo')).toHaveTextContent('Updated 19:45');
-  expect(api.requested()).toContain(
-    `/api/v1/movies/digger-2026/screenings?city=vilnius&date=${TODAY}`,
-  );
+  // Today's screenings are asked for without a date (the server's today), alongside the details.
+  expect(api.requested()).toContain('/api/v1/movies/digger-2026/screenings?city=vilnius');
 });
 
 test('with no screenings left today, links to the next date that has some', async () => {
@@ -57,7 +56,7 @@ test('today is selected by default; choosing another date puts it in the URL and
 
   expect(location()).toBe('/en/movie/digger-2026?date=2026-10-31');
   expect(
-    screen.getByRole('heading', { level: 2, name: 'Saturday 31 October' }),
+    await screen.findByRole('heading', { level: 2, name: 'Saturday 31 October' }),
   ).toBeInTheDocument();
   expect(within(picker).getByRole('button', { pressed: true })).toHaveAccessibleName(
     'Saturday 31 October, has screenings',
@@ -100,9 +99,7 @@ test.each([
     screen.getByText('That date can’t be chosen, so today’s screenings are shown.'),
   ).toBeInTheDocument();
   expect(await screen.findByRole('list', { name: 'Screenings' })).toBeInTheDocument();
-  expect(api.requested()).toContain(
-    `/api/v1/movies/digger-2026/screenings?city=vilnius&date=${TODAY}`,
-  );
+  expect(api.requested()).toContain('/api/v1/movies/digger-2026/screenings?city=vilnius');
 });
 
 test('keeps the previous list visible with a loading indicator while switching dates', async () => {
@@ -114,7 +111,7 @@ test('keeps the previous list visible with a loading indicator while switching d
   await user.click(screen.getByRole('button', { name: /Saturday 31 October/ }));
 
   expect(
-    screen.getByRole('heading', { level: 2, name: 'Saturday 31 October' }),
+    await screen.findByRole('heading', { level: 2, name: 'Saturday 31 October' }),
   ).toBeInTheDocument();
   expect(list).toBeInTheDocument();
   expect(screen.getByRole('status')).toHaveTextContent('Loading screenings…');

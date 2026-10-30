@@ -20,9 +20,18 @@ export function movieSummary(movie: MovieRecord): MovieSummary {
   };
 }
 
-/** The movie, or a 404 `movie_not_found`. */
+/**
+ * Movie ids are slugs of a normalised title and a year: letters and digits joined by hyphens.
+ * Fastify itself refuses path parameters over 100 characters (414).
+ */
+const MovieIdSchema = z
+  .string()
+  .max(99)
+  .regex(/^[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*$/u);
+
+/** The movie, or a 404 `movie_not_found` (also for ids that cannot be movie ids). */
 export function findMovie(queries: Queries, movieId: string): MovieRecord {
-  const movie = queries.getMovie(movieId);
+  const movie = MovieIdSchema.safeParse(movieId).success ? queries.getMovie(movieId) : undefined;
   if (!movie) throw new ApiError(404, 'movie_not_found', 'There is no movie with this id.');
   return movie;
 }

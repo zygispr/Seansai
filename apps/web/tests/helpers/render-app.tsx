@@ -2,15 +2,16 @@ import type { Lang } from '@seansai/shared';
 import { render } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { createMemoryRouter, MemoryRouter, RouterProvider } from 'react-router';
-import { AppProviders } from '../../src/app/providers.tsx';
-import { routes } from '../../src/app/router.tsx';
+import { AppProviders, createQueryClient } from '../../src/app/providers.tsx';
+import { createRoutes } from '../../src/app/router.tsx';
 import { I18nProvider } from '../../src/i18n/index.tsx';
 
 /** Renders the real app routes at `path`; returns the router to inspect the final location. */
 export function renderApp(path: string) {
-  const router = createMemoryRouter(routes, { initialEntries: [path] });
+  const queryClient = createQueryClient();
+  const router = createMemoryRouter(createRoutes(queryClient), { initialEntries: [path] });
   const result = render(
-    <AppProviders>
+    <AppProviders queryClient={queryClient}>
       <RouterProvider router={router} />
     </AppProviders>,
   );

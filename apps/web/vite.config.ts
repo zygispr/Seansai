@@ -14,7 +14,8 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
     proxy: {
-      '/api': 'http://localhost:3000',
+      // API_PORT lets end-to-end tests pair a second web server with a differently set-up API.
+      '/api': `http://localhost:${process.env.API_PORT ?? '3000'}`,
     },
   },
 });

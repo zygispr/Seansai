@@ -1,3 +1,5 @@
+import { constants as zlib } from 'node:zlib';
+import fastifyCompress from '@fastify/compress';
 import fastifyEtag from '@fastify/etag';
 import fastifyStatic from '@fastify/static';
 import Fastify, { type FastifyBaseLogger, type FastifyInstance } from 'fastify';
@@ -25,6 +27,27 @@ export type ServerOptions = {
 
 const API_PREFIX = '/api/v1';
 
+/**
+ * Sent with every response. The web app loads only its own scripts and styles (no inline code);
+ * posters come from the cinemas' websites over HTTPS.
+ */
+const SECURITY_HEADERS = {
+  'content-security-policy': [
+    "default-src 'self'",
+    "script-src 'self'",
+    "style-src 'self'",
+    "img-src 'self' https: data:",
+    "connect-src 'self'",
+    "font-src 'self'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+  ].join('; '),
+  'x-content-type-options': 'nosniff',
+  'referrer-policy': 'strict-origin-when-cross-origin',
+} as const;
+
 export function buildServer(options: ServerOptions): FastifyInstance {
   const repo = new Repository(options.db);
   const sourceIds =
@@ -37,6 +60,18 @@ export function buildServer(options: ServerOptions): FastifyInstance {
   const app = Fastify({ loggerInstance });
 
   void app.register(fastifyEtag);
+  // JSON answers are compressed per request with a fast Brotli level; the web app's files are
+  // compressed once at build time and served as they are (preCompressed below).
+  void app.register(fastifyCompress, {
+    encodings: ['br', 'gzip'],
+    threshold: 1024,
+    brotliOptions: { params: { [zlib.BROTLI_PARAM_QUALITY]: 4 } },
+  });
+
+  app.addHook('onRequest', (_request, reply, done) => {
+    reply.headers(SECURITY_HEADERS);
+    done();
+  });
 
   app.setErrorHandler((error, request, reply) => {
     if (error instanceof ApiError) {
@@ -63,6 +98,8 @@ export function buildServer(options: ServerOptions): FastifyInstance {
   if (webDistDir !== null) {
     void app.register(fastifyStatic, {
       root: webDistDir,
+      // Serves the .br or .gz copy written by the web build when the browser accepts it.
+      preCompressed: true,
       cacheControl: false,
       setHeaders: (reply, path) => {
         // Vite fingerprints everything under assets/, so it can be cached forever.

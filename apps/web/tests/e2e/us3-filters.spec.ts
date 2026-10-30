@@ -1,6 +1,10 @@
 import { MoviesResponseSchema } from '@seansai/shared';
 import { expect, test, type Page } from '@playwright/test';
-import { answerExternalRequestsLocally, expectNoAccessibilityViolations } from './helpers.ts';
+import {
+  answerExternalRequestsLocally,
+  expectNoAccessibilityViolations,
+  waitForSources,
+} from './helpers.ts';
 
 /**
  * Quickstart US3 against the fixture data (see helpers.ts for the fixture clock). The fixtures hold
@@ -8,8 +12,9 @@ import { answerExternalRequestsLocally, expectNoAccessibilityViolations } from '
  * offered here; the format filter is covered by the unit and component tests.
  */
 
-test.beforeEach(async ({ context }) => {
+test.beforeEach(async ({ context, request }) => {
   await answerExternalRequestsLocally(context);
+  await waitForSources(request);
 });
 
 async function movieCount(page: Page, city: string) {

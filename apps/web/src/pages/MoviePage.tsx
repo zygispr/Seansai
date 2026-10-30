@@ -50,7 +50,13 @@ export function MoviePage() {
   const unavailableDate =
     detail.data !== undefined && requested !== null && !dates.includes(requested);
   const date = requested !== null && dates.includes(requested) ? requested : today;
-  const screenings = useScreenings(movieId, city, date);
+  // Requested at once, in parallel with the details: today (null, the server's today) unless the
+  // link names a date. A date the details show to be unavailable falls back to today.
+  const screenings = useScreenings(
+    movieId,
+    city,
+    requested === null || unavailableDate ? null : requested,
+  );
 
   // Replaces the history entry, so Back leaves the movie instead of stepping through dates.
   const chooseDate = (next: string) => {

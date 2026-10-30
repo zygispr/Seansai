@@ -83,6 +83,15 @@ describe('GET /movies/{id}/screenings', () => {
     ]);
   });
 
+  test('without a date, answers for today (the server’s today, not the device’s)', async () => {
+    const response = await server.app.inject('/api/v1/movies/digger-2026/screenings?city=vilnius');
+
+    expect(response.statusCode).toBe(200);
+    const body = ScreeningsResponseSchema.parse(response.json());
+    expect(body.date).toBe(TODAY);
+    expect(body.screenings).toHaveLength(3);
+  });
+
   test('a future date returns that day’s full list', async () => {
     const response = await server.app.inject(
       '/api/v1/movies/digger-2026/screenings?city=vilnius&date=2026-10-31',
@@ -132,6 +141,28 @@ describe('GET /movies/{id}/screenings', () => {
 
     expect(response.statusCode).toBe(404);
     expect(ErrorResponseSchema.parse(response.json()).error.code).toBe('movie_not_found');
+  });
+
+  test.each([
+    ['a path', '..%2F..%2Fetc%2Fpasswd'],
+    ['punctuation', 'digger%27%3B--'],
+    ['too long', 'a'.repeat(100)],
+  ])('answers a malformed movie id (%s) with 404 movie_not_found', async (_, movieId) => {
+    for (const url of [
+      `/api/v1/movies/${movieId}?city=vilnius`,
+      `/api/v1/movies/${movieId}/screenings?city=vilnius&date=${TODAY}`,
+    ]) {
+      const response = await server.app.inject(url);
+      expect(response.statusCode).toBe(404);
+      expect(ErrorResponseSchema.parse(response.json()).error.code).toBe('movie_not_found');
+    }
+  });
+
+  test('refuses an id longer than the router accepts with 414, without details', async () => {
+    const response = await server.app.inject(`/api/v1/movies/${'a'.repeat(300)}?city=vilnius`);
+
+    expect(response.statusCode).toBe(414);
+    expect(response.body).not.toMatch(/stack|node_modules|\/src\//);
   });
 
   test('rejects an unknown city with 400 invalid_city', async () => {

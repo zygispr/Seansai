@@ -16,18 +16,21 @@ export const screeningsRoutes: FastifyPluginAsync<ScreeningsRouteOptions> = (
 ) => {
   const QuerySchema = z.object({
     city: citySchema((city) => queries.isCity(city)),
-    date: DateSchema,
+    /** Omitted means today, so a client can ask before it knows the server's date. */
+    date: DateSchema.optional(),
     lang: langSchema,
   });
 
   app.get<{ Params: { movieId: string } }>(
     '/movies/:movieId/screenings',
     (request, reply): ScreeningsResponse => {
-      const { city, date, lang } = parseQuery(QuerySchema, request.query, {
+      const query = parseQuery(QuerySchema, request.query, {
         city: 'invalid_city',
         date: 'invalid_date',
       });
+      const { city, lang } = query;
       const at = now();
+      const date = query.date ?? todayIn(at);
       if (!queries.availableDates(todayIn(at)).includes(date)) {
         throw new ApiError(
           400,

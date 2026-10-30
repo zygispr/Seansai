@@ -19,7 +19,7 @@
     "test": "npm run test --workspaces --if-present",
     "test:load": "npm run test:load -w @seansai/api",
     "test:e2e": "npm run test:e2e -w @seansai/web",
-    "sources:check": "npm run sources:check -w @seansai/api",
+    "sources:check": "npm run sources:check -w @seansai/api --",
     "fixtures:capture": "npm run fixtures:capture -w @seansai/api --"
   },
   "devDependencies": {

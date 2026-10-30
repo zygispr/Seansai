@@ -1,41 +1,19 @@
 import { fileURLToPath } from 'node:url';
-import { loadConfig, type Config } from './config.ts';
+import { loadConfig } from './config.ts';
 import { openDb } from './db/index.ts';
 import { Repository } from './db/repository.ts';
-import { createLogger, type Logger } from './lib/logger.ts';
-import { PoliteHttpClient, type HttpClient } from './lib/polite-http.ts';
+import { createLogger } from './lib/logger.ts';
 import { todayIn } from './lib/time.ts';
 import { loadAliases } from './matching/match.ts';
 import { refreshSource } from './refresh/refresh-source.ts';
 import { startScheduler } from './refresh/scheduler.ts';
 import { cinemaRegistry } from './registry/cinemas.ts';
 import { buildServer } from './server.ts';
-import { FixtureHttpClient, readFixtureNow } from './sources/fixture-http.ts';
 import { adapters, findSourceConfig, logRobotsOverrides, sourceConfigs } from './sources/index.ts';
-import type { SourceAdapter } from './sources/types.ts';
+import { createClock, createHttpClient } from './sources/runtime.ts';
 
 const WEB_DIST_DIR = fileURLToPath(new URL('../../web/dist', import.meta.url));
 const HOUR_MS = 60 * 60 * 1000;
-
-/** Fixture mode runs on a fixed clock so "today" matches the saved data. */
-function createClock(config: Config): () => Date {
-  if (config.sourcesMode === 'live') return () => new Date();
-  const fixed = config.fixtureNow ?? readFixtureNow();
-  return fixed ? () => fixed : () => new Date();
-}
-
-function createHttpClient(adapter: SourceAdapter, config: Config, logger: Logger): HttpClient {
-  if (config.sourcesMode === 'fixtures') {
-    return new FixtureHttpClient({ sourceId: adapter.id, failingSources: config.fixtureFail });
-  }
-  if (config.contact === null) throw new Error('SEANSAI_CONTACT is required in live mode');
-  return new PoliteHttpClient({
-    sourceId: adapter.id,
-    contact: config.contact,
-    robotsOverride: findSourceConfig(adapter.id)?.robotsOverride ?? false,
-    logger,
-  });
-}
 
 async function main(): Promise<void> {
   const config = loadConfig();
