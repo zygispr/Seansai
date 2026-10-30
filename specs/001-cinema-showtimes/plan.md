@@ -15,9 +15,12 @@ per-source adapters, merges listings of the same movie conservatively, stores ev
 (atomic design, SCSS Modules, Lithuanian/English) renders the movie list, the screening timeline,
 the date picker and the filters, keeping movie/date/filters in the URL.
 
-Research verified live data sources for **Apollo, Forum Cinemas, Pasaka, Skalvija and Atlantis**.
-**Vue (formerly Multikino) is excluded from v1**: its `robots.txt` disallows automated access to
-the schedule data, so it is added only once Vue grants permission ([research.md §1](./research.md#1-cinema-data-sources)).
+Research verified live data sources for **Apollo, Forum Cinemas, Pasaka, Skalvija and Atlantis**,
+and found four more regular cinemas worth covering: **Romuva** (Kaunas), **Garsas** (Panevėžys),
+**Spindulys** (Marijampolė) and **Minija** (Gargždai) ([research.md §1a](./research.md#1a-additional-venues-not-in-the-users-original-list)).
+**Vue (formerly Multikino) and Cinamon Mega are excluded from v1**: their `robots.txt` disallows
+automated access to the schedule data, so they are added only once their operators grant
+permission ([research.md §1](./research.md#1-cinema-data-sources)).
 
 ## Technical Context
 
@@ -54,7 +57,8 @@ screen widths from 320 px
 
 **Scale/Scope**:
 - ~1,000 visitors/day, peaks of ~100 concurrent (SC-007); design checked at 10x
-- 5 cinema chains / ~11 venues / 5 cities in v1; ~2–5k screenings stored at any time
+- 9 cinema operators / ~15 venues / 7 cities (Vilnius, Kaunas, Klaipėda, Šiauliai, Panevėžys,
+  Marijampolė, Gargždai) in v1; 5 source adapters; ~3–6k screenings stored at any time
 - 2 main screens (movie list, movie screenings) + city prompt + not-found page
 
 ## Constitution Check
@@ -88,8 +92,9 @@ new projects, layers or patterns beyond those listed.
 
 - Sources are undocumented and can change without notice → adapters are isolated, validated and
   contract-tested; a failing source degrades gracefully (FR-015); `sources:check` detects drift.
-- Permission: the spec's "collection is acceptable" assumption holds for 5 of 6 cinemas based on
-  `robots.txt`; written confirmation from each cinema is a recommended follow-up (research.md §1).
+- Permission: the spec's "collection is acceptable" assumption holds for 9 of the 11 operators
+  checked based on `robots.txt` (not for Vue and Cinamon); written confirmation from each cinema is
+  a recommended follow-up (research.md §1).
 
 ## Project Structure
 
@@ -128,7 +133,7 @@ apps/
 │   │   ├── server.ts        # Fastify app: routes, caching headers, static web files
 │   │   ├── routes/          # cities, movies, screenings, health
 │   │   ├── refresh/         # scheduler + refresh job (validate → match → store)
-│   │   ├── sources/         # one folder per adapter: mcs/, forum/, skalvija/, atlantis/
+│   │   ├── sources/         # one folder per adapter: mcs/, forum/, skalvija/, fliko/, romuva/
 │   │   ├── matching/        # title normalisation, match rules, review log, alias file
 │   │   ├── registry/        # cinemas.ts, cities.ts (city assignment per venue)
 │   │   ├── db/              # SQLite schema, migrations, queries

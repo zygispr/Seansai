@@ -19,9 +19,9 @@ its `robots.txt` rules.
 | Atlantis | Šiauliai | Server-rendered movie pages `https://atlantiscinemas.lt/filmai` → `/filmai/{slug}` (several days of screenings in the HTML, `<time datetime>` + `/kasa/seansas/{id}` links) | HTML | Main site allows all except `/checkout/`, `/kasa/`; its backend `back.atlantiscinemas.lt` disallows all | ✅ Use HTML pages only; never call the backend |
 | Vue (formerly Multikino; `multikino.lt` → `vuekinas.lt`) | Vilnius | Schedule loaded client-side from `/data/filmswithshowings/…` and `/api/…` | JSON | **`/data/`, `/api/`, `/iapi/`, `/restapi/` disallowed** | ⛔ Blocked until permission |
 
-**Decision**: Ship with five cinemas (Apollo, Forum, Pasaka, Skalvija, Atlantis), using four source
-adapters (Apollo and Pasaka share one). Vue is excluded until Vue Lietuva grants written permission
-or offers a feed; the adapter design lets it be added without touching other code.
+**Decision**: Ship the five permitted cinemas from this list (Apollo, Forum, Pasaka, Skalvija,
+Atlantis) plus the additional venues found in §1a. Vue is excluded until Vue Lietuva grants written
+permission or offers a feed; the adapter design lets it be added without touching other code.
 
 **Rationale**: Every included source is either a documented-style public feed or the public API
 that the cinema's own website uses, and none is disallowed by `robots.txt`. Vue explicitly
@@ -34,6 +34,37 @@ wishes.
 - *Third-party showtime aggregators (e.g., paid showtime APIs)*: coverage of small Lithuanian
   venues (Skalvija, Pasaka, Atlantis) is doubtful and costs money; rejected for v1.
 
+### 1a. Additional venues (not in the user's original list)
+
+Searched for other regularly operating cinemas in Lithuania (chain sites, Europa Cinemas network
+members, regional cinema reports) and checked each one's website and `robots.txt` on 2026-10-30.
+
+| Venue | City | Why it matters | Source | robots.txt | Verdict |
+|-------|------|----------------|--------|------------|---------|
+| Kauno kino centras **Romuva** | Kaunas | Oldest working cinema in Lithuania; Kaunas' main arthouse cinema (Europa Cinemas member) | `https://bilietai.kcromuva.lt/` embeds its full calendar as a JSON array (`title`, `start`, `url`) | Allows all | ✅ Add (new small adapter) |
+| Kino centras **Garsas** | Panevėžys | Panevėžys' arthouse cinema (Europa Cinemas member since 2009) | Ticket shop `https://bilietai.garsas.lt/filmai` uses the **same Fliko site template as Atlantis** | Allows all except `/checkout/`, `/kasa/` | ✅ Add (reuses Fliko adapter) |
+| **Spindulys** | Marijampolė | Main cinema in Marijampolė (2 halls) | `https://spinduliokinas.lt/` — Fliko template | Same as above | ✅ Add (reuses Fliko adapter) |
+| **Minija** | Gargždai (Klaipėda district) | Regional cinema near Klaipėda | `https://gargzdukinas.lt/` — Fliko template | Same as above | ✅ Add (reuses Fliko adapter) |
+| **Cinamon Mega** | Kaunas | Second multiplex in Kaunas (mainstream releases) | Schedule exists only inside the page's client-side app state (today only); the data API is under `/api/`, which `robots.txt` **disallows** | `/api/` disallowed | ⛔ Deferred — ask Cinamon for permission/feed |
+| **Dainava** | Alytus | Listed as operating in regional-cinema reports | No online schedule or ticket shop found | — | ❌ Not possible without a public schedule |
+
+Not added: one-off or seasonal screening venues (e.g., cultural centres with occasional film
+nights, outdoor summer cinemas), because they are not regular cinemas; they can be added later if
+users ask for them.
+
+**Decision**: Add Romuva, Garsas, Spindulys and Minija to v1. Three of them need no new code
+(the Fliko adapter, renamed from "atlantis"), and Romuva needs one small adapter. Defer Cinamon
+with Vue until permission is granted.
+
+**Rationale**: Romuva and Garsas are the main arthouse cinemas in Lithuania's 2nd and 5th largest
+cities, so leaving them out would leave gaps in Kaunas and Panevėžys. Reusing the Fliko adapter
+makes the regional venues nearly free to support. Cinamon's data is only reachable through a path
+its operator disallows, the same situation as Vue.
+
+**Alternatives considered**: evaluating Cinamon's embedded page state — technically possible for
+today's screenings only, would require executing or deeply parsing the site's minified scripts, and
+still would not provide future dates; rejected.
+
 **Operational rules for all sources** (good-citizen collection):
 - Identify the client with a descriptive `User-Agent` that includes a contact address.
 - One refresh cycle per source per hour, requests sent sequentially per source with a small delay.
@@ -42,8 +73,8 @@ wishes.
   disallowing the paths used, and flag it as unavailable (FR-015).
 
 **Follow-ups (not blocking)**:
-- Email each cinema to say what Seansai does and that it links back for ticket sales; ask Vue for
-  permission or a feed. The EU *sui generis* database right can apply to collected listings, so
+- Email each cinema to say what Seansai does and that it links back for ticket sales; ask Vue and
+  Cinamon for permission or a feed. The EU *sui generis* database right can apply to collected listings, so
   explicit permission is the safest basis long-term. This is a risk note, not legal advice.
 
 ### Source data quirks found
@@ -59,7 +90,11 @@ wishes.
 - **Skalvija**: response body starts with PHP warning HTML before the JSON → strip everything
   before the first `{`/`[`; `start_date` is a Unix timestamp; titles are arrays; generic entries
   such as "Repertuarinis seansas" exist and are shown under that title.
-- **Atlantis**: times are local `HH:MM` grouped under `<time datetime="YYYY-MM-DD">` date headers.
+- **Atlantis / Fliko sites** (Atlantis, Garsas, Spindulys, Minija): times are local `HH:MM`
+  grouped under `<time datetime="YYYY-MM-DD">` date headers on `/filmai/{slug}` pages; each site's
+  `back.*` backend disallows all crawling and must not be called.
+- **Romuva**: calendar events are embedded in the ticket page as a JSON array; `start` is local
+  time (`YYYY-MM-DD HH:MM`); no format or language fields.
 
 ## 2. Backend: Node.js vs .NET
 
@@ -114,7 +149,7 @@ independent; one failing source never blocks others.
 consecutive failures before data becomes stale, and the load on cinema servers stays low.
 
 **Alternatives considered**: external cron / job queue — extra infrastructure not justified for
-five sources.
+nine small sources.
 
 ## 5. Movie matching across cinemas (FR-005)
 

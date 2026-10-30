@@ -1,7 +1,7 @@
 # Contract: Source Adapter (internal)
 
 Each cinema data source is implemented as an adapter behind one interface, so sources can be
-added (e.g. Vue, once permitted) or fixed without touching the rest of the system.
+added (e.g. Vue or Cinamon, once permitted) or fixed without touching the rest of the system.
 
 ```ts
 interface SourceAdapter {
@@ -65,7 +65,8 @@ type SourceScreening = {
 | `mcs` (configured twice: `apollo`, `pasaka`) | Apollo Kinas, Pasaka | Markus Cinema System feed; JSON (Apollo) or XML (Pasaka) |
 | `forum` | Forum Cinemas | REST API; screenings per region + movie details per movie id |
 | `skalvija` | Skalvija | WordPress JSON with PHP-warning prefix; title/start/ticket URL only |
-| `atlantis` | Atlantis | HTML movie pages |
+| `fliko` (configured per site: `atlantis`, `garsas`, `spindulys`, `minija`) | Atlantis, Garsas, Spindulys, Minija | Server-rendered `/filmai/{slug}` pages of the shared Fliko site template; never calls the `back.*` backends |
+| `romuva` | Romuva | JSON calendar array embedded in the ticket page; title/start/ticket URL only |
 
 ## Contract tests
 
