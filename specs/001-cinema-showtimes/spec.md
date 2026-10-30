@@ -123,8 +123,8 @@ screenings remain, and that clearing filters restores the full list.
   shown as one movie, not duplicates. Different films with similar titles (e.g., a remake and
   the original, or two parts of a series) MUST NOT be merged; when unsure, they stay separate.
 - **A cinema is unavailable**: if schedule data from one cinema cannot be refreshed, screenings from
-  the other cinemas are still shown, and the user is told which cinema's times may be missing or
-  out of date.
+  the other cinemas are still shown; once that cinema's data has not been refreshed for 3 hours,
+  the user is told which cinema's times may be missing or out of date.
 - **Schedule changes**: if a cinema changes or cancels a screening, the site reflects the change at
   the next refresh; the cinema's own page remains the source of truth when buying.
 - **Screenings around midnight**: a screening starting after midnight belongs to the calendar date
@@ -176,7 +176,8 @@ screenings remain, and that clearing filters restores the full list.
 - **FR-014**: Schedule data MUST be refreshed at least every 3 hours, and the page MUST show when the
   data was last updated.
 - **FR-015**: If data from a cinema could not be refreshed, the system MUST keep showing data from
-  other cinemas and clearly indicate which cinema's information may be missing or outdated.
+  other cinemas; once a cinema's data has not been successfully refreshed for 3 hours (see FR-014,
+  SC-005), the system MUST clearly indicate which cinema's information may be missing or outdated.
 - **FR-016**: All dates and times MUST be shown in Lithuanian local time.
 - **FR-017**: The interface MUST be available in Lithuanian (default) and English, with a visible
   language switch; the chosen language MUST be remembered on the same device. Movie titles are

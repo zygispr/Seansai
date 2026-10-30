@@ -51,7 +51,9 @@ screen widths from 320 px
 
 **Constraints**:
 - Data no older than 3 hours unless flagged (FR-014, SC-005); refresh hourly
-- Respect each source's `robots.txt`; never request ticket-sale paths; ≤ 1 refresh cycle/hour/source
+- Respect each source's `robots.txt`, except the owner-approved overrides for Vue and Cinamon
+  ([research.md §1b](./research.md#1b-owner-decision-include-vue-and-cinamon-mega-2026-10-30));
+  never request ticket-sale paths; ≤ 1 refresh cycle/hour/source
 - All times in Europe/Vilnius; WCAG 2.1 AA; Lithuanian default, English option
 - No accounts, no personal data stored server-side
 
