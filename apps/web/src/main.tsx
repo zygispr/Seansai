@@ -1,5 +1,9 @@
+import './styles/global.scss';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { RouterProvider } from 'react-router';
+import { AppProviders } from './app/providers.tsx';
+import { createAppRouter } from './app/router.tsx';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -8,6 +12,8 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <h1>Seansai</h1>
+    <AppProviders>
+      <RouterProvider router={createAppRouter()} />
+    </AppProviders>
   </StrictMode>,
 );

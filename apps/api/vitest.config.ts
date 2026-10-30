@@ -5,7 +5,5 @@ export default defineConfig({
     include: ['tests/**/*.test.ts'],
     // Load tests start a real server for ~20 s; they run separately via `npm run test:load`.
     exclude: [...configDefaults.exclude, 'tests/load/**'],
-    // Remove once Phase 2 adds the first API tests.
-    passWithNoTests: true,
   },
 });

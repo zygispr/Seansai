@@ -1,0 +1,128 @@
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { ErrorResponseSchema } from '@seansai/shared';
+import type { FastifyInstance } from 'fastify';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
+import { z } from 'zod';
+import { parseQuery, setListCaching } from '../../src/routes/http.ts';
+import { buildServer } from '../../src/server.ts';
+import { createTempDb } from '../helpers/temp-db.ts';
+import { createTestLogger } from '../helpers/test-logger.ts';
+
+const NOW = new Date('2026-10-30T10:00:00Z');
+
+let app: FastifyInstance;
+let cleanup: () => void;
+let log: ReturnType<typeof createTestLogger>;
+
+function startServer(webDistDir: string | null = null): FastifyInstance {
+  const temp = createTempDb();
+  cleanup = temp.cleanup;
+  log = createTestLogger();
+  const server = buildServer({ db: temp.db, now: () => NOW, logger: log.logger, webDistDir });
+  server.get('/api/v1/test/list', (_request, reply) => {
+    setListCaching(reply);
+    return { items: [1, 2, 3] };
+  });
+  server.get('/api/v1/test/query', (request) =>
+    parseQuery(z.object({ city: z.enum(['vilnius']) }), request.query, { city: 'invalid_city' }),
+  );
+  server.get('/api/v1/test/boom', () => {
+    throw new Error('SQLITE_CORRUPT: secret internals at /srv/db.sqlite');
+  });
+  return server;
+}
+
+afterEach(async () => {
+  await app.close();
+  cleanup();
+});
+
+describe('buildServer', () => {
+  beforeEach(() => {
+    app = startServer();
+  });
+
+  test('rejects invalid query parameters with 400 and an ErrorResponse', async () => {
+    const response = await app.inject('/api/v1/test/query?city=riga');
+
+    expect(response.statusCode).toBe(400);
+    expect(ErrorResponseSchema.parse(response.json()).error.code).toBe('invalid_city');
+  });
+
+  test('accepts valid query parameters', async () => {
+    const response = await app.inject('/api/v1/test/query?city=vilnius');
+
+    expect(response.json()).toEqual({ city: 'vilnius' });
+  });
+
+  test('maps unexpected errors to 500 internal_error without leaking details', async () => {
+    const response = await app.inject('/api/v1/test/boom');
+
+    expect(response.statusCode).toBe(500);
+    expect(ErrorResponseSchema.parse(response.json()).error.code).toBe('internal_error');
+    expect(response.body).not.toContain('SQLITE');
+    expect(log.raw()).toContain('SQLITE_CORRUPT');
+  });
+
+  test('answers unknown API routes with 404 not_found', async () => {
+    const response = await app.inject('/api/v1/nothing-here');
+
+    expect(response.statusCode).toBe(404);
+    expect(ErrorResponseSchema.parse(response.json()).error.code).toBe('not_found');
+  });
+
+  test('list responses are cacheable for 5 minutes and carry an ETag', async () => {
+    const first = await app.inject('/api/v1/test/list');
+
+    expect(first.headers['cache-control']).toBe('public, max-age=300');
+    const etag = first.headers.etag;
+    expect(etag).toEqual(expect.any(String));
+
+    const revalidated = await app.inject({
+      url: '/api/v1/test/list',
+      headers: { 'if-none-match': String(etag) },
+    });
+    expect(revalidated.statusCode).toBe(304);
+  });
+});
+
+describe('serving the web app', () => {
+  let webDistDir: string;
+
+  beforeEach(() => {
+    webDistDir = mkdtempSync(join(tmpdir(), 'seansai-web-'));
+    mkdirSync(join(webDistDir, 'assets'));
+    writeFileSync(join(webDistDir, 'index.html'), '<!doctype html><title>Seansai</title>');
+    writeFileSync(join(webDistDir, 'assets', 'index-abc123.js'), 'console.log(1)');
+    app = startServer(webDistDir);
+  });
+
+  afterEach(() => {
+    rmSync(webDistDir, { recursive: true, force: true });
+  });
+
+  test('serves hashed assets with a long cache lifetime', async () => {
+    const response = await app.inject('/assets/index-abc123.js');
+
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['cache-control']).toBe('public, max-age=31536000, immutable');
+  });
+
+  test('falls back to index.html for app routes', async () => {
+    const response = await app.inject('/lt/movie/digger-2026?date=2026-10-31');
+
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['content-type']).toContain('text/html');
+    expect(response.headers['cache-control']).toBe('no-cache');
+    expect(response.body).toContain('<title>Seansai</title>');
+  });
+
+  test('still answers unknown API routes with JSON', async () => {
+    const response = await app.inject('/api/v1/nothing-here');
+
+    expect(response.statusCode).toBe(404);
+    expect(response.json()).toMatchObject({ error: { code: 'not_found' } });
+  });
+});

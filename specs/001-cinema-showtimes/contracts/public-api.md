@@ -18,7 +18,8 @@ imported by both the API and the web app.
   { "error": { "code": "invalid_date", "message": "date must be today or later" } }
   ```
 
-  Codes: `invalid_city`, `invalid_date`, `movie_not_found`, `internal_error`.
+  Codes: `invalid_city`, `invalid_date`, `movie_not_found`, `not_found` (unknown API route),
+  `internal_error`.
 
 ## Shared objects
 

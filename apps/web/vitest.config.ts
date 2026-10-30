@@ -8,8 +8,6 @@ export default mergeConfig(
       environment: 'jsdom',
       setupFiles: ['./tests/setup.ts'],
       include: ['tests/unit/**/*.test.{ts,tsx}'],
-      // Remove once Phase 2 adds the first web tests.
-      passWithNoTests: true,
     },
   }),
 );
