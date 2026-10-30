@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, type ReactNode } from 'react';
 import { ApiError } from '../api/client.ts';
+import { CityProvider } from './city.tsx';
 
 const MAX_RETRIES = 2;
 
@@ -20,5 +21,9 @@ export function createQueryClient(): QueryClient {
 
 export function AppProviders({ children }: { children: ReactNode }) {
   const [queryClient] = useState(createQueryClient);
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <CityProvider>{children}</CityProvider>
+    </QueryClientProvider>
+  );
 }

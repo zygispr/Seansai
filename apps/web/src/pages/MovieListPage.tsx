@@ -1,8 +1,6 @@
-import { useState } from 'react';
 import { ApiError } from '../api/client.ts';
 import { useCities, useMovies } from '../api/hooks.ts';
-import { useCity } from '../app/city.ts';
-import { Button } from '../components/atoms/Button/index.ts';
+import { useCity } from '../app/city.tsx';
 import { CityPrompt } from '../components/organisms/CityPrompt/index.ts';
 import { EmptyState } from '../components/organisms/EmptyState/index.ts';
 import { ErrorState } from '../components/organisms/ErrorState/index.ts';
@@ -17,15 +15,13 @@ import styles from './MovieListPage.module.scss';
 export function MovieListPage() {
   const { t, lang, formatTime } = useT();
   const { city, chooseCity } = useCity();
-  const [changingCity, setChangingCity] = useState(false);
   const movies = useMovies(city);
   const cities = useCities(lang);
 
-  // A city remembered from before that is no longer supported is asked for again.
+  // A city remembered from before that is no longer supported is asked for again. Changing a
+  // known city is done with the switcher in the header.
   const unknownCity = movies.error instanceof ApiError && movies.error.code === 'invalid_city';
-  const askForCity = city === null || unknownCity || changingCity;
-  const cityName =
-    city === 'all' ? t('city.all') : cities.data?.cities.find((item) => item.id === city)?.name;
+  const askForCity = city === null || unknownCity;
 
   return (
     <PageLayout
@@ -34,35 +30,10 @@ export function MovieListPage() {
       }
     >
       <div className={styles.page}>
-        <div className={styles.heading}>
-          <h1>{t('movieList.title')}</h1>
-          {cityName !== undefined && !askForCity && (
-            <p className={styles.city}>
-              {t('city.current', { city: cityName })}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setChangingCity(true);
-                }}
-              >
-                {t('city.change')}
-              </Button>
-            </p>
-          )}
-        </div>
+        <h1 className={styles.title}>{t('movieList.title')}</h1>
         {!askForCity && <MovieListContent query={movies} />}
       </div>
-      {askForCity && (
-        <CityPrompt
-          cities={cities.data?.cities ?? null}
-          selected={unknownCity ? null : city}
-          onSelect={(chosen) => {
-            chooseCity(chosen);
-            setChangingCity(false);
-          }}
-        />
-      )}
+      {askForCity && <CityPrompt cities={cities.data?.cities ?? null} onSelect={chooseCity} />}
     </PageLayout>
   );
 }

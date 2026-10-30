@@ -219,18 +219,18 @@ rows remain, clear filters restores the full list
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T083 [P] [US3] Unit test `apps/web/tests/unit/filters.test.ts` for `applyFilters(screenings, { cinemas, formats, audio })`: cinema list filter; format filter; `audio=original` keeps screenings whose spoken language is not dubbed Lithuanian; `audio=dubbed` keeps `isDubbed === true`; screenings with unknown format/language are excluded only when that filter is active
-- [ ] T084 [P] [US3] Component test `apps/web/tests/unit/FilterBar.test.tsx`: options built only from values present in the current list; selected chips reflected in URL params `cinema`, `format`, `audio`; "Išvalyti filtrus"/"Clear filters" resets
-- [ ] T085 [P] [US3] End-to-end test `apps/web/tests/e2e/us3-filters.spec.ts` covering quickstart US3 steps 1–3 (city change to "Visa Lietuva" then Kaunas persists after reload) with an axe scan
+- [X] T083 [P] [US3] Unit test `apps/web/tests/unit/filters.test.ts` for `applyFilters(screenings, { cinemas, formats, audio })`: cinema list filter; format filter; `audio=original` keeps screenings whose spoken language is not dubbed Lithuanian; `audio=dubbed` keeps `isDubbed === true`; screenings with unknown format/language are excluded only when that filter is active
+- [X] T084 [P] [US3] Component test `apps/web/tests/unit/FilterBar.test.tsx`: options built only from values present in the current list; selected chips reflected in URL params `cinema`, `format`, `audio`; "Išvalyti filtrus"/"Clear filters" resets
+- [X] T085 [P] [US3] End-to-end test `apps/web/tests/e2e/us3-filters.spec.ts` covering quickstart US3 steps 1–3 (city change to "Visa Lietuva" then Kaunas persists after reload) with an axe scan. *Note:* the fixtures hold only 2D screenings (Forum, the source of 3D/IMAX, is blocked), so the e2e test checks that no format group is offered and the `3D` step is covered by T083/T084
 
 ### Implementation for User Story 3
 
-- [ ] T086 [P] [US3] Implement `applyFilters` and URL (de)serialisation `parseFilters(searchParams)`/`toSearchParams(filters)` in `apps/web/src/lib/filters.ts` so T083 passes
-- [ ] T087 [P] [US3] Create molecule `apps/web/src/components/molecules/FilterChip/` (toggle button with `aria-pressed`)
-- [ ] T088 [US3] Create organism `apps/web/src/components/organisms/FilterBar/` (cinema, format and audio groups; collapsible on mobile) so T084 passes
-- [ ] T089 [US3] Add a city switcher to `apps/web/src/components/templates/PageLayout/PageLayout.tsx` reusing `CityOption` (changing city updates `seansai.city`, the `?city` param and refetches lists)
-- [ ] T090 [US3] Update `apps/web/src/pages/MoviePage.tsx` to render FilterBar, apply filters client-side, and show "no screenings match" EmptyState with a one-click clear (US3 scenario 5)
-- [ ] T091 [US3] Add US3 strings to `apps/web/src/i18n/lt.ts` and `apps/web/src/i18n/en.ts`; run T083–T085 and confirm they pass
+- [X] T086 [P] [US3] Implement `applyFilters` and URL (de)serialisation `parseFilters(searchParams)`/`toSearchParams(filters)` in `apps/web/src/lib/filters.ts` so T083 passes
+- [X] T087 [P] [US3] Create molecule `apps/web/src/components/molecules/FilterChip/` (toggle button with `aria-pressed`)
+- [X] T088 [US3] Create organism `apps/web/src/components/organisms/FilterBar/` (cinema, format and audio groups; collapsible on mobile) so T084 passes
+- [X] T089 [US3] Add a city switcher to `apps/web/src/components/templates/PageLayout/PageLayout.tsx` reusing `CityOption` (changing city updates `seansai.city`, the `?city` param and refetches lists). *Implemented as:* organism `CitySwitcher` in the header, opening `CityPrompt` (now closable with a button or Escape); the remembered city moved into a shared `CityProvider` so header and page stay in sync; the `?city` param is updated when the link has one, and the `cinema` filter is dropped because it names the old city's cinemas
+- [X] T090 [US3] Update `apps/web/src/pages/MoviePage.tsx` to render FilterBar, apply filters client-side, and show "no screenings match" EmptyState with a one-click clear (US3 scenario 5)
+- [X] T091 [US3] Add US3 strings to `apps/web/src/i18n/lt.ts` and `apps/web/src/i18n/en.ts`; run T083–T085 and confirm they pass
 
 **Checkpoint**: All user stories are independently functional.
 

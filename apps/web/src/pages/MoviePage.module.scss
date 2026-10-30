@@ -82,3 +82,13 @@
   flex-direction: column;
   gap: var(--space-4);
 }
+
+.count {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+
+  // Empty, it takes no space but stays in the accessibility tree, so later text is announced.
+  &:empty {
+    position: absolute;
+  }
+}

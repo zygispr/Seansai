@@ -2,19 +2,23 @@ import type { MovieDetail } from '@seansai/shared';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { ApiError } from '../api/client.ts';
 import { useCities, useMovie, useScreenings } from '../api/hooks.ts';
-import { useCity } from '../app/city.ts';
+import { useCity } from '../app/city.tsx';
+import { useFilters } from '../app/filters.ts';
 import { Badge } from '../components/atoms/Badge/index.ts';
+import { Button } from '../components/atoms/Button/index.ts';
 import { Poster } from '../components/atoms/Poster/index.ts';
 import { Spinner } from '../components/atoms/Spinner/index.ts';
 import { CityPrompt } from '../components/organisms/CityPrompt/index.ts';
 import { DatePicker } from '../components/organisms/DatePicker/index.ts';
 import { EmptyState } from '../components/organisms/EmptyState/index.ts';
 import { ErrorState } from '../components/organisms/ErrorState/index.ts';
+import { FilterBar } from '../components/organisms/FilterBar/index.ts';
 import { LoadingState } from '../components/organisms/LoadingState/index.ts';
 import { ScreeningTimeline } from '../components/organisms/ScreeningTimeline/index.ts';
 import { StaleNotice } from '../components/organisms/StaleNotice/index.ts';
 import { PageLayout } from '../components/templates/PageLayout/index.ts';
 import { useT } from '../i18n/index.tsx';
+import { applyFilters, hasFilters, noFilters } from '../lib/filters.ts';
 import { secondaryTitle } from '../lib/text.ts';
 import styles from './MoviePage.module.scss';
 import { NotFoundPage } from './NotFoundPage.tsx';
@@ -157,6 +161,7 @@ function ScreeningsContent({
   nextDateHref: (date: string) => string;
 }) {
   const { t, formatDate } = useT();
+  const [filters, setFilters] = useFilters();
   if (query.isPending) return <LoadingState />;
   if (query.isError) {
     return (
@@ -169,13 +174,35 @@ function ScreeningsContent({
   }
   // While another date loads, the previous list stays visible (placeholder data).
   const { date, screenings, nextDateWithScreenings, freshness } = query.data;
+  const shown = applyFilters(screenings, filters);
   return (
     <div className={styles.results} aria-busy={query.isPlaceholderData}>
       {query.isPlaceholderData && <Spinner label={t('movie.loadingDate')} />}
       <StaleNotice staleCinemas={freshness.staleCinemas} />
-      {screenings.length > 0 ? (
-        <ScreeningTimeline screenings={screenings} />
-      ) : (
+      {screenings.length > 0 && (
+        <FilterBar screenings={screenings} filters={filters} onChange={setFilters} />
+      )}
+      {/* Always present, so screen readers announce the count as filters change. */}
+      <p aria-live="polite" className={styles.count}>
+        {screenings.length > 0 &&
+          hasFilters(filters) &&
+          t('filters.shown', { shown: shown.length, total: screenings.length })}
+      </p>
+      {screenings.length > 0 && shown.length === 0 && (
+        <EmptyState title={t('filters.noMatch')}>
+          <p>{t('filters.noMatchBody')}</p>
+          <Button
+            variant="primary"
+            onClick={() => {
+              setFilters(noFilters);
+            }}
+          >
+            {t('filters.clear')}
+          </Button>
+        </EmptyState>
+      )}
+      {shown.length > 0 && <ScreeningTimeline screenings={shown} />}
+      {screenings.length === 0 && (
         <EmptyState title={t(date === today ? 'movie.noMoreToday' : 'movie.noScreeningsOnDate')}>
           {nextDateWithScreenings === null ? (
             <p>{t('movie.noUpcoming')}</p>

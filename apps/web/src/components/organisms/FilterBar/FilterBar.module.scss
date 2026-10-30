@@ -1,0 +1,62 @@
+@use 'breakpoints';
+
+.bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+// Phones: the groups fold behind the toggle. From md up they are always shown.
+.toggle {
+  align-self: flex-start;
+
+  @include breakpoints.from(md) {
+    display: none;
+  }
+}
+
+.panel {
+  display: none;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  @include breakpoints.from(md) {
+    display: flex;
+  }
+}
+
+.expanded {
+  display: flex;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  @include breakpoints.from(md) {
+    flex-direction: row;
+    align-items: baseline;
+  }
+}
+
+.label {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+
+  @include breakpoints.from(md) {
+    flex: none;
+    width: 8rem;
+  }
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.clear {
+  align-self: flex-start;
+}

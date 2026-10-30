@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router';
 import { useT } from '../../../i18n/index.tsx';
 import { setLang } from '../../../storage/settings.ts';
 import { VisuallyHidden } from '../../atoms/VisuallyHidden/index.ts';
+import { CitySwitcher } from '../../organisms/CitySwitcher/index.ts';
 import styles from './PageLayout.module.scss';
 
 /** Each language is named in its own language, so speakers recognise it (FR-017). */
@@ -30,7 +31,10 @@ export function PageLayout({ children, footer }: PageLayoutProps) {
           <Link to={`/${lang}/`} className={styles.siteName}>
             {t('app.name')}
           </Link>
-          <LanguageSwitch />
+          <div className={styles.headerControls}>
+            <CitySwitcher />
+            <LanguageSwitch />
+          </div>
         </div>
       </header>
       <main id="main" tabIndex={-1} className={styles.main}>

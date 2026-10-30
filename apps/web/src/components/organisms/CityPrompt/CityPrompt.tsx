@@ -1,6 +1,8 @@
 import type { CitiesResponse } from '@seansai/shared';
 import { useEffect, useId, useRef } from 'react';
 import { useT } from '../../../i18n/index.tsx';
+import { Button } from '../../atoms/Button/index.ts';
+import { Icon } from '../../atoms/Icon/index.ts';
 import { Spinner } from '../../atoms/Spinner/index.ts';
 import { CityOption } from '../../molecules/CityOption/index.ts';
 import styles from './CityPrompt.module.scss';
@@ -11,13 +13,16 @@ type CityPromptProps = {
   /** The current choice, when changing an earlier one. */
   selected?: string | null;
   onSelect: (city: string) => void;
+  /** When changing an earlier choice: the dialog can be closed (button or Escape) unchanged. */
+  onClose?: () => void;
 };
 
 /**
- * Asks for the city on the first visit (FR-013), as a modal dialog: focus moves into it and
- * stays there until a city is chosen, then returns to where it was.
+ * Asks for the city on the first visit (FR-013), or lets the user change it, as a modal dialog:
+ * focus moves into it (to the current city, if any) and stays there until it closes, then
+ * returns to where it was.
  */
-export function CityPrompt({ cities, selected = null, onSelect }: CityPromptProps) {
+export function CityPrompt({ cities, selected = null, onSelect, onClose }: CityPromptProps) {
   const { t } = useT();
   const titleId = useId();
   const bodyId = useId();
@@ -30,8 +35,22 @@ export function CityPrompt({ cities, selected = null, onSelect }: CityPromptProp
   }, []);
 
   useEffect(() => {
-    if (hasCities) dialog.current?.querySelector('button')?.focus();
+    if (!hasCities) return;
+    const current = dialog.current?.querySelector<HTMLElement>('li [aria-pressed="true"]');
+    (current ?? dialog.current?.querySelector<HTMLElement>('li button'))?.focus();
   }, [hasCities]);
+
+  useEffect(() => {
+    const element = dialog.current;
+    if (!onClose || !element) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    element.addEventListener('keydown', closeOnEscape);
+    return () => {
+      element.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [onClose]);
 
   // Tab and Shift+Tab wrap around inside the dialog.
   useEffect(() => {
@@ -63,9 +82,16 @@ export function CityPrompt({ cities, selected = null, onSelect }: CityPromptProp
         aria-describedby={bodyId}
         className={styles.dialog}
       >
-        <h2 id={titleId} className={styles.title}>
-          {t('city.promptTitle')}
-        </h2>
+        <div className={styles.header}>
+          <h2 id={titleId} className={styles.title}>
+            {t('city.promptTitle')}
+          </h2>
+          {onClose && (
+            <Button variant="ghost" size="sm" aria-label={t('common.close')} onClick={onClose}>
+              <Icon name="close" />
+            </Button>
+          )}
+        </div>
         <p id={bodyId} className={styles.body}>
           {t('city.promptBody')}
         </p>

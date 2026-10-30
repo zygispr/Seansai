@@ -120,6 +120,48 @@ test('keeps the previous list visible with a loading indicator while switching d
   expect(screen.getByRole('status')).toHaveTextContent('Loading screenings…');
 });
 
+test('filters narrow the list and live in the URL; when nothing matches, one click clears them', async () => {
+  const user = userEvent.setup();
+  mockApi();
+  const { location } = renderApp('/en/movie/digger-2026?date=2026-10-31');
+  const list = await screen.findByRole('list', { name: 'Screenings' });
+  expect(within(list).getAllByRole('listitem')).toHaveLength(3);
+
+  await user.click(
+    within(screen.getByRole('group', { name: 'Format' })).getByRole('button', { name: '3D' }),
+  );
+  expect(within(list).getAllByRole('listitem')).toHaveLength(1);
+  expect(screen.getByText('Showing 1 of 3')).toBeInTheDocument();
+  expect(location()).toBe('/en/movie/digger-2026?date=2026-10-31&format=3D');
+
+  await user.click(
+    within(screen.getByRole('group', { name: 'Cinema' })).getByRole('button', {
+      name: 'Vue Vilnius',
+    }),
+  );
+  expect(screen.queryByRole('list', { name: 'Screenings' })).not.toBeInTheDocument();
+  const noMatch = screen.getByText('No screenings match your filters').parentElement;
+  if (!noMatch) throw new Error('expected the empty state');
+  await user.click(within(noMatch).getByRole('button', { name: 'Clear filters' }));
+
+  expect(
+    within(await screen.findByRole('list', { name: 'Screenings' })).getAllByRole('listitem'),
+  ).toHaveLength(3);
+  expect(location()).toBe('/en/movie/digger-2026?date=2026-10-31');
+});
+
+test('opens with the filters in the URL applied', async () => {
+  mockApi();
+  renderApp('/en/movie/digger-2026?audio=dubbed');
+
+  const rows = within(await screen.findByRole('list', { name: 'Screenings' })).getAllByRole(
+    'listitem',
+  );
+  expect(rows).toHaveLength(1);
+  expect(rows[0]).toHaveTextContent('Vue Vilnius');
+  expect(screen.getByRole('button', { name: 'Dubbed' })).toHaveAttribute('aria-pressed', 'true');
+});
+
 test('names the cinemas whose data may be out of date', async () => {
   mockApi({
     screenings: {
