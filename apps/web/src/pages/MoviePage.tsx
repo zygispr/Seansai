@@ -1,11 +1,13 @@
 import type { MovieDetail } from '@seansai/shared';
-import { Link, useParams, useSearchParams } from 'react-router';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { ApiError } from '../api/client.ts';
 import { useCities, useMovie, useScreenings } from '../api/hooks.ts';
 import { useCity } from '../app/city.ts';
 import { Badge } from '../components/atoms/Badge/index.ts';
 import { Poster } from '../components/atoms/Poster/index.ts';
+import { Spinner } from '../components/atoms/Spinner/index.ts';
 import { CityPrompt } from '../components/organisms/CityPrompt/index.ts';
+import { DatePicker } from '../components/organisms/DatePicker/index.ts';
 import { EmptyState } from '../components/organisms/EmptyState/index.ts';
 import { ErrorState } from '../components/organisms/ErrorState/index.ts';
 import { LoadingState } from '../components/organisms/LoadingState/index.ts';
@@ -17,11 +19,21 @@ import { secondaryTitle } from '../lib/text.ts';
 import styles from './MoviePage.module.scss';
 import { NotFoundPage } from './NotFoundPage.tsx';
 
-/** One movie's screenings in the chosen city, today by default (FR-006 to FR-009). */
+/** The page's query string with `date` set, or removed for today (web-routes.md). */
+function withDate(params: URLSearchParams, date: string, today: string | null): string {
+  const next = new URLSearchParams(params);
+  if (date === today) next.delete('date');
+  else next.set('date', date);
+  const search = next.toString();
+  return search === '' ? '' : `?${search}`;
+}
+
+/** One movie's screenings in the chosen city on one date, today by default (FR-006 to FR-011). */
 export function MoviePage() {
   const { t, lang, formatTime } = useT();
   const { movieId = '' } = useParams();
   const [params] = useSearchParams();
+  const navigate = useNavigate();
   const { city, chooseCity } = useCity();
   const cities = useCities(lang);
   const detail = useMovie(movieId, city);
@@ -29,9 +41,20 @@ export function MoviePage() {
   // "Today" comes from the server, so it matches the data even on a device with a wrong clock.
   const dates = detail.data?.availableDates ?? [];
   const today = dates[0] ?? null;
+  // A past, unpublished or malformed date falls back to today, with a notice.
   const requested = params.get('date');
+  const unavailableDate =
+    detail.data !== undefined && requested !== null && !dates.includes(requested);
   const date = requested !== null && dates.includes(requested) ? requested : today;
   const screenings = useScreenings(movieId, city, date);
+
+  // Replaces the history entry, so Back leaves the movie instead of stepping through dates.
+  const chooseDate = (next: string) => {
+    void navigate(
+      { search: withDate(params, next, today) },
+      { replace: true, preventScrollReset: true },
+    );
+  };
 
   if (detail.error instanceof ApiError && detail.error.code === 'movie_not_found') {
     return <NotFoundPage reason="movie" />;
@@ -64,10 +87,21 @@ export function MoviePage() {
         <div className={styles.page}>
           <MovieHeader movie={detail.data.movie} />
           <section className={styles.screenings} aria-labelledby="screenings-heading">
+            <DatePicker
+              dates={dates}
+              selected={date}
+              screeningDates={detail.data.screeningDates}
+              onSelect={chooseDate}
+            />
             <h2 id="screenings-heading" className={styles.date}>
               <DateHeading date={date} isToday={date === today} />
             </h2>
-            <ScreeningsContent query={screenings} isToday={date === today} />
+            {unavailableDate && <p className={styles.notice}>{t('movie.unavailableDate')}</p>}
+            <ScreeningsContent
+              query={screenings}
+              today={today}
+              nextDateHref={(next) => withDate(params, next, today)}
+            />
           </section>
         </div>
       )}
@@ -115,10 +149,12 @@ function MovieHeader({ movie }: { movie: MovieDetail }) {
 
 function ScreeningsContent({
   query,
-  isToday,
+  today,
+  nextDateHref,
 }: {
   query: ReturnType<typeof useScreenings>;
-  isToday: boolean;
+  today: string | null;
+  nextDateHref: (date: string) => string;
 }) {
   const { t, formatDate } = useT();
   if (query.isPending) return <LoadingState />;
@@ -131,25 +167,27 @@ function ScreeningsContent({
       />
     );
   }
-  const { screenings, nextDateWithScreenings, freshness } = query.data;
+  // While another date loads, the previous list stays visible (placeholder data).
+  const { date, screenings, nextDateWithScreenings, freshness } = query.data;
   return (
-    <>
+    <div className={styles.results} aria-busy={query.isPlaceholderData}>
+      {query.isPlaceholderData && <Spinner label={t('movie.loadingDate')} />}
       <StaleNotice staleCinemas={freshness.staleCinemas} />
       {screenings.length > 0 ? (
         <ScreeningTimeline screenings={screenings} />
       ) : (
-        <EmptyState title={t(isToday ? 'movie.noMoreToday' : 'movie.noScreeningsOnDate')}>
+        <EmptyState title={t(date === today ? 'movie.noMoreToday' : 'movie.noScreeningsOnDate')}>
           {nextDateWithScreenings === null ? (
             <p>{t('movie.noUpcoming')}</p>
           ) : (
             <p>
-              <Link to={`?date=${nextDateWithScreenings}`}>
+              <Link to={nextDateHref(nextDateWithScreenings)}>
                 {t('movie.nextDate', { date: formatDate(nextDateWithScreenings) })}
               </Link>
             </p>
           )}
         </EmptyState>
       )}
-    </>
+    </div>
   );
 }

@@ -193,16 +193,16 @@ same screenings shown; no past dates selectable
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T076 [P] [US2] Extend `apps/api/tests/integration/screenings.test.ts`: future date returns that day's full list (no "already started" filtering); date before today or not in `availableDates` → `400 invalid_date`; screening at 00:30 appears on the date it starts
-- [ ] T077 [P] [US2] Component test `apps/web/tests/unit/DatePicker.test.tsx`: today selected by default; only `availableDates` selectable; dates in `screeningDates` visibly marked and announced to screen readers; keyboard navigation with arrow keys
-- [ ] T078 [P] [US2] End-to-end test `apps/web/tests/e2e/us2-date.spec.ts` covering quickstart US2 steps 1–3 with an axe scan
+- [X] T076 [P] [US2] Extend `apps/api/tests/integration/screenings.test.ts`: future date returns that day's full list (no "already started" filtering); date before today or not in `availableDates` → `400 invalid_date`; screening at 00:30 appears on the date it starts
+- [X] T077 [P] [US2] Component test `apps/web/tests/unit/DatePicker.test.tsx`: today selected by default; only `availableDates` selectable; dates in `screeningDates` visibly marked and announced to screen readers; keyboard navigation with arrow keys
+- [X] T078 [P] [US2] End-to-end test `apps/web/tests/e2e/us2-date.spec.ts` covering quickstart US2 steps 1–3 with an axe scan
 
 ### Implementation for User Story 2
 
-- [ ] T079 [P] [US2] Create molecule `apps/web/src/components/molecules/DateChip/` (weekday + day, "Šiandien"/"Today", "has screenings" marker, `aria-pressed`)
-- [ ] T080 [US2] Create organism `apps/web/src/components/organisms/DatePicker/` (horizontally scrollable row of DateChips over `availableDates`, roving tabindex)
-- [ ] T081 [US2] Update `apps/web/src/pages/MoviePage.tsx` to read/write `?date=YYYY-MM-DD` (omitted = today; invalid or past date → today with an inline notice, per web-routes.md), fetch screenings for the selected date, and keep the previous list visible with a loading indicator while switching (feedback within 100 ms)
-- [ ] T082 [US2] Add US2 strings to `apps/web/src/i18n/lt.ts` and `apps/web/src/i18n/en.ts`; run T076–T078 and confirm they pass
+- [X] T079 [P] [US2] Create molecule `apps/web/src/components/molecules/DateChip/` (weekday + day, "Šiandien"/"Today", "has screenings" marker, `aria-pressed`)
+- [X] T080 [US2] Create organism `apps/web/src/components/organisms/DatePicker/` (horizontally scrollable row of DateChips over `availableDates`, roving tabindex)
+- [X] T081 [US2] Update `apps/web/src/pages/MoviePage.tsx` to read/write `?date=YYYY-MM-DD` (omitted = today; invalid or past date → today with an inline notice, per web-routes.md), fetch screenings for the selected date, and keep the previous list visible with a loading indicator while switching (feedback within 100 ms)
+- [X] T082 [US2] Add US2 strings to `apps/web/src/i18n/lt.ts` and `apps/web/src/i18n/en.ts`; run T076–T078 and confirm they pass
 
 **Checkpoint**: User Stories 1 and 2 both work independently.
 

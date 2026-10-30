@@ -110,6 +110,8 @@ type MockOptions = {
   movies?: MoviesResponse;
   screenings?: ScreeningsResponse;
   detail?: MovieDetailResponse;
+  /** Requests for which this returns true never get an answer, to observe loading states. */
+  pending?: (url: URL) => boolean;
 };
 
 const urlOf = (input: string | URL | Request): string =>
@@ -127,6 +129,7 @@ const json = (status: number, body: unknown) =>
 export function mockApi(options: MockOptions = {}) {
   const fetch = vi.fn((input: string | URL | Request) => {
     const url = new URL(urlOf(input), 'http://localhost');
+    if (options.pending?.(url)) return new Promise<Response>(() => undefined);
     const city = url.searchParams.get('city');
     const badCity = city !== null && !['vilnius', 'kaunas', 'all'].includes(city);
     if (url.pathname === '/api/v1/cities') return json(200, cities);

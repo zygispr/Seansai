@@ -1,4 +1,5 @@
 import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { freshness, mockApi, TODAY } from '../helpers/mock-api.ts';
 import { renderApp } from '../helpers/render-app.tsx';
@@ -40,6 +41,83 @@ test('with no screenings left today, links to the next date that has some', asyn
     'href',
     '/en/movie/digger-2026?date=2026-11-06',
   );
+});
+
+test('today is selected by default; choosing another date puts it in the URL and loads it', async () => {
+  const user = userEvent.setup();
+  const api = mockApi();
+  const { location } = renderApp('/en/movie/digger-2026');
+
+  const picker = await screen.findByRole('toolbar', { name: 'Choose a date' });
+  expect(within(picker).getByRole('button', { pressed: true })).toHaveAccessibleName(
+    'Today, Friday 30 October, has screenings',
+  );
+
+  await user.click(within(picker).getByRole('button', { name: /Saturday 31 October/ }));
+
+  expect(location()).toBe('/en/movie/digger-2026?date=2026-10-31');
+  expect(
+    screen.getByRole('heading', { level: 2, name: 'Saturday 31 October' }),
+  ).toBeInTheDocument();
+  expect(within(picker).getByRole('button', { pressed: true })).toHaveAccessibleName(
+    'Saturday 31 October, has screenings',
+  );
+  expect(await screen.findByRole('list', { name: 'Screenings' })).toBeInTheDocument();
+  expect(api.requested()).toContain(
+    '/api/v1/movies/digger-2026/screenings?city=vilnius&date=2026-10-31',
+  );
+
+  await user.click(within(picker).getByRole('button', { name: /^Today/ }));
+  expect(location()).toBe('/en/movie/digger-2026');
+});
+
+test('opens on the date in the URL', async () => {
+  const api = mockApi();
+  renderApp('/en/movie/digger-2026?date=2026-11-01');
+
+  expect(
+    await screen.findByRole('heading', { level: 2, name: 'Sunday 1 November' }),
+  ).toBeInTheDocument();
+  expect(screen.getByRole('button', { pressed: true })).toHaveAccessibleName('Sunday 1 November');
+  expect(await screen.findByRole('list', { name: 'Screenings' })).toBeInTheDocument();
+  expect(api.requested()).toContain(
+    '/api/v1/movies/digger-2026/screenings?city=vilnius&date=2026-11-01',
+  );
+});
+
+test.each([
+  ['a past date', '2026-10-29'],
+  ['a date past the published schedules', '2026-12-31'],
+  ['something that is not a date', 'tomorrow'],
+])('%s in the URL shows today with a notice', async (_, date) => {
+  const api = mockApi();
+  renderApp(`/en/movie/digger-2026?date=${date}`);
+
+  expect(
+    await screen.findByRole('heading', { level: 2, name: 'Today, Friday 30 October' }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByText('That date can’t be chosen, so today’s screenings are shown.'),
+  ).toBeInTheDocument();
+  expect(await screen.findByRole('list', { name: 'Screenings' })).toBeInTheDocument();
+  expect(api.requested()).toContain(
+    `/api/v1/movies/digger-2026/screenings?city=vilnius&date=${TODAY}`,
+  );
+});
+
+test('keeps the previous list visible with a loading indicator while switching dates', async () => {
+  const user = userEvent.setup();
+  mockApi({ pending: (url) => url.searchParams.get('date') === '2026-10-31' });
+  renderApp('/en/movie/digger-2026');
+  const list = await screen.findByRole('list', { name: 'Screenings' });
+
+  await user.click(screen.getByRole('button', { name: /Saturday 31 October/ }));
+
+  expect(
+    screen.getByRole('heading', { level: 2, name: 'Saturday 31 October' }),
+  ).toBeInTheDocument();
+  expect(list).toBeInTheDocument();
+  expect(screen.getByRole('status')).toHaveTextContent('Loading screenings…');
 });
 
 test('names the cinemas whose data may be out of date', async () => {

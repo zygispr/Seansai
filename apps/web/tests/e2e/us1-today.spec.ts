@@ -1,26 +1,11 @@
-import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { answerExternalRequestsLocally, expectNoAccessibilityViolations } from './helpers.ts';
 
-/**
- * Quickstart US1 against the fixture data (SOURCES_MODE=fixtures). The fixture clock is the
- * capture instant in apps/api/tests/fixtures/README.md: Friday 30 October 2026, 19:46 in Vilnius.
- */
+/** Quickstart US1 against the fixture data (see helpers.ts for the fixture clock). */
 
 test.beforeEach(async ({ context }) => {
-  // Tests never contact cinema websites: posters and ticket pages are answered locally.
-  await context.route(
-    (url) => url.hostname !== 'localhost',
-    (route) =>
-      route.fulfill({ status: 200, contentType: 'text/html', body: '<title>Kino teatras</title>' }),
-  );
+  await answerExternalRequestsLocally(context);
 });
-
-async function expectNoAccessibilityViolations(page: Page) {
-  const results = await new AxeBuilder({ page })
-    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-    .analyze();
-  expect(results.violations).toEqual([]);
-}
 
 test('US1: today’s screenings of a movie across all cinemas in the city', async ({ page }) => {
   // 1. A first visit lands in Lithuanian and asks for the city.

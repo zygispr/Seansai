@@ -83,6 +83,48 @@ describe('GET /movies/{id}/screenings', () => {
     ]);
   });
 
+  test('a future date returns that day’s full list', async () => {
+    const response = await server.app.inject(
+      '/api/v1/movies/digger-2026/screenings?city=vilnius&date=2026-10-31',
+    );
+
+    expect(response.statusCode).toBe(200);
+    const body = ScreeningsResponseSchema.parse(response.json());
+    expect(body.date).toBe('2026-10-31');
+    expect(body.screenings.map((screening) => screening.startsAt)).toEqual([
+      '2026-10-31T20:00:00+02:00',
+    ]);
+  });
+
+  test('a screening starting after midnight belongs to the date it starts on', async () => {
+    const day = async (date: string) =>
+      ScreeningsResponseSchema.parse(
+        (
+          await server.app.inject(`/api/v1/movies/sooner-2026/screenings?city=vilnius&date=${date}`)
+        ).json(),
+      ).screenings.map((screening) => screening.startsAt);
+
+    expect(await day('2026-10-31')).toEqual([]);
+    expect(await day('2026-11-01')).toEqual([
+      '2026-11-01T00:30:00+02:00',
+      '2026-11-01T19:00:00+02:00',
+    ]);
+  });
+
+  test.each([
+    ['before today', '2026-10-29'],
+    ['after the last published date', '2026-11-07'],
+    ['not a date', 'tomorrow'],
+    ['not a calendar date', '2026-02-30'],
+  ])('rejects a date %s with 400 invalid_date', async (_, date) => {
+    const response = await server.app.inject(
+      `/api/v1/movies/digger-2026/screenings?city=vilnius&date=${date}`,
+    );
+
+    expect(response.statusCode).toBe(400);
+    expect(ErrorResponseSchema.parse(response.json()).error.code).toBe('invalid_date');
+  });
+
   test('answers an unknown movie with 404 movie_not_found', async () => {
     const response = await server.app.inject(
       `/api/v1/movies/no-such-movie/screenings?city=vilnius&date=${TODAY}`,

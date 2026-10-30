@@ -39,7 +39,10 @@ export function useMovie(movieId: string, city: string | null) {
   });
 }
 
-/** Waits until both the city and the date are known. */
+/**
+ * Waits until both the city and the date are known. While another date of the same movie and city
+ * loads, the previous date's list stays as placeholder data (`isPlaceholderData`).
+ */
 export function useScreenings(movieId: string, city: string | null, date: string | null) {
   return useQuery({
     queryKey: queryKeys.screenings(movieId, city ?? '', date ?? ''),
@@ -48,5 +51,9 @@ export function useScreenings(movieId: string, city: string | null, date: string
         ? skipToken
         : ({ signal }) => getScreenings(movieId, city, date, signal),
     staleTime: STALE_TIME_MS,
+    placeholderData: (previous, previousQuery) =>
+      previousQuery?.queryKey[1] === movieId && previousQuery.queryKey[2] === (city ?? '')
+        ? previous
+        : undefined,
   });
 }
