@@ -1,7 +1,7 @@
 # Contract: Source Adapter (internal)
 
 Each cinema data source is implemented as an adapter behind one interface, so sources can be
-added (e.g. Vue or Cinamon, once permitted) or fixed without touching the rest of the system.
+added or fixed without touching the rest of the system.
 
 ```ts
 interface SourceAdapter {
@@ -52,8 +52,10 @@ type SourceScreening = {
 1. Output is validated against the `SourceScreening` schema by the refresh job; an adapter whose
    result fails validation, or that throws, counts as a failed refresh. The previous data for that
    source is kept (FR-015).
-2. Only paths allowed by the source's `robots.txt` are requested; ticket-sale paths are never
-   requested, only returned as `ticketUrl`.
+2. Only paths allowed by the source's `robots.txt` are requested, unless the source config sets
+   `robotsOverride: true` with a written reason (only `vue` and `cinamon`, research.md §1b).
+   Ticket-sale paths are never requested, only returned as `ticketUrl`. On HTTP 401/403/429 or a
+   CAPTCHA/block page the adapter throws `SourceBlockedError`; it never retries or circumvents.
 3. Times are converted to exact instants using the source's offset or UTC field; when the source
    gives local time only, it is interpreted in `Europe/Vilnius`.
 4. A successful result **replaces** all of that source's future screenings in storage.
@@ -67,6 +69,8 @@ type SourceScreening = {
 | `skalvija` | Skalvija | WordPress JSON with PHP-warning prefix; title/start/ticket URL only |
 | `fliko` (configured per site: `atlantis`, `garsas`, `spindulys`, `minija`) | Atlantis, Garsas, Spindulys, Minija | Server-rendered `/filmai/{slug}` pages of the shared Fliko site template; never calls the `back.*` backends |
 | `romuva` | Romuva | JSON calendar array embedded in the ticket page; title/start/ticket URL only |
+| `vue` | Vue Vilnius | `/data/filmswithshowings/1001`; local times despite `Z` suffix; `robotsOverride` |
+| `cinamon` | Cinamon Mega (Kaunas) | Page API `/api/page/home?cinema_id=77139293&…` (verify first); fallback: today's sessions from page state; `robotsOverride` |
 
 ## Contract tests
 
