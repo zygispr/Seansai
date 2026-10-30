@@ -1,0 +1,74 @@
+# Contract: Source Adapter (internal)
+
+Each cinema data source is implemented as an adapter behind one interface, so sources can be
+added (e.g. Vue, once permitted) or fixed without touching the rest of the system.
+
+```ts
+interface SourceAdapter {
+  /** Matches Source.id in the data model, e.g. "forum". */
+  readonly id: string;
+
+  /**
+   * Fetch and normalise all published screenings from today up to the source's furthest
+   * published date. Must not write to storage and must not throw for a single bad item:
+   * bad items are skipped and counted in `skipped`.
+   */
+  fetchScreenings(context: AdapterContext): Promise<AdapterResult>;
+}
+
+type AdapterContext = {
+  now: Date;                       // injected for deterministic tests
+  http: PoliteHttpClient;          // User-Agent, delay between requests, timeout, robots check
+  registry: CinemaRegistry;        // maps source venue keys → Cinema ids
+};
+
+type AdapterResult = {
+  screenings: SourceScreening[];
+  skipped: Array<{ reason: string; raw: string }>;  // logged, not shown to users
+};
+
+type SourceScreening = {
+  sourceScreeningId: string;
+  cinemaId: string;                // resolved through the registry
+  startsAt: Date;                  // exact instant (UTC)
+  title: string;                   // as published
+  originalTitle: string | null;
+  year: number | null;
+  durationMinutes: number | null;
+  ageRating: string | null;
+  genres: string[];
+  posterUrl: string | null;
+  hall: string | null;
+  format: "2D" | "3D" | "IMAX" | "4DX" | "ScreenX" | "other" | null;
+  spokenLanguage: string | null;
+  subtitleLanguage: string | null;
+  isDubbed: boolean | null;
+  ticketUrl: string;
+};
+```
+
+## Rules every adapter must follow
+
+1. Output is validated against the `SourceScreening` schema by the refresh job; an adapter whose
+   result fails validation, or that throws, counts as a failed refresh. The previous data for that
+   source is kept (FR-015).
+2. Only paths allowed by the source's `robots.txt` are requested; ticket-sale paths are never
+   requested, only returned as `ticketUrl`.
+3. Times are converted to exact instants using the source's offset or UTC field; when the source
+   gives local time only, it is interpreted in `Europe/Vilnius`.
+4. A successful result **replaces** all of that source's future screenings in storage.
+
+## Adapters in v1
+
+| Adapter | Cinemas | Notes |
+|---------|---------|-------|
+| `mcs` (configured twice: `apollo`, `pasaka`) | Apollo Kinas, Pasaka | Markus Cinema System feed; JSON (Apollo) or XML (Pasaka) |
+| `forum` | Forum Cinemas | REST API; screenings per region + movie details per movie id |
+| `skalvija` | Skalvija | WordPress JSON with PHP-warning prefix; title/start/ticket URL only |
+| `atlantis` | Atlantis | HTML movie pages |
+
+## Contract tests
+
+Each adapter has fixture-based tests: saved real responses in `apps/api/tests/fixtures/{source}/`
+→ expected `SourceScreening[]`. Fixtures are refreshed deliberately (by a script) when a source
+changes, never fetched during CI.

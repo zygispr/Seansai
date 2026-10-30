@@ -1,0 +1,175 @@
+# Research: Cinema Showtimes Aggregator
+
+**Feature**: [spec.md](./spec.md) | **Plan**: [plan.md](./plan.md) | **Date**: 2026-10-30
+
+All findings below were verified against the live sites on 2026-10-30 unless stated otherwise.
+
+## 1. Cinema data sources
+
+The spec assumes each cinema publishes its schedule publicly and that collecting it is acceptable
+(Assumptions → *Data availability*). Each source was checked for a machine-readable feed and for
+its `robots.txt` rules.
+
+| Cinema | Cities (verified) | Source | Format | robots.txt | Verdict |
+|--------|-------------------|--------|--------|------------|---------|
+| Apollo Kinas | Vilnius (Akropolis, Outlet), Panevėžys (Molas) | `https://www.apollokinas.lt/xml/` (Markus Cinema System feed: `TheatreAreas`, `ScheduleDates`, `Schedule?area=&dt=&nrOfDays=`, `Events`) | JSON | Only `/websales/`, `/account/`, `/mypage/` disallowed | ✅ Use |
+| Forum Cinemas | Vilnius (Vingis), Kaunas, Klaipėda, Šiauliai | `https://restapi.forumcinemas.lt/api` (`/region`, `/cinema`, `/region/{id}/screening?dateTimeFrom=&dateTimeTo=`, `/movie/{id}`) — the public API behind their own website | JSON | No robots.txt (404); main site allows all | ✅ Use |
+| Pasaka | Vilnius (Paupio, Senamiesčio; seasonal Kalnų parko estrada) | `https://bilietai.kinopasaka.lt/xml/` (same Markus Cinema System feed as Apollo) | XML | Allows `*`; blocks named AI/training bots only; `Content-Signal: search=yes` | ✅ Use (same adapter as Apollo) |
+| Skalvija | Vilnius | `https://skalvija.lt/wp-json/data/v1/get_shows` (WordPress endpoint used by their site) | JSON, but prefixed with PHP warnings | Allows all | ✅ Use, tolerant parsing; title + start + ticket URL only (no format/language) |
+| Atlantis | Šiauliai | Server-rendered movie pages `https://atlantiscinemas.lt/filmai` → `/filmai/{slug}` (several days of screenings in the HTML, `<time datetime>` + `/kasa/seansas/{id}` links) | HTML | Main site allows all except `/checkout/`, `/kasa/`; its backend `back.atlantiscinemas.lt` disallows all | ✅ Use HTML pages only; never call the backend |
+| Vue (formerly Multikino; `multikino.lt` → `vuekinas.lt`) | Vilnius | Schedule loaded client-side from `/data/filmswithshowings/…` and `/api/…` | JSON | **`/data/`, `/api/`, `/iapi/`, `/restapi/` disallowed** | ⛔ Blocked until permission |
+
+**Decision**: Ship with five cinemas (Apollo, Forum, Pasaka, Skalvija, Atlantis), using four source
+adapters (Apollo and Pasaka share one). Vue is excluded until Vue Lietuva grants written permission
+or offers a feed; the adapter design lets it be added without touching other code.
+
+**Rationale**: Every included source is either a documented-style public feed or the public API
+that the cinema's own website uses, and none is disallowed by `robots.txt`. Vue explicitly
+disallows automated access to its schedule data, so using it would ignore the operator's stated
+wishes.
+
+**Alternatives considered**:
+- *Headless-browser scraping of Vue's rendered page*: still fetches the disallowed `/data/` URLs
+  under the hood; rejected.
+- *Third-party showtime aggregators (e.g., paid showtime APIs)*: coverage of small Lithuanian
+  venues (Skalvija, Pasaka, Atlantis) is doubtful and costs money; rejected for v1.
+
+**Operational rules for all sources** (good-citizen collection):
+- Identify the client with a descriptive `User-Agent` that includes a contact address.
+- One refresh cycle per source per hour, requests sent sequentially per source with a small delay.
+- Never request ticket-sale paths (`/websales/`, `/kasa/`, `/checkout/`); only link users to them.
+- Re-check each source's `robots.txt` at startup and once a day; skip a source whose rules start
+  disallowing the paths used, and flag it as unavailable (FR-015).
+
+**Follow-ups (not blocking)**:
+- Email each cinema to say what Seansai does and that it links back for ticket sales; ask Vue for
+  permission or a feed. The EU *sui generis* database right can apply to collected listings, so
+  explicit permission is the safest basis long-term. This is a risk note, not legal advice.
+
+### Source data quirks found
+
+- **Forum**: the `/cinema` endpoint reports Vingis' city as "Kaunas" although its address
+  (Savanorių pr. 7) is in Vilnius → city assignment comes from our own cinema registry, not the
+  feed. A "Sandėlys" region exists without a matching cinema → ignored unless it has screenings,
+  then mapped via the registry.
+- **Apollo/Pasaka (MCS)**: `dttmShowStart` is local time without offset; `dttmShowStartUTC` is
+  UTC → use the UTC field. `dtAccounting` is the cinema's business day and can differ from the
+  calendar date after midnight → the spec's rule (calendar date of start, Europe/Vilnius) wins.
+  Multi-day queries work via `nrOfDays`.
+- **Skalvija**: response body starts with PHP warning HTML before the JSON → strip everything
+  before the first `{`/`[`; `start_date` is a Unix timestamp; titles are arrays; generic entries
+  such as "Repertuarinis seansas" exist and are shown under that title.
+- **Atlantis**: times are local `HH:MM` grouped under `<time datetime="YYYY-MM-DD">` date headers.
+
+## 2. Backend: Node.js vs .NET
+
+**Decision**: **Node.js 24 LTS with TypeScript**, using **Fastify** for the HTTP API.
+
+**Rationale**:
+- *Simplicity (Principle III)*: the frontend is TypeScript, so a TypeScript backend means one
+  language, one toolchain (ESLint, Prettier, Vitest, tsc) and one package manager across the repo.
+- *Shared contracts*: API types and validation schemas live in one shared package used by both
+  the API and the web app, so a contract change breaks the build instead of production. With .NET,
+  types would be duplicated or generated from OpenAPI — an extra step to keep in sync.
+- *Workload fit*: the backend is I/O-bound (fetch feeds, parse JSON/XML/HTML, serve small cached
+  JSON). Node's async I/O is a natural fit, and the load target (≈100 concurrent users, SC-007) is
+  far below either runtime's limits, so .NET's raw throughput advantage does not matter here.
+- *Ecosystem for this job*: mature, well-maintained libraries for each parsing need (`zod` for
+  validation, `fast-xml-parser` for XML, `cheerio` for HTML).
+
+**Alternatives considered**:
+- *.NET 10 (ASP.NET Core minimal APIs + hosted background service)*: excellent performance,
+  strong typing, and built-in background services. Rejected because it adds a second language and
+  toolchain and duplicates contract types, with no performance need that justifies it.
+- *Node with Express*: older middleware model, no built-in schema validation; Fastify is faster
+  and has first-class TypeScript and JSON-schema support.
+- *Node with Hono*: also good, but Fastify is more established for a long-running Node server.
+- *No backend (scheduled job writing static JSON to a CDN)*: very cheap to host, but splits the
+  system across a CI scheduler, object storage and a CDN, and CI cron timing is not reliable
+  enough for the 3-hour freshness requirement (FR-014). Rejected for v1; the API's HTTP caching
+  gives most of the same benefit.
+
+## 3. Storage
+
+**Decision**: **SQLite** (via `better-sqlite3`) in a single file next to the API.
+
+**Rationale**: The full dataset is small (≈15 cinemas × up to ~3 weeks of screenings ≈ a few
+thousand rows). SQLite persists across restarts (so the site works immediately after a deploy,
+even if a cinema is down), supports the needed queries (by city, date, movie) with indexes, and
+needs no separate server. It also stores source status and the match-review log.
+
+**Alternatives considered**:
+- *In-memory only*: simplest, but data is lost on restart and the first visitors after a deploy
+  would see nothing until every source refreshed.
+- *PostgreSQL*: needed only if several API instances must share state; not needed at 10x load.
+  Migration path is documented in plan.md (Scalability).
+
+## 4. Refresh scheduling
+
+**Decision**: An in-process scheduler in the API service refreshes each source every **60
+minutes** (with random jitter of ±5 minutes), plus once on startup. Each source refresh is
+independent; one failing source never blocks others.
+
+**Rationale**: FR-014 allows at most 3 hours of staleness; hourly refreshes tolerate two
+consecutive failures before data becomes stale, and the load on cinema servers stays low.
+
+**Alternatives considered**: external cron / job queue — extra infrastructure not justified for
+five sources.
+
+## 5. Movie matching across cinemas (FR-005)
+
+**Decision**: Deterministic, conservative matching:
+1. **Normalise** titles: lower-case, strip diacritics, remove format/language tags (`3D`, `IMAX`,
+   `4DX`, `(LT sub.)`, `LT`, `ORG`, `dubliuotas`, etc.), remove punctuation, collapse spaces.
+2. **Match key** = normalised *original* title when available, otherwise normalised local title.
+3. Two listings are a **confident match** when their match keys are equal **and** either their
+   production years are equal, or one year is missing and durations differ by ≤ 10 minutes.
+4. Everything else stays a **separate movie**; pairs with equal keys but conflicting year or
+   duration are written to the **match-review log** for the maintainer.
+5. A small, versioned **manual alias file** lets the maintainer confirm or reject pairs found in
+   the review log.
+
+**Rationale**: Wrong merges are worse than duplicates (spec clarification). Exact keys plus a
+year/duration check are predictable, easy to unit-test, and avoid false merges of remakes or
+sequels (different years).
+
+**Alternatives considered**: fuzzy string similarity (Levenshtein/Jaro-Winkler) — catches more
+duplicates but risks wrong merges (e.g., "Kopa" vs "Kopa. Antra dalis"); external IDs (IMDb) —
+not provided by most sources.
+
+## 6. Frontend stack details
+
+| Concern | Decision | Rationale | Alternatives rejected |
+|---------|----------|-----------|-----------------------|
+| Framework/build | React 19 + Vite, TypeScript strict | User requirement | — |
+| Component structure | Atomic design: `atoms/`, `molecules/`, `organisms/`, `templates/`, plus `pages/` | User requirement; keeps components reusable (Principle V consistency) | — |
+| Styling | SCSS Modules (`*.module.scss`) + shared design tokens in `styles/` (colours, spacing, breakpoints) | User requirement; modules prevent class-name clashes | Global SCSS only — clashes as the app grows |
+| Routing / URL state | React Router (data mode) | Movie and date must be in the URL (FR-011) | Hand-rolled history handling |
+| Data fetching | TanStack Query | Built-in loading/error/stale states and caching per movie+date; avoids hand-written cache logic | Plain `fetch` in effects — reimplements caching and race handling |
+| i18n (LT default, EN) | Typed message catalogues (`lt.ts`, `en.ts`) + native `Intl` (`DateTimeFormat`, `PluralRules` for Lithuanian's three plural forms) | Two languages and a modest number of strings; no library needed | `react-i18next` — capable, but more than this needs |
+| Remembered city/language | `localStorage`, wrapped so the app works if storage is unavailable | FR-013/FR-017, no accounts | Cookies — unnecessary |
+| Code quality | ESLint (typescript-eslint, react-hooks, jsx-a11y) + Prettier, run in CI | User requirement; Principle I | — |
+
+## 7. Testing strategy
+
+**Decision**:
+- **Vitest** for unit and integration tests in all packages.
+- **React Testing Library** for component tests.
+- **Source adapter contract tests**: saved real responses from each cinema (fixtures) are parsed
+  and compared with expected normalised screenings; a separate, manually-triggered "live check"
+  verifies the sources still respond in the expected shape.
+- **API integration tests**: Fastify `inject` against a temporary SQLite database.
+- **Playwright** end-to-end tests for each user story, with `@axe-core/playwright` for
+  accessibility checks (WCAG 2.1 AA, Principle V).
+
+**Rationale**: Principle IV requires unit, integration and end-to-end coverage; fixtures keep
+tests deterministic and independent of cinema websites (no flaky network tests in CI).
+
+## 8. Hosting
+
+**Decision**: One Linux container (Node API serving the built web app as static files, SQLite on
+a persistent volume) on any EU-region container host; a CDN or the host's edge cache in front.
+The exact provider is chosen at deploy time and does not affect the design.
+
+**Rationale**: One deployable unit is the simplest thing that meets SC-007; an EU region keeps
+latency low for Lithuanian users.
