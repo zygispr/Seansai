@@ -22,7 +22,8 @@ const EnvSchema = z
     SOURCES_MODE: z.enum(['live', 'fixtures']).default('live'),
     FIXTURE_NOW: z.iso.datetime({ offset: true }).optional(),
     FIXTURE_FAIL: sourceIdList,
-    SEANSAI_CONTACT: z.email().optional(),
+    /** An email address or the project's https URL, sent in the User-Agent. */
+    SEANSAI_CONTACT: z.union([z.email(), z.url({ protocol: /^https$/ })]).optional(),
     DISABLED_SOURCES: sourceIdList,
     NODE_ENV: z.string().optional(),
   })

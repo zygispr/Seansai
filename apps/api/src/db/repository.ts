@@ -8,6 +8,8 @@ export type MovieRecord = {
   id: string;
   title: string;
   originalTitle: string | null;
+  /** Known only from some sources (Apollo, Cinamon); shown under the Lithuanian title. */
+  englishTitle: string | null;
   matchKey: string;
   year: number | null;
   durationMinutes: number | null;
@@ -17,7 +19,10 @@ export type MovieRecord = {
 };
 
 /** What movie matching needs to know about existing movies. */
-export type MovieIdentity = Pick<MovieRecord, 'id' | 'matchKey' | 'year' | 'durationMinutes'>;
+export type MovieIdentity = Pick<MovieRecord, 'id' | 'matchKey' | 'year' | 'durationMinutes'> & {
+  /** Every normalised title the movie is known by. */
+  keys: string[];
+};
 
 export type ScreeningRecord = {
   /** `{sourceId}:{sourceScreeningId}` */
@@ -53,10 +58,11 @@ export type MatchReviewRecord = {
   firstSeenAt: Date;
 };
 
-type MovieRow = {
+export type MovieRow = {
   id: string;
   title: string;
   original_title: string | null;
+  english_title: string | null;
   match_key: string;
   year: number | null;
   duration_minutes: number | null;
@@ -74,6 +80,19 @@ type SourceRow = {
 
 const toDate = (value: string | null): Date | null => (value === null ? null : new Date(value));
 
+export const toMovieRecord = (row: MovieRow): MovieRecord => ({
+  id: row.id,
+  title: row.title,
+  originalTitle: row.original_title,
+  englishTitle: row.english_title,
+  matchKey: row.match_key,
+  year: row.year,
+  durationMinutes: row.duration_minutes,
+  ageRating: row.age_rating,
+  genres: JSON.parse(row.genres) as string[],
+  posterUrl: row.poster_url,
+});
+
 const toSourceRecord = (row: SourceRow): SourceRecord => ({
   id: row.id,
   lastAttemptAt: toDate(row.last_attempt_at),
@@ -90,20 +109,25 @@ export class Repository {
     this.#db = db;
     this.#statements = {
       upsertMovie: db.prepare(`
-        INSERT INTO movies (id, title, original_title, match_key, year, duration_minutes,
-                            age_rating, genres, poster_url)
-        VALUES (@id, @title, @originalTitle, @matchKey, @year, @durationMinutes,
-                @ageRating, @genres, @posterUrl)
+        INSERT INTO movies (id, title, original_title, english_title, match_key, year,
+                            duration_minutes, age_rating, genres, poster_url)
+        VALUES (@id, @title, @originalTitle, @englishTitle, @matchKey, @year,
+                @durationMinutes, @ageRating, @genres, @posterUrl)
         ON CONFLICT (id) DO UPDATE SET
           -- The title stays as the first source published it; gaps are filled from later ones.
           original_title   = COALESCE(original_title, excluded.original_title),
+          english_title    = COALESCE(english_title, excluded.english_title),
           duration_minutes = COALESCE(duration_minutes, excluded.duration_minutes),
           age_rating       = COALESCE(age_rating, excluded.age_rating),
           genres           = CASE WHEN genres = '[]' THEN excluded.genres ELSE genres END,
           poster_url       = COALESCE(poster_url, excluded.poster_url)`),
       getMovie: db.prepare('SELECT * FROM movies WHERE id = ?'),
-      movieIdentities: db.prepare(
-        'SELECT id, match_key, year, duration_minutes FROM movies ORDER BY id',
+      movieIdentities: db.prepare(`
+        SELECT movies.id, match_key, year, duration_minutes,
+               (SELECT json_group_array(key) FROM movie_keys WHERE movie_id = movies.id) AS keys
+        FROM movies ORDER BY movies.id`),
+      addMovieKey: db.prepare(
+        'INSERT INTO movie_keys (movie_id, key) VALUES (?, ?) ON CONFLICT DO NOTHING',
       ),
       deleteFutureScreenings: db.prepare(
         'DELETE FROM screenings WHERE source_id = ? AND starts_at >= ?',
@@ -159,35 +183,29 @@ export class Repository {
     return this.#db.transaction(work)();
   }
 
-  upsertMovie(movie: MovieRecord): void {
+  /** Creates or fills in the movie, and records the titles it is known by (its own match key included). */
+  upsertMovie(movie: MovieRecord, keys: readonly string[] = []): void {
     this.#statement('upsertMovie').run({ ...movie, genres: JSON.stringify(movie.genres) });
+    for (const key of new Set([movie.matchKey, ...keys])) {
+      this.#statement('addMovieKey').run(movie.id, key);
+    }
   }
 
   getMovie(id: string): MovieRecord | undefined {
     const row = this.#statement('getMovie').get(id) as MovieRow | undefined;
-    if (!row) return undefined;
-    return {
-      id: row.id,
-      title: row.title,
-      originalTitle: row.original_title,
-      matchKey: row.match_key,
-      year: row.year,
-      durationMinutes: row.duration_minutes,
-      ageRating: row.age_rating,
-      genres: JSON.parse(row.genres) as string[],
-      posterUrl: row.poster_url,
-    };
+    return row ? toMovieRecord(row) : undefined;
   }
 
   listMovieIdentities(): MovieIdentity[] {
     const rows = this.#statement('movieIdentities').all() as Array<
-      Pick<MovieRow, 'id' | 'match_key' | 'year' | 'duration_minutes'>
+      Pick<MovieRow, 'id' | 'match_key' | 'year' | 'duration_minutes'> & { keys: string }
     >;
     return rows.map((row) => ({
       id: row.id,
       matchKey: row.match_key,
       year: row.year,
       durationMinutes: row.duration_minutes,
+      keys: JSON.parse(row.keys) as string[],
     }));
   }
 

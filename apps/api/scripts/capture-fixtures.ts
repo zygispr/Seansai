@@ -4,7 +4,8 @@
  * Reads the hand-written URL list `tests/fixtures/<sourceId>/urls.json`, fetches each URL once
  * through the polite HTTP client (robots.txt, User-Agent, delays), saves every response as a
  * numbered file plus `manifest.json`, and records the capture instant in the fixtures README.
- * List pages are not followed: every page an adapter needs is listed explicitly.
+ * HTML is saved without its inline stylesheets (see `stripInlineStyles`). List pages are not
+ * followed: every page an adapter needs is listed explicitly.
  */
 import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -16,6 +17,7 @@ import {
   DEFAULT_FIXTURES_DIR,
   recordCapture,
   resolveFixtureUrl,
+  stripInlineStyles,
 } from '../src/sources/fixture-http.ts';
 import { sourceConfigs } from '../src/sources/index.ts';
 
@@ -59,8 +61,10 @@ async function main(): Promise<void> {
   const files: Array<{ file: string; body: string }> = [];
   for (const [index, template] of templates.entries()) {
     const url = resolveFixtureUrl(template, capturedAt);
-    const body = await http.getText(url);
-    const file = `${String(index + 1).padStart(3, '0')}.${extensionOf(body)}`;
+    const response = await http.getText(url);
+    const extension = extensionOf(response);
+    const body = extension === 'html' ? stripInlineStyles(response) : response;
+    const file = `${String(index + 1).padStart(3, '0')}.${extension}`;
     manifest[url] = file;
     files.push({ file, body });
     logger.info({ source: sourceId, url, file }, 'Captured');

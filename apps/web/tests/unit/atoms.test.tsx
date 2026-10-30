@@ -21,6 +21,13 @@ describe('Poster', () => {
     expect(screen.getByRole('img', { name: 'Repertuarinis seansas' }).tagName).toBe('DIV');
   });
 
+  test('is hidden from assistive technology when decorative (empty alt)', () => {
+    const { container } = render(<Poster src={null} alt="" />);
+
+    expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    expect(container.firstElementChild).toHaveAttribute('aria-hidden', 'true');
+  });
+
   test('switches to the placeholder when the image fails to load', () => {
     render(<Poster src="https://cinema.lt/missing.jpg" alt="Kasėjas" />);
 

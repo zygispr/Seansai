@@ -6,7 +6,8 @@
 
 /**
  * Format and language tags cinemas add to titles, as whole words after normalisation:
- * "Kopa 3D", "Kopa (LT sub.)", "Kopa ORG", "Mažasis princas (dubliuotas)".
+ * "Kopa 3D", "Kopa (LT sub.)", "Kopa ORG", "Mažasis princas (dubliuotas)",
+ * "Mažoji Amelija (įgarsinta lietuviškai)".
  */
 const TAG_WORDS = new Set([
   '2d',
@@ -21,7 +22,13 @@ const TAG_WORDS = new Set([
   'subtitrais',
   'dubliuotas',
   'dubliuota',
+  'igarsinta',
+  'igarsintas',
+  'lietuviskai',
 ]);
+
+/** "Monster Mia (2026)": a production year in brackets is metadata, not part of the title. */
+const YEAR_IN_BRACKETS = /\(\s*(?:18|19|20)\d{2}\s*\)/g;
 
 /** Lower-case, strip diacritics, and turn everything but letters and digits into single spaces. */
 function simplify(text: string): string {
@@ -35,7 +42,7 @@ function simplify(text: string): string {
 
 /** "Kopa. Trečia dalis (LT sub.)" → "kopa trecia dalis". */
 export function normalizeTitle(title: string): string {
-  const simplified = simplify(title);
+  const simplified = simplify(title.replace(YEAR_IN_BRACKETS, ' '));
   const withoutTags = simplified
     .split(' ')
     .filter((word) => !TAG_WORDS.has(word))
@@ -58,15 +65,36 @@ function originalTitleInBrackets(title: string): string | null {
   return isOnlyTags || !hasLetters ? null : inBrackets;
 }
 
+type Titles = { title: string; originalTitle: string | null; englishTitle: string | null };
+
+/** "The Uprising" and "Uprising" are the same title; a lone "A" stays a title. */
+function withoutLeadingArticle(key: string): string {
+  const stripped = key.replace(/^(the|a|an) /, '');
+  return stripped.length > 0 ? stripped : key;
+}
+
+function keyOf(title: string): string {
+  return withoutLeadingArticle(normalizeTitle(title));
+}
+
 /**
- * The key two listings must share to be the same movie: the normalised original title when
- * known, otherwise the normalised local title.
+ * Every title a listing is known by, as normalised keys, most telling first: the English title,
+ * the original title, then the Lithuanian title. Two listings can only be the same movie if they
+ * share one of these (research.md §5).
  */
-export function matchKeyOf(listing: { title: string; originalTitle: string | null }): string {
+export function titleKeysOf(listing: Titles): string[] {
   const original = listing.originalTitle ?? originalTitleInBrackets(listing.title);
-  if (original !== null) {
-    const key = normalizeTitle(original);
-    if (key.length > 0) return key;
-  }
-  return normalizeTitle(listing.title);
+  const keys = [listing.englishTitle, original, listing.title]
+    .filter((title): title is string => title !== null)
+    .map(keyOf)
+    .filter((key) => key.length > 0);
+  return [...new Set(keys)];
+}
+
+/**
+ * The key a movie is named by (its id comes from it): the English title when known, otherwise
+ * the original title, otherwise the Lithuanian title.
+ */
+export function matchKeyOf(listing: Titles): string {
+  return titleKeysOf(listing)[0] ?? normalizeTitle(listing.title);
 }

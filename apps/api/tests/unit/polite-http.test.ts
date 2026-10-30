@@ -15,7 +15,10 @@ type Call = { url: string; at: number; headers: Headers };
 
 const ALLOW_ALL: Route = { body: 'User-agent: *\nAllow: /\n' };
 
-function createClient(routes: Record<string, Route>, options: { robotsOverride?: boolean } = {}) {
+function createClient(
+  routes: Record<string, Route>,
+  options: { robotsOverride?: boolean; contact?: string } = {},
+) {
   const calls: Call[] = [];
   const fetch = vi.fn((input: string | URL | Request, init?: RequestInit) => {
     const url = input instanceof Request ? input.url : input.toString();
@@ -38,7 +41,7 @@ function createClient(routes: Record<string, Route>, options: { robotsOverride?:
   const { logger, lines } = createTestLogger();
   const client = new PoliteHttpClient({
     sourceId: 'test',
-    contact: 'hello@seansai.lt',
+    contact: options.contact ?? 'hello@seansai.lt',
     robotsOverride: options.robotsOverride ?? false,
     logger,
     fetch,
@@ -80,6 +83,22 @@ describe('PoliteHttpClient', () => {
     for (const call of calls) {
       expect(call.headers.get('user-agent')).toBe('Seansai/1.0 (+mailto:hello@seansai.lt)');
     }
+  });
+
+  test('links to the project page when the contact is a URL', async () => {
+    const { client, calls } = createClient(
+      {
+        'https://cinema.lt/robots.txt': ALLOW_ALL,
+        'https://cinema.lt/schedule': { body: 'ok' },
+      },
+      { contact: 'https://github.com/zygispr/Seansai' },
+    );
+
+    await settle(client.getText('https://cinema.lt/schedule'));
+
+    expect(calls[0]?.headers.get('user-agent')).toBe(
+      'Seansai/1.0 (+https://github.com/zygispr/Seansai)',
+    );
   });
 
   test('sends no browser-like headers', async () => {
@@ -251,6 +270,18 @@ describe('PoliteHttpClient', () => {
     await expect(settle(client.getText('https://cinema.lt/schedule'))).rejects.toThrow(
       SourceRequestError,
     );
+  });
+
+  test('reports the HTTP status of a failed request, so adapters can tell "not found" apart', async () => {
+    const { client } = createClient({
+      'https://cinema.lt/robots.txt': ALLOW_ALL,
+      'https://cinema.lt/gone': { status: 404 },
+    });
+
+    await expect(settle(client.getText('https://cinema.lt/gone'))).rejects.toMatchObject({
+      name: 'SourceRequestError',
+      status: 404,
+    });
   });
 
   test('caches robots.txt for 24 hours', async () => {

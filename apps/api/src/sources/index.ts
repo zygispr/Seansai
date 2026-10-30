@@ -1,5 +1,16 @@
 import type { Logger } from '../lib/logger.ts';
+import { cinamonAdapter } from './cinamon/adapter.ts';
+import {
+  atlantisAdapter,
+  garsasAdapter,
+  minijaAdapter,
+  spindulysAdapter,
+} from './fliko/adapter.ts';
+import { apolloAdapter, pasakaAdapter } from './mcs/adapter.ts';
+import { romuvaAdapter } from './romuva/adapter.ts';
+import { skalvijaAdapter } from './skalvija/adapter.ts';
 import type { SourceAdapter, SourceId } from './types.ts';
+import { vueAdapter } from './vue/adapter.ts';
 
 export type SourceConfig = {
   id: SourceId;
@@ -32,8 +43,23 @@ export const sourceConfigs: readonly SourceConfig[] = [
   { id: 'cinamon', enabled: true, robotsOverride: true, overrideReason: OWNER_OVERRIDE_REASON },
 ];
 
-/** Adapters for the configured sources; registered as they are built (T060–T067). */
-export const adapters: readonly SourceAdapter[] = [];
+/**
+ * One adapter per configured source. Forum has none yet: its fixtures could not be captured
+ * (its API answered robots.txt with HTTP 500, which means "disallow"), so its cinemas show as
+ * stale until the adapter is built.
+ */
+export const adapters: readonly SourceAdapter[] = [
+  apolloAdapter,
+  pasakaAdapter,
+  skalvijaAdapter,
+  atlantisAdapter,
+  garsasAdapter,
+  spindulysAdapter,
+  minijaAdapter,
+  romuvaAdapter,
+  vueAdapter,
+  cinamonAdapter,
+];
 
 export function findSourceConfig(id: SourceId): SourceConfig | undefined {
   return sourceConfigs.find((config) => config.id === id);

@@ -6,6 +6,7 @@ function listing(overrides: Partial<Listing> = {}): Listing {
   return {
     title: 'Kasėjas',
     originalTitle: 'Digger',
+    englishTitle: null,
     year: 2026,
     durationMinutes: 101,
     ageRating: 'N13',
@@ -15,12 +16,12 @@ function listing(overrides: Partial<Listing> = {}): Listing {
   };
 }
 
-const digger: MovieIdentity = {
-  id: 'digger-2026',
-  matchKey: 'digger',
-  year: 2026,
-  durationMinutes: 101,
-};
+/** Existing movies list every title they are known by. */
+function movie(identity: Omit<MovieIdentity, 'keys'> & { keys?: string[] }): MovieIdentity {
+  return { keys: [identity.matchKey], ...identity };
+}
+
+const digger = movie({ id: 'digger-2026', matchKey: 'digger', year: 2026, durationMinutes: 101 });
 
 describe('resolveMovie', () => {
   test('creates a new movie with a stable id from match key and year', () => {
@@ -57,15 +58,15 @@ describe('resolveMovie', () => {
     expect(result.reviews).toEqual([]);
   });
 
-  test('matches confidently when one year is missing and durations differ by at most 10 minutes', () => {
-    const result = resolveMovie(listing({ year: null, durationMinutes: 110 }), [digger], []);
+  test('matches confidently when one year is missing and durations differ by at most 15 minutes', () => {
+    const result = resolveMovie(listing({ year: null, durationMinutes: 116 }), [digger], []);
 
     expect(result.movie.id).toBe('digger-2026');
     expect(result.reviews).toEqual([]);
   });
 
-  test('keeps listings separate when one year is missing and durations differ by more than 10 minutes', () => {
-    const result = resolveMovie(listing({ year: null, durationMinutes: 115 }), [digger], []);
+  test('keeps listings separate when one year is missing and durations differ by more than 15 minutes', () => {
+    const result = resolveMovie(listing({ year: null, durationMinutes: 117 }), [digger], []);
 
     expect(result.movie.id).toBe('digger');
     expect(result.reviews).toEqual([
@@ -73,20 +74,110 @@ describe('resolveMovie', () => {
     ]);
   });
 
-  test('keeps listings separate when one year is missing and a duration is unknown', () => {
+  test('matches when one year is missing and a duration is unknown, as nothing contradicts it', () => {
     const result = resolveMovie(listing({ year: null, durationMinutes: null }), [digger], []);
 
-    expect(result.movie.id).toBe('digger');
+    expect(result.movie.id).toBe('digger-2026');
+    expect(result.reviews).toEqual([]);
+  });
+
+  test('names a new movie after its English title and keeps every title as a key', () => {
+    const result = resolveMovie(
+      listing({ title: 'Instruktorius', originalTitle: 'Instructor', englishTitle: 'Instructor' }),
+      [],
+      [],
+    );
+
+    expect(result.movie).toMatchObject({ id: 'instructor-2026', englishTitle: 'Instructor' });
+    expect(result.keys).toEqual(['instructor', 'instruktorius']);
+  });
+
+  test('matches through any shared title: the same Lithuanian title, different originals', () => {
+    // Apollo knows the English title; Vue only the Lithuanian original.
+    const apollo = movie({
+      id: 'instructor-2026',
+      matchKey: 'instructor',
+      keys: ['instructor', 'instruktorius'],
+      year: 2026,
+      durationMinutes: 90,
+    });
+
+    const result = resolveMovie(
+      listing({
+        title: 'Instruktorius',
+        originalTitle: 'Instruktorius',
+        year: null,
+        durationMinutes: 90,
+      }),
+      [apollo],
+      [],
+    );
+
+    expect(result.movie.id).toBe('instructor-2026');
+    expect(result.keys).toEqual(['instruktorius']);
+  });
+
+  test('a Lithuanian title alone (Romuva) joins the movie with that title', () => {
+    const odyssey = movie({
+      id: 'odyssey-2026',
+      matchKey: 'odyssey',
+      keys: ['odyssey', 'odiseja'],
+      year: 2026,
+      durationMinutes: 172,
+    });
+
+    const result = resolveMovie(
+      listing({ title: 'Odisėja', originalTitle: null, year: null, durationMinutes: null }),
+      [odyssey],
+      [],
+    );
+
+    expect(result.movie.id).toBe('odyssey-2026');
+  });
+
+  test('"The Uprising" and "Uprising" are the same title', () => {
+    const uprising = movie({
+      id: 'uprising-2026',
+      matchKey: 'uprising',
+      year: 2026,
+      durationMinutes: 127,
+    });
+
+    const result = resolveMovie(
+      listing({ title: 'Sukilimas', originalTitle: 'The Uprising', durationMinutes: 127 }),
+      [uprising],
+      [],
+    );
+
+    expect(result.movie.id).toBe('uprising-2026');
+  });
+
+  test('a shared title does not override a year conflict', () => {
+    const result = resolveMovie(
+      listing({ title: 'Kasėjas', originalTitle: 'Kasėjas', year: 1990 }),
+      [
+        movie({
+          id: 'digger-2026',
+          matchKey: 'digger',
+          keys: ['digger', 'kasejas'],
+          year: 2026,
+          durationMinutes: 101,
+        }),
+      ],
+      [],
+    );
+
+    expect(result.movie.id).toBe('kasejas-1990');
     expect(result.reviews).toHaveLength(1);
   });
 
   test('keeps a remake with a different year separate and logs it for review', () => {
-    const dune1984: MovieIdentity = {
+    const dune1984 = movie({
       id: 'dune-1984',
       matchKey: 'dune',
       year: 1984,
       durationMinutes: 137,
-    };
+    });
 
     const result = resolveMovie(
       listing({ title: 'Kopa', originalTitle: 'Dune', year: 2021, durationMinutes: 155 }),
@@ -106,7 +197,7 @@ describe('resolveMovie', () => {
   });
 
   test('never merges a film with its sequel', () => {
-    const kopa: MovieIdentity = { id: 'kopa', matchKey: 'kopa', year: null, durationMinutes: null };
+    const kopa = movie({ id: 'kopa', matchKey: 'kopa', year: null, durationMinutes: null });
 
     const result = resolveMovie(
       listing({ title: 'Kopa. Antra dalis', originalTitle: null, year: null }),
@@ -119,12 +210,12 @@ describe('resolveMovie', () => {
   });
 
   test('treats two listings without a year as the same movie', () => {
-    const skalvijaKopa: MovieIdentity = {
+    const skalvijaKopa = movie({
       id: 'kopa',
       matchKey: 'kopa',
       year: null,
       durationMinutes: null,
-    };
+    });
 
     const result = resolveMovie(
       listing({ title: 'Kopa', originalTitle: null, year: null, durationMinutes: null }),
@@ -136,9 +227,9 @@ describe('resolveMovie', () => {
   });
 
   test('does not guess when more than one existing movie would match', () => {
-    const candidates: MovieIdentity[] = [
-      { id: 'pinocchio-2022', matchKey: 'pinocchio', year: 2022, durationMinutes: 115 },
-      { id: 'pinocchio-2019', matchKey: 'pinocchio', year: 2019, durationMinutes: 120 },
+    const candidates = [
+      movie({ id: 'pinocchio-2022', matchKey: 'pinocchio', year: 2022, durationMinutes: 115 }),
+      movie({ id: 'pinocchio-2019', matchKey: 'pinocchio', year: 2019, durationMinutes: 120 }),
     ];
 
     const result = resolveMovie(
@@ -155,12 +246,12 @@ describe('resolveMovie', () => {
   });
 
   describe('alias file', () => {
-    const dune1984: MovieIdentity = {
+    const dune1984 = movie({
       id: 'dune-1984',
       matchKey: 'dune',
       year: 1984,
       durationMinutes: 137,
-    };
+    });
     const remake = listing({
       title: 'Kopa',
       originalTitle: 'Dune',

@@ -114,9 +114,12 @@ function storeScreenings(
   const reviews: MatchReview[] = [];
   const records: ScreeningRecord[] = screenings.map((screening) => {
     const resolution = resolveMovie(screening, movies, aliases);
-    const { movie } = resolution;
-    repo.upsertMovie(movie);
-    if (!movies.some((existing) => existing.id === movie.id)) movies.push(movie);
+    const { movie, keys } = resolution;
+    repo.upsertMovie(movie, keys);
+    // Later listings in this refresh can match on the titles just learned.
+    const known = movies.find((existing) => existing.id === movie.id);
+    if (known) known.keys = [...new Set([...known.keys, ...keys])];
+    else movies.push({ ...movie, keys: [...new Set([movie.matchKey, ...keys])] });
     reviews.push(...resolution.reviews);
     return {
       id: `${source}:${screening.sourceScreeningId}`,

@@ -1,10 +1,12 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, expect, test } from 'vitest';
+import { afterEach, expect, test, vi } from 'vitest';
+import { mockApi } from '../helpers/mock-api.ts';
 import { renderApp } from '../helpers/render-app.tsx';
 
 afterEach(() => {
   window.localStorage.clear();
+  vi.unstubAllGlobals();
 });
 
 test('has a skip link, a site name linking home and a main landmark', async () => {
@@ -32,6 +34,8 @@ test('the language switch marks the current language and names each in its own l
 
 test('switching language keeps the page and its parameters, and is remembered (FR-017)', async () => {
   const user = userEvent.setup();
+  window.localStorage.setItem('seansai.city', 'vilnius');
+  mockApi();
   const app = renderApp('/lt/movie/digger-2026?date=2026-10-31');
 
   const english = await screen.findByRole('link', { name: 'English' });
@@ -41,7 +45,10 @@ test('switching language keeps the page and its parameters, and is remembered (F
   await waitFor(() => {
     expect(app.location()).toBe('/en/movie/digger-2026?date=2026-10-31');
   });
-  expect(await screen.findByRole('heading', { level: 1, name: 'Screenings' })).toBeInTheDocument();
+  expect(await screen.findByRole('heading', { level: 1, name: 'Kasėjas' })).toBeInTheDocument();
+  expect(
+    await screen.findByRole('heading', { level: 2, name: /^Saturday 31 October/ }),
+  ).toBeInTheDocument();
   expect(window.localStorage.getItem('seansai.lang')).toBe('en');
   expect(screen.getByRole('navigation', { name: 'Language' })).toBeInTheDocument();
 });

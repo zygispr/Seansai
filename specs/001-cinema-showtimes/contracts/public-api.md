@@ -33,6 +33,7 @@ type MovieSummary = {
   id: string;                 // e.g. "digger-2026"
   title: string;              // as published, Lithuanian
   originalTitle: string | null;
+  englishTitle: string | null; // when a cinema states it; shown under the title
   posterUrl: string | null;   // null → placeholder
   ageRating: string | null;
   durationMinutes: number | null;

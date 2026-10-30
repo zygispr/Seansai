@@ -10,6 +10,7 @@ export type Db = Database.Database;
  */
 const migrations: readonly string[] = [
   readFileSync(new URL('./schema.sql', import.meta.url), 'utf8'),
+  readFileSync(new URL('./migration-002-movie-keys.sql', import.meta.url), 'utf8'),
 ];
 
 /** Opens (creating if needed) the SQLite database and brings its schema up to date. */

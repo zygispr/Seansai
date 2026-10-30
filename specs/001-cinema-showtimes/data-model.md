@@ -53,8 +53,10 @@ A film or event grouping listings of the same title from all cinemas (FR-005).
 |-------|------|-------|
 | `id` | string | stable slug derived from match key + year, e.g. `digger-2026`; used in URLs |
 | `title` | string | local (Lithuanian) display title, from the first source that provided it |
-| `originalTitle` | string \| null | shown alongside the title when different (FR-017) |
-| `matchKey` | string | normalised title used for matching (research §5) |
+| `originalTitle` | string \| null | shown alongside the title when different and no English title is known (FR-017) |
+| `englishTitle` | string \| null | when a source states it (Apollo, Cinamon); shown under the title |
+| `matchKey` | string | the normalised title the movie is named after: English, else original, else Lithuanian (research §5) |
+| `keys` | string[] | every normalised title the movie is known by (table `movie_keys`); listings match on any of them |
 | `year` | integer \| null | production year |
 | `durationMinutes` | integer \| null | |
 | `ageRating` | string \| null | e.g. "N13" |

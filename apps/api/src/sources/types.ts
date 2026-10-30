@@ -33,6 +33,8 @@ export const SourceScreeningSchema = z.object({
   /** As published. */
   title: z.string().trim().min(1),
   originalTitle: z.string().trim().min(1).nullable(),
+  /** Only when the source states it (Apollo's international titles, Cinamon's translations). */
+  englishTitle: z.string().trim().min(1).nullable(),
   year: z.number().int().min(1888).max(2100).nullable(),
   durationMinutes: z.number().int().positive().nullable(),
   ageRating: z.string().min(1).nullable(),
@@ -62,9 +64,14 @@ export type AdapterResult = {
   skipped: Array<{ reason: string; raw: string }>;
 };
 
+/** A known gap in what a source publishes, e.g. Cinamon's page API shows only today. */
+export type SourceLimitation = 'today-only';
+
 export interface SourceAdapter {
   /** Matches Source.id in the data model, e.g. "forum". */
   readonly id: SourceId;
+  /** Reported by `sources:check` instead of counted as a failure. */
+  readonly limitations?: readonly SourceLimitation[];
 
   /**
    * Fetch and normalise all published screenings from today up to the source's furthest

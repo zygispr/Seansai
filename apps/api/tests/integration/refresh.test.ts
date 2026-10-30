@@ -18,6 +18,7 @@ function screening(overrides: Partial<SourceScreening> = {}): SourceScreening {
     startsAt: new Date('2026-10-30T17:00:00Z'),
     title: 'Kasėjas',
     originalTitle: 'Digger',
+    englishTitle: null,
     year: 2026,
     durationMinutes: 101,
     ageRating: 'N13',

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<TheatreAreas xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <TheatreArea>
+    <ID>1028</ID>
+    <Name>Visi kino teatrai</Name>
+  </TheatreArea>
+  <TheatreArea>
+    <ID>1033</ID>
+    <Name>Paupio "Pasaka"</Name>
+  </TheatreArea>
+  <TheatreArea>
+    <ID>1042</ID>
+    <Name>Kalnų parko estrada</Name>
+  </TheatreArea>
+  <TheatreArea>
+    <ID>1034</ID>
+    <Name>Senamesčio „Pasaka“</Name>
+  </TheatreArea>
+</TheatreAreas>

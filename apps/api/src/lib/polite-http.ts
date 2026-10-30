@@ -50,6 +50,7 @@ type CachedRobots = { rules: Promise<RobotsRules | null>; fetchedAt: number };
 
 export type PoliteHttpOptions = {
   sourceId: string;
+  /** An email address or an https URL where cinemas can reach the project. */
   contact: string;
   /** Owner-approved exception to robots.txt (only `vue` and `cinamon`, research.md §1b). */
   robotsOverride: boolean;
@@ -71,7 +72,10 @@ export class PoliteHttpClient implements HttpClient {
 
   constructor(options: PoliteHttpOptions) {
     this.#sourceId = options.sourceId;
-    this.#userAgent = `Seansai/1.0 (+mailto:${options.contact})`;
+    const contact = options.contact.startsWith('https://')
+      ? options.contact
+      : `mailto:${options.contact}`;
+    this.#userAgent = `Seansai/1.0 (+${contact})`;
     this.#robotsOverride = options.robotsOverride;
     this.#logger = options.logger;
     this.#fetch = options.fetch ?? globalThis.fetch;
@@ -86,7 +90,9 @@ export class PoliteHttpClient implements HttpClient {
     const response = await this.#request(url);
     await this.#throwIfBlocked(url, response);
     if (!response.ok) {
-      throw new SourceRequestError(url, `HTTP ${String(response.status)}`);
+      throw new SourceRequestError(url, `HTTP ${String(response.status)}`, {
+        status: response.status,
+      });
     }
     const body = await response.text();
     const contentType = response.headers.get('content-type') ?? '';

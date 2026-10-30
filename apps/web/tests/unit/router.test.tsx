@@ -1,9 +1,11 @@
 import { screen, waitFor } from '@testing-library/react';
-import { afterEach, describe, expect, test } from 'vitest';
+import { afterEach, describe, expect, test, vi } from 'vitest';
+import { mockApi } from '../helpers/mock-api.ts';
 import { renderApp } from '../helpers/render-app.tsx';
 
 afterEach(() => {
   window.localStorage.clear();
+  vi.unstubAllGlobals();
 });
 
 describe('routes (contracts/web-routes.md)', () => {
@@ -25,12 +27,14 @@ describe('routes (contracts/web-routes.md)', () => {
   });
 
   test('an unknown language prefix redirects to the same page in Lithuanian', async () => {
+    window.localStorage.setItem('seansai.city', 'vilnius');
+    mockApi();
     const app = renderApp('/de/movie/digger-2026?date=2026-10-31');
 
     await waitFor(() => {
       expect(app.location()).toBe('/lt/movie/digger-2026?date=2026-10-31');
     });
-    expect(await screen.findByRole('heading', { level: 1, name: 'Seansai' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { level: 1, name: 'Kasėjas' })).toBeInTheDocument();
   });
 
   test('the shell renders in Lithuanian and sets <html lang>', async () => {

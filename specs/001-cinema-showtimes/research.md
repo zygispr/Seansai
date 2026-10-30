@@ -178,11 +178,22 @@ eleven small sources.
 **Decision**: Deterministic, conservative matching:
 1. **Normalise** titles: lower-case, strip diacritics, remove format/language tags (`3D`, `IMAX`,
    `4DX`, `(LT sub.)`, `LT`, `ORG`, `dubliuotas`, etc.), remove punctuation, collapse spaces.
-2. **Match key** = normalised *original* title when available, otherwise normalised local title.
-3. Two listings are a **confident match** when their match keys are equal **and** either their
-   production years are equal, or one year is missing and durations differ by ≤ 10 minutes.
-4. Everything else stays a **separate movie**; pairs with equal keys but conflicting year or
-   duration are written to the **match-review log** for the maintainer.
+2. **Title keys**: every movie is known by all its normalised titles — the **English** title (when
+   a source states it: Apollo's international titles, Cinamon's translations), the original
+   title, and the Lithuanian title — with a leading "The"/"A"/"An" ignored. The movie is named
+   (and its id derived) after the English title when known, else the original, else the
+   Lithuanian title.
+3. Two listings are a **confident match** when they share **any** title key **and** nothing known
+   contradicts it: production years equal when both are known; otherwise durations within
+   **15 minutes** when both are known (Vue lists running times 11–13 minutes shorter than
+   Apollo's, apparently without ads); a listing with neither (Romuva) matches on the title alone.
+4. Everything else stays a **separate movie**; pairs that share a title but conflict on year or
+   duration, or that would match more than one movie, are written to the **match-review log**.
+
+*Owner decision 2026-10-30*: "the same movie shouldn't appear twice" — matching uses the English
+title where available and shared titles in any language, instead of only the original title. On
+the fixture data this turns 238 title groups into 195 movies with no title shared between two
+movies. The English title is shown under the Lithuanian one.
 5. A small, versioned **manual alias file** lets the maintainer confirm or reject pairs found in
    the review log.
 

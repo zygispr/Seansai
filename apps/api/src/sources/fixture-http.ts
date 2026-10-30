@@ -44,7 +44,10 @@ export class FixtureHttpClient implements HttpClient {
     if (this.#fails) throw new SourceBlockedError(url, 'simulated failure (FIXTURE_FAIL)');
     const file = this.#readManifest()[url];
     if (file === undefined) {
-      throw new SourceRequestError(url, `no fixture recorded for ${this.#sourceId}`);
+      // Fixtures may hold only a sample of a site's pages; the rest answer like removed pages.
+      throw new SourceRequestError(url, `no fixture recorded for ${this.#sourceId}`, {
+        status: 404,
+      });
     }
     return readFile(join(this.#sourceDir, file), 'utf8');
   }
@@ -65,6 +68,14 @@ export class FixtureHttpClient implements HttpClient {
     this.#manifest = ManifestSchema.parse(JSON.parse(readFileSync(manifestPath, 'utf8')));
     return this.#manifest;
   }
+}
+
+/**
+ * Empties inline `<style>` elements. Some cinema pages inline megabytes of CSS that no adapter
+ * reads, so fixtures are saved without it. Scripts are kept: some adapters read data from them.
+ */
+export function stripInlineStyles(html: string): string {
+  return html.replace(/(<style\b[^>]*>)[\s\S]*?(<\/style>)/gi, '$1$2');
 }
 
 const PLACEHOLDER = /\{today(?:\+(\d+))?:(dd\.MM\.yyyy|yyyy-MM-dd)\}/g;

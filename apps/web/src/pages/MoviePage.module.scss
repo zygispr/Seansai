@@ -1,0 +1,70 @@
+@use 'breakpoints';
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.movie {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  gap: var(--space-4);
+  align-items: start;
+
+  @include breakpoints.from(md) {
+    grid-template-columns: 10rem 1fr;
+    gap: var(--space-6);
+  }
+}
+
+.poster {
+  width: 100%;
+}
+
+.titles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  overflow-wrap: anywhere;
+
+  @include breakpoints.from(md) {
+    font-size: var(--font-size-3xl);
+  }
+}
+
+.original {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-lg);
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+
+  abbr {
+    text-decoration: none;
+  }
+}
+
+.screenings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.date {
+  font-size: var(--font-size-xl);
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}

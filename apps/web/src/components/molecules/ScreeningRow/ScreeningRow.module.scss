@@ -1,0 +1,80 @@
+@use 'breakpoints';
+
+.row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    'time details'
+    'ticket ticket';
+  gap: var(--space-2) var(--space-4);
+  align-items: start;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-raised);
+
+  @include breakpoints.from(sm) {
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: 'time details ticket';
+    align-items: center;
+  }
+}
+
+.time {
+  grid-area: time;
+  min-width: 3.5rem;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--line-height-tight);
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  grid-area: details;
+  min-width: 0;
+}
+
+.cinema {
+  font-weight: var(--font-weight-semibold);
+}
+
+.place {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+
+  abbr {
+    text-decoration: none;
+  }
+}
+
+.ticket {
+  display: inline-flex;
+  grid-area: ticket;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--color-accent-hover);
+  }
+}

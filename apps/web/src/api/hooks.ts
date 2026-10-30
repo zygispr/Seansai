@@ -30,18 +30,23 @@ export function useMovies(city: string | null) {
   });
 }
 
-export function useMovie(movieId: string, city: string) {
+/** Waits while no city has been chosen yet. */
+export function useMovie(movieId: string, city: string | null) {
   return useQuery({
-    queryKey: queryKeys.movie(movieId, city),
-    queryFn: ({ signal }) => getMovie(movieId, city, signal),
+    queryKey: queryKeys.movie(movieId, city ?? ''),
+    queryFn: city === null ? skipToken : ({ signal }) => getMovie(movieId, city, signal),
     staleTime: STALE_TIME_MS,
   });
 }
 
-export function useScreenings(movieId: string, city: string, date: string) {
+/** Waits until both the city and the date are known. */
+export function useScreenings(movieId: string, city: string | null, date: string | null) {
   return useQuery({
-    queryKey: queryKeys.screenings(movieId, city, date),
-    queryFn: ({ signal }) => getScreenings(movieId, city, date, signal),
+    queryKey: queryKeys.screenings(movieId, city ?? '', date ?? ''),
+    queryFn:
+      city === null || date === null
+        ? skipToken
+        : ({ signal }) => getScreenings(movieId, city, date, signal),
     staleTime: STALE_TIME_MS,
   });
 }

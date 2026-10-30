@@ -31,8 +31,15 @@ describe('loadConfig', () => {
     expect(loadConfig({ SEANSAI_CONTACT: 'hello@seansai.lt' }).contact).toBe('hello@seansai.lt');
   });
 
+  test('accepts a project URL as the contact', () => {
+    expect(loadConfig({ SEANSAI_CONTACT: 'https://github.com/zygispr/Seansai' }).contact).toBe(
+      'https://github.com/zygispr/Seansai',
+    );
+  });
+
   test('rejects an invalid contact address', () => {
     expect(() => loadConfig({ SEANSAI_CONTACT: 'not-an-email' })).toThrow(/SEANSAI_CONTACT/);
+    expect(() => loadConfig({ SEANSAI_CONTACT: 'ftp://example.com' })).toThrow(/SEANSAI_CONTACT/);
   });
 
   test('parses source id lists and fixture overrides', () => {

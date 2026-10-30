@@ -9,6 +9,7 @@ import {
   readFixtureNow,
   recordCapture,
   resolveFixtureUrl,
+  stripInlineStyles,
 } from '../../src/sources/fixture-http.ts';
 
 let fixturesDir: string;
@@ -54,6 +55,14 @@ describe('FixtureHttpClient', () => {
     );
   });
 
+  test('answers a URL that was never captured as "not found", like a removed page', async () => {
+    const client = new FixtureHttpClient({ sourceId: 'apollo', fixturesDir, failingSources: [] });
+
+    await expect(client.getText('https://www.apollokinas.lt/other')).rejects.toMatchObject({
+      status: 404,
+    });
+  });
+
   test('fails clearly for a source without fixtures', async () => {
     const client = new FixtureHttpClient({ sourceId: 'forum', fixturesDir, failingSources: [] });
 
@@ -71,6 +80,26 @@ describe('FixtureHttpClient', () => {
 
     await expect(client.getText('https://www.apollokinas.lt/xml/TheatreAreas/')).rejects.toThrow(
       SourceBlockedError,
+    );
+  });
+});
+
+describe('stripInlineStyles', () => {
+  test('empties inline <style> elements and keeps everything else, scripts included', () => {
+    const html = [
+      '<html><head><style data-n-head="ssr">.a{color:red}\n.b{}</style>',
+      '<link rel="stylesheet" href="/x.css"></head>',
+      '<body><time datetime="2026-10-30">30</time>',
+      '<script>fullCalendar({ events: [] })</script><STYLE>p{}</STYLE></body></html>',
+    ].join('');
+
+    expect(stripInlineStyles(html)).toBe(
+      [
+        '<html><head><style data-n-head="ssr"></style>',
+        '<link rel="stylesheet" href="/x.css"></head>',
+        '<body><time datetime="2026-10-30">30</time>',
+        '<script>fullCalendar({ events: [] })</script><STYLE></STYLE></body></html>',
+      ].join(''),
     );
   });
 });

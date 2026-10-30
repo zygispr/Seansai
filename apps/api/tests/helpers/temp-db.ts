@@ -24,6 +24,7 @@ export function movieRecord(overrides: Partial<MovieRecord> = {}): MovieRecord {
     id: 'digger-2026',
     title: 'Kasėjas',
     originalTitle: 'Digger',
+    englishTitle: null,
     matchKey: 'digger',
     year: 2026,
     durationMinutes: 101,

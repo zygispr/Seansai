@@ -1,12 +1,13 @@
 import { readFileSync } from 'node:fs';
 import { z } from 'zod';
 import type { MatchReviewRecord, MovieIdentity, MovieRecord } from '../db/repository.ts';
-import { matchKeyOf } from './normalize.ts';
+import { matchKeyOf, titleKeysOf } from './normalize.ts';
 
 /** The movie details one source listing carries. */
 export type Listing = {
   title: string;
   originalTitle: string | null;
+  englishTitle: string | null;
   year: number | null;
   durationMinutes: number | null;
   ageRating: string | null;
@@ -32,11 +33,14 @@ export type MatchReview = Omit<MatchReviewRecord, 'firstSeenAt'>;
 export type Resolution = {
   /** The movie this listing belongs to: an existing one, or a new one to create. */
   movie: MovieRecord;
+  /** The listing's titles, to remember on the movie so later listings can match on them. */
+  keys: string[];
   /** Uncertain pairs to log for the maintainer (FR-005). */
   reviews: MatchReview[];
 };
 
-const DURATION_TOLERANCE_MINUTES = 10;
+/** Cinemas list running times with or without ads and trailers: Vue's run 11–13 minutes shorter than Apollo's. */
+const DURATION_TOLERANCE_MINUTES = 15;
 
 /** Stable, URL-friendly id from match key and year, e.g. `digger-2026`. */
 function movieIdOf(matchKey: string, year: number | null): string {
@@ -45,14 +49,14 @@ function movieIdOf(matchKey: string, year: number | null): string {
 }
 
 /**
- * The rule from research.md §5: equal match keys plus equal production years, or one year missing
- * and durations within 10 minutes. Two missing years count as equal: such listings share the same
- * (match key, year) identity.
+ * For two listings that share a title (research.md §5): known production years must be equal;
+ * when a year is missing, known durations must be within 15 minutes. Nothing known to contradict
+ * the shared title (e.g. Romuva publishes only titles) counts as a match, because the same movie
+ * appearing twice is the more common mistake.
  */
 function isConfidentMatch(listing: Listing, candidate: MovieIdentity): boolean {
   if (listing.year !== null && candidate.year !== null) return listing.year === candidate.year;
-  if (listing.year === null && candidate.year === null) return true;
-  if (listing.durationMinutes === null || candidate.durationMinutes === null) return false;
+  if (listing.durationMinutes === null || candidate.durationMinutes === null) return true;
   return (
     Math.abs(listing.durationMinutes - candidate.durationMinutes) <= DURATION_TOLERANCE_MINUTES
   );
@@ -76,9 +80,10 @@ function findAlias(aliases: readonly Alias[], idA: string, idB: string): Alias |
 }
 
 /**
- * Decides which movie a listing belongs to. Merges only confident matches; anything uncertain
- * becomes a separate movie and is logged for review, because a wrong merge is worse than a
- * duplicate (FR-005).
+ * Decides which movie a listing belongs to: an existing movie that shares one of its titles
+ * (English, original or Lithuanian) and does not contradict it, else a new movie named after its
+ * English title when known. Conflicts and ambiguities become a separate movie and are logged
+ * for review (FR-005).
  */
 export function resolveMovie(
   listing: Listing,
@@ -86,11 +91,13 @@ export function resolveMovie(
   aliases: readonly Alias[],
 ): Resolution {
   const matchKey = matchKeyOf(listing);
+  const keys = titleKeysOf(listing);
   const ownId = movieIdOf(matchKey, listing.year);
   const fromListing: MovieRecord = {
     id: ownId,
     title: listing.title,
     originalTitle: listing.originalTitle,
+    englishTitle: listing.englishTitle,
     matchKey,
     year: listing.year,
     durationMinutes: listing.durationMinutes,
@@ -100,10 +107,13 @@ export function resolveMovie(
   };
   const joinExisting = (target: MovieIdentity): Resolution => ({
     movie: { ...fromListing, id: target.id, matchKey: target.matchKey, year: target.year },
+    keys,
     reviews: [],
   });
 
-  const candidates = existingMovies.filter((movie) => movie.matchKey === matchKey);
+  const candidates = existingMovies.filter(
+    (movie) => movie.id === ownId || movie.keys.some((key) => keys.includes(key)),
+  );
   const sameIdentity = candidates.find((movie) => movie.id === ownId);
   if (sameIdentity) return joinExisting(sameIdentity);
 
@@ -133,5 +143,5 @@ export function resolveMovie(
       reason: 'matches more than one movie',
     })),
   ];
-  return { movie: fromListing, reviews };
+  return { movie: fromListing, keys, reviews };
 }

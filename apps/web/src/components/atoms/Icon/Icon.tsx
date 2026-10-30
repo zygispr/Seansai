@@ -42,7 +42,7 @@ type IconProps = {
   /** Accessible name; omit for decorative icons next to visible text. */
   label?: string;
   size?: number;
-  className?: string;
+  className?: string | undefined;
 };
 
 export function Icon({ name, label, size = 20, className }: IconProps) {

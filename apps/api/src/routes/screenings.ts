@@ -1,0 +1,66 @@
+import { DateSchema, type ScreeningsResponse } from '@seansai/shared';
+import type { FastifyPluginAsync } from 'fastify';
+import { z } from 'zod';
+import { cityName, type Queries } from '../db/queries.ts';
+import { formatInstant, todayIn } from '../lib/time.ts';
+import { findCity } from '../registry/cities.ts';
+import { ApiError, citySchema, langSchema, parseQuery, setListCaching } from './http.ts';
+import { findMovie } from './movies.ts';
+
+type ScreeningsRouteOptions = { queries: Queries; now: () => Date };
+
+/** All screenings of a movie on one date in a city, as one timeline (FR-006, FR-007). */
+export const screeningsRoutes: FastifyPluginAsync<ScreeningsRouteOptions> = (
+  app,
+  { queries, now },
+) => {
+  const QuerySchema = z.object({
+    city: citySchema((city) => queries.isCity(city)),
+    date: DateSchema,
+    lang: langSchema,
+  });
+
+  app.get<{ Params: { movieId: string } }>(
+    '/movies/:movieId/screenings',
+    (request, reply): ScreeningsResponse => {
+      const { city, date, lang } = parseQuery(QuerySchema, request.query, {
+        city: 'invalid_city',
+        date: 'invalid_date',
+      });
+      const at = now();
+      if (!queries.availableDates(todayIn(at)).includes(date)) {
+        throw new ApiError(
+          400,
+          'invalid_date',
+          'date must be between today and the last published date',
+        );
+      }
+      const movie = findMovie(queries, request.params.movieId);
+      const cinemas = queries.cinemasIn(city);
+      const screenings = queries.listScreenings(movie.id, cinemas, date, at);
+      setListCaching(reply);
+      return {
+        date,
+        screenings: screenings.map(({ cinema, startsAt, ...screening }) => {
+          const cinemaCity = findCity(cinema.cityId);
+          return {
+            ...screening,
+            startsAt: formatInstant(startsAt),
+            cinema: {
+              id: cinema.id,
+              name: cinema.name,
+              cityId: cinema.cityId,
+              cityName: cinemaCity ? cityName(cinemaCity, lang) : cinema.cityId,
+            },
+          };
+        }),
+        nextDateWithScreenings:
+          screenings.length === 0
+            ? queries.nextDateWithScreenings(movie.id, cinemas, date, at)
+            : null,
+        freshness: queries.freshness(cinemas, at),
+      };
+    },
+  );
+  return Promise.resolve();
+};

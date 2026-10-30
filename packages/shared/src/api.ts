@@ -30,6 +30,8 @@ export const MovieSummarySchema = z.object({
   id: z.string(),
   title: z.string(),
   originalTitle: z.string().nullable(),
+  /** When a cinema states it; shown under the Lithuanian title. */
+  englishTitle: z.string().nullable(),
   posterUrl: z.string().nullable(),
   ageRating: z.string().nullable(),
   durationMinutes: z.number().int().nullable(),

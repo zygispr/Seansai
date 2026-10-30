@@ -2,17 +2,22 @@ import fastifyEtag from '@fastify/etag';
 import fastifyStatic from '@fastify/static';
 import Fastify, { type FastifyBaseLogger, type FastifyInstance } from 'fastify';
 import type { Db } from './db/index.ts';
+import { Queries } from './db/queries.ts';
 import { Repository } from './db/repository.ts';
 import { createLogger, type Logger } from './lib/logger.ts';
+import { cinemaRegistry } from './registry/cinemas.ts';
+import { citiesRoutes } from './routes/cities.ts';
 import { healthRoutes } from './routes/health.ts';
 import { ApiError, errorBody } from './routes/http.ts';
+import { moviesRoutes } from './routes/movies.ts';
+import { screeningsRoutes } from './routes/screenings.ts';
 import { sourceConfigs } from './sources/index.ts';
 
 export type ServerOptions = {
   db: Db;
   now: () => Date;
   logger?: Logger;
-  /** Sources reported by `/health`; defaults to every enabled source. */
+  /** Sources whose cinemas are shown and reported by `/health`; defaults to every enabled one. */
   sourceIds?: readonly string[];
   /** Built web app to serve (production); null when Vite serves it (development). */
   webDistDir?: string | null;
@@ -25,6 +30,7 @@ export function buildServer(options: ServerOptions): FastifyInstance {
   const sourceIds =
     options.sourceIds ??
     sourceConfigs.filter((source) => source.enabled).map((source) => source.id);
+  const queries = new Queries({ db: options.db, registry: cinemaRegistry, sourceIds });
 
   // The logger's own serializers keep request logs free of personal data (lib/logger.ts).
   const loggerInstance: FastifyBaseLogger = options.logger ?? createLogger();
@@ -71,6 +77,9 @@ export function buildServer(options: ServerOptions): FastifyInstance {
   void app.register(
     async (api) => {
       await api.register(healthRoutes, { repo, now: options.now, sourceIds });
+      await api.register(citiesRoutes, { queries });
+      await api.register(moviesRoutes, { queries, now: options.now });
+      await api.register(screeningsRoutes, { queries, now: options.now });
     },
     { prefix: API_PREFIX },
   );

@@ -1,0 +1,32 @@
+@use 'breakpoints';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5) var(--space-4);
+  padding: 0;
+  list-style: none;
+
+  @include breakpoints.from(sm) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @include breakpoints.from(md) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  @include breakpoints.from(lg) {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-6) var(--space-5);
+  }
+}
+
+.noResults {
+  color: var(--color-text-muted);
+}

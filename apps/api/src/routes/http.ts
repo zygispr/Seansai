@@ -1,6 +1,6 @@
-import type { ErrorCode, ErrorResponse } from '@seansai/shared';
+import { LangSchema, type ErrorCode, type ErrorResponse } from '@seansai/shared';
 import type { FastifyReply } from 'fastify';
-import type { z } from 'zod';
+import { z } from 'zod';
 
 /** An error with a status and a public error code, answered as an `ErrorResponse`. */
 export class ApiError extends Error {
@@ -44,3 +44,11 @@ export function parseQuery<T>(
 export function setListCaching(reply: FastifyReply): void {
   reply.header('cache-control', 'public, max-age=300');
 }
+
+/** `city`: a city with at least one shown cinema, or `all` (required on list endpoints). */
+export function citySchema(isCity: (city: string) => boolean) {
+  return z.string().refine(isCity, 'unknown city');
+}
+
+/** `lang` only affects server-provided labels; anything unknown falls back to Lithuanian. */
+export const langSchema = LangSchema.default('lt').catch('lt');

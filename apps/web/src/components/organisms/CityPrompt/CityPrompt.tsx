@@ -1,0 +1,102 @@
+import type { CitiesResponse } from '@seansai/shared';
+import { useEffect, useId, useRef } from 'react';
+import { useT } from '../../../i18n/index.tsx';
+import { Spinner } from '../../atoms/Spinner/index.ts';
+import { CityOption } from '../../molecules/CityOption/index.ts';
+import styles from './CityPrompt.module.scss';
+
+type CityPromptProps = {
+  /** Null while the cities are loading. */
+  cities: CitiesResponse['cities'] | null;
+  /** The current choice, when changing an earlier one. */
+  selected?: string | null;
+  onSelect: (city: string) => void;
+};
+
+/**
+ * Asks for the city on the first visit (FR-013), as a modal dialog: focus moves into it and
+ * stays there until a city is chosen, then returns to where it was.
+ */
+export function CityPrompt({ cities, selected = null, onSelect }: CityPromptProps) {
+  const { t } = useT();
+  const titleId = useId();
+  const bodyId = useId();
+  const dialog = useRef<HTMLDivElement>(null);
+  const hasCities = cities !== null;
+
+  useEffect(() => {
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    return () => previous?.focus();
+  }, []);
+
+  useEffect(() => {
+    if (hasCities) dialog.current?.querySelector('button')?.focus();
+  }, [hasCities]);
+
+  // Tab and Shift+Tab wrap around inside the dialog.
+  useEffect(() => {
+    const element = dialog.current;
+    const keepFocusInside = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab' || !element) return;
+      const buttons = [...element.querySelectorAll('button')];
+      const first = buttons[0];
+      const last = buttons.at(-1);
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    };
+    element?.addEventListener('keydown', keepFocusInside);
+    return () => element?.removeEventListener('keydown', keepFocusInside);
+  }, []);
+
+  return (
+    <div className={styles.backdrop}>
+      <div
+        ref={dialog}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={bodyId}
+        className={styles.dialog}
+      >
+        <h2 id={titleId} className={styles.title}>
+          {t('city.promptTitle')}
+        </h2>
+        <p id={bodyId} className={styles.body}>
+          {t('city.promptBody')}
+        </p>
+        {cities === null ? (
+          <Spinner label={t('common.loading')} />
+        ) : (
+          <ul className={styles.options}>
+            <li>
+              <CityOption
+                name={t('city.all')}
+                selected={selected === 'all'}
+                onSelect={() => {
+                  onSelect('all');
+                }}
+              />
+            </li>
+            {cities.map((city) => (
+              <li key={city.id}>
+                <CityOption
+                  name={city.name}
+                  cinemaCount={city.cinemaCount}
+                  selected={selected === city.id}
+                  onSelect={() => {
+                    onSelect(city.id);
+                  }}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}

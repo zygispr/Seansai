@@ -30,10 +30,13 @@ export class RobotsDisallowedError extends Error {
 export class SourceRequestError extends Error {
   override readonly name = 'SourceRequestError';
   readonly url: string;
+  /** The HTTP status when the server answered, e.g. 404 for a removed page; else null. */
+  readonly status: number | null;
 
-  constructor(url: string, reason: string, options?: ErrorOptions) {
+  constructor(url: string, reason: string, options?: ErrorOptions & { status?: number }) {
     super(`Request to ${url} failed: ${reason}`, options);
     this.url = url;
+    this.status = options?.status ?? null;
   }
 }
 
