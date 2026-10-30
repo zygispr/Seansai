@@ -1,0 +1,11 @@
+dist
+coverage
+playwright-report
+test-results
+apps/api/tests/fixtures
+package-lock.json
+
+# Spec Kit tooling and feature documents are generated and rewritten by the speckit commands
+.claude
+.specify
+specs
