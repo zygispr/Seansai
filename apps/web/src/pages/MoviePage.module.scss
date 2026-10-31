@@ -1,0 +1,94 @@
+@use 'breakpoints';
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.movie {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  gap: var(--space-4);
+  align-items: start;
+
+  @include breakpoints.from(md) {
+    grid-template-columns: 10rem 1fr;
+    gap: var(--space-6);
+  }
+}
+
+.poster {
+  width: 100%;
+}
+
+.titles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  overflow-wrap: anywhere;
+
+  @include breakpoints.from(md) {
+    font-size: var(--font-size-3xl);
+  }
+}
+
+.original {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-lg);
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+
+  abbr {
+    text-decoration: none;
+  }
+}
+
+.screenings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.date {
+  font-size: var(--font-size-xl);
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.notice {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  font-size: var(--font-size-sm);
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.count {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+
+  // Empty, it takes no space but stays in the accessibility tree, so later text is announced.
+  &:empty {
+    position: absolute;
+  }
+}

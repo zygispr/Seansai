@@ -1,0 +1,238 @@
+<style>
+    .fc-list-item {
+        white-space: nowrap;
+    }
+    .fc-list-item-title {
+        white-space: normal;
+    }
+</style>
+
+<html>
+    <head>
+
+        <title> Kauno kino centras „Romuva“ </title>
+
+        <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta name="application-name" content="Romuva ticketing">
+    <meta name="_token" content="v1QZ844I1AxoBjMuWHWPm1NIp1yhCuGmDzGaGTdH" />
+    
+    <meta name="theme-color" content="#2E3254">
+    <meta name="msapplication-navbutton-color" content="#2E3254">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#2E3254">
+        <!--JS-->
+       <script src="https://bilietai.kcromuva.lt/js/jquery.min.js"></script>
+        <!--/JS-->
+
+        <!--Style-->
+       <link media="all" type="text/css" rel="stylesheet" href="https://bilietai.kcromuva.lt/css/app.css">
+        <!--/Style-->
+
+        
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css" integrity="sha256-szHusaozbQctTn4FX+3l5E0A5zoxz7+ne4fr8NgWJlw=" crossorigin="anonymous" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.4/raphael-min.js" integrity="sha256-Gk+dzc4kV2rqAZMkyy3gcfW6Xd66BhGYjVWa/FjPu+s=" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js" integrity="sha256-0rg2VtfJo3VUij/UY9X0HJP7NET6tgAY98aMOfwP0P8=" crossorigin="anonymous"></script>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.js' crossorigin="anonymous"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/eu.js' crossorigin="anonymous"></script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places&amp;key=AIzaSyAdiNpW-icWuoQ2UELBOz0NPZCuHsjNL5g"></script>
+    <script src="https://bilietai.kcromuva.lt/js/jquery.geocomplete.min.js"></script>
+
+    <script src="https://bilietai.kcromuva.lt/js/fullcalendar/fullcalendar.min.js"></script>
+    <script src="https://bilietai.kcromuva.lt/js/fullcalendar/locale/lt.js"></script>    <link media="all" type="text/css" rel="stylesheet" href="https://bilietai.kcromuva.lt/css/fullcalendar.min.css">
+
+
+        <meta name="verify-paysera" content="05ba1f50b8bd3067129bea84f23fe381">
+        <link rel="icon" type="image/png" href="https://bilietai.kcromuva.lt/assets/images/favicon.ico">
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js"></script>
+        <style>
+
+            body {
+                background: url(https://bilietai.kcromuva.lt/assets/images/background-black.jpg);
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: cover;
+            }
+
+            h2 {
+                text-align: center;
+                margin-bottom: 31px;
+                text-transform: uppercase;
+                letter-spacing: 4px;
+                font-size: 23px;
+            }
+            .panel {
+                background-color: #ffffff;
+                background-color: rgba(255,255,255,.95);
+                padding: 15px 30px ;
+                border: none;
+                color: #333;
+                box-shadow: 0 0 5px 0 rgba(0,0,0,.2);
+                margin-top: 40px;
+            }
+
+            .panel a {
+                color: #333;
+                font-weight: 600;
+            }
+
+            .logo {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .logo img {
+                width: 200px;
+            }
+
+            .signup {
+                margin-top: 10px;
+            }
+
+            .forgotPassword {
+                font-size: 12px;
+                color: #ccc;
+            }
+            
+            /*Cookie Policy Begin*/
+            #cookiePolicy {
+                background-color: rgba(20,20,20,0.8);
+                min-height: 26px;
+                font-size: 14px;
+                color: #ccc;
+                line-height: 26px;
+                padding: 8px 0 8px 30px;
+                font-family: "Trebuchet MS",Helvetica,sans-serif;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                display: none;
+                z-index: 9999;
+            }
+            #cookiePolicy a {
+                color: #fff;
+                text-decoration: none;
+            }
+         
+            #cookiePolicy a.cookieAccept {
+                display: inline-block;
+                border-radius: 12px;
+                padding: 5px 20px;
+                cursor: pointer;
+                float: right;
+                margin: 0 60px 0 10px;
+                font-size: 12px;
+                background-color: rgba(190,30,45);
+                border-color: rgba(190,30,45);
+                color: #fff;
+            }
+            @-moz-document url-prefix() {
+                #cookiePolicy a.cookieAccept {
+                display: inline-block;
+                border-radius: 0;
+                padding: 5px 20px;
+                cursor: pointer;
+                float: right;
+                margin: 0 60px 0 10px;
+                font-size: 12px;
+                background-color: rgba(190,30,45);
+                border-color: rgba(190,30,45);
+                color: #fff;
+                }
+            }
+            .red_rom {
+                color: rgba(190,30,45) !important;
+            }
+        </style>
+    </head>
+    <body>
+        <section id="main" role="main">
+            <section class="container">
+                    <div class="row">
+
+        <div class="col-md-8 col-md-offset-2">
+            <h4 style="margin-bottom: 25px;margin-top: 19px; font-size: 16px; color: #fff; opacity: 0.8; text-align:center;">Visi Kauno kino centro „Romuva“ renginiai</h4>
+            <div id="calendar" style="opacity: 0.9;"></div>
+        </div>
+    </div>
+    <script>
+        $('#calendar').fullCalendar({
+            locale: 'lt',
+            events: [{"title":"Kopa: Tre\u010dia dalis","start":"2026-12-15 18:00","end":"2026-12-15 20:20","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6090915110\/kopa-trecia-dalis","color":"#BE1E2D"},{"title":"SCA: Mylimasis","start":"2026-11-07 18:00","end":"2026-11-07 19:53","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6091516490\/sca-mylimasis","color":"#BE1E2D"},{"title":"SCA: Kaskart","start":"2026-11-07 20:20","end":"2026-11-07 22:24","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6091517050\/sca-kaskart","color":"#BE1E2D"},{"title":"SCA: Aukso am\u017eius","start":"2026-11-08 18:00","end":"2026-11-08 19:53","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6091517170\/sca-aukso-amzius","color":"#BE1E2D"},{"title":"GYVAI I\u0160 BERLYNO FILHARMONIJOS: Nauj\u0173j\u0173 met\u0173 koncertas","start":"2026-12-31 18:00","end":"2026-12-31 20:00","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6092911570\/gyvai-is-berlyno-filharmonijos-naujuju-metu-koncertas","color":"#BE1E2D"},{"title":"Kino stovykla","start":"2026-11-03 10:00","end":"2026-11-03 11:30","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6100114510\/kino-stovykla","color":"#BE1E2D"},{"title":"Godzilla Minus Zero","start":"2026-11-03 20:20","end":"2026-11-03 22:35","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6100614240\/godzilla-minus-zero","color":"#BE1E2D"},{"title":"Godzilla Minus Zero","start":"2026-11-06 18:00","end":"2026-11-06 20:15","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6100614241\/godzilla-minus-zero","color":"#BE1E2D"},{"title":"Helovynas su \u0161eima: Monstriuk\u0117 Mija","start":"2026-10-31 13:30","end":"2026-10-31 14:51","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6100817450\/helovynas-su-seima-monstriuke-mija","color":"#BE1E2D"},{"title":"Ragani\u0161kas Helovynas: Praktin\u0117 magija 2","start":"2026-10-31 15:20","end":"2026-10-31 17:30","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6100818018\/raganiskas-helovynas-praktine-magija-2","color":"#BE1E2D"},{"title":"Ragani\u0161kas Helovynas: Fokus pokus","start":"2026-10-31 18:00","end":"2026-10-31 19:36","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6100818260\/raganiskas-helovynas-fokus-pokus","color":"#BE1E2D"},{"title":"Ragani\u0161kas Helovynas: Suspirija","start":"2026-10-31 20:00","end":"2026-10-31 21:39","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6100818470\/raganiskas-helovynas-suspirija","color":"#BE1E2D"},{"title":"Romuvos kinoteka: MOTERS KVAPAS","start":"2026-11-05 18:00","end":"2026-11-05 20:36","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6100718080\/romuvos-kinoteka-moters-kvapas","color":"#BE1E2D"},{"title":"SCA: Visiems patinka Billas Evansas","start":"2026-11-07 18:15","end":"2026-11-07 19:57","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101316040\/sca-visiems-patinka-billas-evansas","color":"#BE1E2D"},{"title":"SCA: Vie\u0161nia","start":"2026-11-07 20:30","end":"2026-11-07 22:09","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101316120\/sca-viesnia","color":"#BE1E2D"},{"title":"SCA: Roz\u0117","start":"2026-11-08 13:40","end":"2026-11-08 15:13","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101316180\/sca-roze","color":"#BE1E2D"},{"title":"SCA: \u0160velnus monstras","start":"2026-11-08 15:40","end":"2026-11-08 17:34","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101316210\/sca-svelnus-monstras","color":"#BE1E2D"},{"title":"SCA: Paklydusi j\u016broje","start":"2026-11-08 16:00","end":"2026-11-08 18:01","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101316250\/sca-paklydusi-juroje","color":"#BE1E2D"},{"title":"SCA: Heysel 85","start":"2026-11-09 18:00","end":"2026-11-09 19:31","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101316280\/sca-heysel-85","color":"#BE1E2D"},{"title":"SCA: \u0160velnus monstras","start":"2026-11-09 18:15","end":"2026-11-09 20:09","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101316311\/sca-svelnus-monstras","color":"#BE1E2D"},{"title":"SCA: Ka\u017ekas ypatingo","start":"2026-11-09 20:00","end":"2026-11-09 21:56","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101316350\/sca-kazkas-ypatingo","color":"#BE1E2D"},{"title":"SCA: Sprogstanti r\u016b\u0161is","start":"2026-11-12 18:00","end":"2026-11-12 19:35","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101316400\/sca-sprogstanti-rusis","color":"#BE1E2D"},{"title":"SCA: Vie\u0161nia","start":"2026-11-12 20:00","end":"2026-11-12 21:39","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101316411\/sca-viesnia","color":"#BE1E2D"},{"title":"SCA: Ka\u017ekas ypatingo","start":"2026-11-12 20:10","end":"2026-11-12 22:06","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101316451\/sca-kazkas-ypatingo","color":"#BE1E2D"},{"title":"SCA: Kruvinoji grafien\u0117","start":"2026-11-13 18:00","end":"2026-11-13 19:59","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101316510\/sca-kruvinoji-grafiene","color":"#BE1E2D"},{"title":"SCA: Roz\u0117","start":"2026-11-13 18:15","end":"2026-11-13 19:48","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101316531\/sca-roze","color":"#BE1E2D"},{"title":"SCA: \u017dem\u0117s syvai","start":"2026-11-13 20:15","end":"2026-11-13 22:50","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101317040\/sca-zemes-syvai","color":"#BE1E2D"},{"title":"SCA: Paklydusi j\u016broje","start":"2026-11-13 20:30","end":"2026-11-13 22:31","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101317061\/sca-paklydusi-juroje","color":"#BE1E2D"},{"title":"SCA: Visiems patinka Billas Evansas","start":"2026-11-14 18:00","end":"2026-11-14 19:42","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101317221\/sca-visiems-patinka-billas-evansas","color":"#BE1E2D"},{"title":"SCA: I\u0161 svetim\u0173 gyvenim\u0173","start":"2026-11-14 20:15","end":"2026-11-14 22:35","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101317250\/sca-is-svetimu-gyvenimu","color":"#BE1E2D"},{"title":"SCA: \u017dem\u0117s syvai","start":"2026-11-15 15:30","end":"2026-11-15 18:05","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101317271\/sca-zemes-syvai","color":"#BE1E2D"},{"title":"SCA: Roz\u0117","start":"2026-11-15 18:20","end":"2026-11-15 19:53","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101317282\/sca-roze","color":"#BE1E2D"},{"title":"SCA: Kruvinoji grafien\u0117","start":"2026-11-08 18:30","end":"2026-11-08 20:29","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101409480\/sca-kruvinoji-grafiene","color":"#BE1E2D"},{"title":"SCA: Sprogstanti r\u016b\u0161is","start":"2026-11-15 13:30","end":"2026-11-15 15:05","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101409521\/sca-sprogstanti-rusis","color":"#BE1E2D"},{"title":"SCA: Kaskart","start":"2026-11-14 15:45","end":"2026-11-14 17:49","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101510201\/sca-kaskart","color":"#BE1E2D"},{"title":"SCA: Aukso am\u017eius","start":"2026-11-15 16:00","end":"2026-11-15 17:53","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101510211\/sca-aukso-amzius","color":"#BE1E2D"},{"title":"SCA: Mylimasis","start":"2026-11-14 18:15","end":"2026-11-14 20:08","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101510261\/sca-mylimasis","color":"#BE1E2D"},{"title":"PATIRTI KIN\u0104: Protas ir jausmai","start":"2026-10-30 18:00","end":"2026-10-30 20:11","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101511070\/patirti-kina-protas-ir-jausmai","color":"#BE1E2D"},{"title":"Verit\u0117","start":"2026-10-30 21:00","end":"2026-10-30 22:54","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101915178\/verite","color":"#BE1E2D"},{"title":"Nelie\u010diamieji","start":"2026-10-30 18:15","end":"2026-10-30 20:07","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101915191\/nelieciamieji","color":"#BE1E2D"},{"title":"Sukilimas","start":"2026-10-30 20:30","end":"2026-10-30 22:38","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101915280\/sukilimas","color":"#BE1E2D"},{"title":"Didysis eteris","start":"2026-10-31 13:15","end":"2026-10-31 15:02","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61019153212\/didysis-eteris","color":"#BE1E2D"},{"title":"Sukilimas","start":"2026-10-31 15:30","end":"2026-10-31 17:38","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101915321\/sukilimas","color":"#BE1E2D"},{"title":"Specialioji operacija","start":"2026-10-31 18:00","end":"2026-10-31 19:05","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101915430\/specialioji-operacija","color":"#BE1E2D"},{"title":"Pasuk mane","start":"2026-10-31 19:30","end":"2026-10-31 20:37","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101915465\/pasuk-mane","color":"#BE1E2D"},{"title":"Mulai","start":"2026-10-31 21:00","end":"2026-10-31 22:53","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6101915462\/mulai","color":"#BE1E2D"},{"title":"JAPONI\u0160KAS VAKARAS: \u0160eima nuomai","start":"2026-11-04 18:00","end":"2026-11-04 19:50","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61022171610\/japoniskas-vakaras-seima-nuomai","color":"#BE1E2D"},{"title":"Seansas senjorams: Skyrybos karo metu","start":"2026-11-06 15:45","end":"2026-11-06 17:33","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61023113810\/seansas-senjorams-skyrybos-karo-metu","color":"#BE1E2D"},{"title":"VDFF: Pradingusi\u0173j\u0173 atlasas","start":"2026-11-29 16:30","end":"2026-11-29 17:54","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102313040\/vdff-pradingusiuju-atlasas","color":"#BE1E2D"},{"title":"VDFF: Palio miestas","start":"2026-11-29 18:30","end":"2026-11-29 19:36","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102313130\/vdff-palio-miestas","color":"#BE1E2D"},{"title":"VDFF: Begalinis sausainiukas","start":"2026-12-03 18:00","end":"2026-12-03 19:38","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102313220\/vdff-begalinis-sausainiukas","color":"#BE1E2D"},{"title":"VDFF: Barbara am\u017einai","start":"2026-12-04 18:00","end":"2026-12-04 19:42","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102313290\/vdff-barbara-amzinai","color":"#BE1E2D"},{"title":"VDFF: Ramios nakties iliuzija","start":"2026-12-06 16:30","end":"2026-12-06 17:40","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102313360\/vdff-ramios-nakties-iliuzija","color":"#BE1E2D"},{"title":"VIDEOKAUKAS ROMUVOJE: U\u017edraustoji planeta","start":"2026-11-15 18:30","end":"2026-11-15 20:08","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102315060\/videokaukas-romuvoje-uzdraustoji-planeta","color":"#BE1E2D"},{"title":"Protas ir jausmai","start":"2026-11-02 18:10","end":"2026-11-02 20:21","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102616302\/protas-ir-jausmai","color":"#BE1E2D"},{"title":"\u017dv\u0117ries \u0161irdis","start":"2026-11-02 20:45","end":"2026-11-02 22:26","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102616555\/zveries-sirdis","color":"#BE1E2D"},{"title":"Didysis eteris","start":"2026-11-02 13:30","end":"2026-11-02 15:17","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61026165413\/didysis-eteris","color":"#BE1E2D"},{"title":"\u0160v. Jok\u016bbo kelias. Terapija","start":"2026-11-02 15:45","end":"2026-11-02 17:38","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102616565\/sv-jokubo-kelias-terapija","color":"#BE1E2D"},{"title":"Tonis","start":"2026-11-02 13:40","end":"2026-11-02 15:26","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61026170413\/tonis","color":"#BE1E2D"},{"title":"Verit\u0117","start":"2026-11-02 16:00","end":"2026-11-02 17:54","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102617049\/verite","color":"#BE1E2D"},{"title":"D diena. Prie\u0161 audr\u0105","start":"2026-11-02 18:20","end":"2026-11-02 20:00","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61026170511\/d-diena-pries-audra","color":"#BE1E2D"},{"title":"Sukilimas","start":"2026-11-02 20:25","end":"2026-11-02 22:33","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102617062\/sukilimas","color":"#BE1E2D"},{"title":"Prezidentas","start":"2026-11-03 18:00","end":"2026-11-03 19:55","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61026171221\/prezidentas","color":"#BE1E2D"},{"title":"Pasuk mane","start":"2026-11-03 18:10","end":"2026-11-03 19:17","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102617156\/pasuk-mane","color":"#BE1E2D"},{"title":"Odis\u0117ja","start":"2026-11-03 19:45","end":"2026-11-03 22:37","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61026171531\/odiseja","color":"#BE1E2D"},{"title":"Verit\u0117","start":"2026-11-04 21:15","end":"2026-11-04 23:09","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61026171810\/verite","color":"#BE1E2D"},{"title":"Didysis eteris","start":"2026-11-04 18:15","end":"2026-11-04 20:02","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61026171814\/didysis-eteris","color":"#BE1E2D"},{"title":"Tonis","start":"2026-11-04 20:30","end":"2026-11-04 22:16","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61026171914\/tonis","color":"#BE1E2D"},{"title":"Specialioji operacija","start":"2026-11-05 18:15","end":"2026-11-05 19:20","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102617221\/specialioji-operacija","color":"#BE1E2D"},{"title":"Digeris","start":"2026-11-05 19:45","end":"2026-11-05 21:54","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102617239\/digeris","color":"#BE1E2D"},{"title":"Protas ir jausmai","start":"2026-11-05 21:00","end":"2026-11-05 23:11","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102617213\/protas-ir-jausmai","color":"#BE1E2D"},{"title":"Odis\u0117ja","start":"2026-11-06 19:45","end":"2026-11-06 22:37","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61026172732\/odiseja","color":"#BE1E2D"},{"title":"\u010carlis ir Harper","start":"2026-11-06 20:40","end":"2026-11-06 22:22","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102617390\/carlis-ir-harper","color":"#BE1E2D"},{"title":"\u010carlis ir Harper","start":"2026-11-07 13:30","end":"2026-11-07 15:12","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102617421\/carlis-ir-harper","color":"#BE1E2D"},{"title":"Dovzhenko. First sight (specialus seansas originalo k.)","start":"2026-11-07 15:45","end":"2026-11-07 17:24","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102617580\/dovzhenko-first-sight-specialus-seansas-originalo-k","color":"#BE1E2D"},{"title":"U\u017emir\u0161toji sala","start":"2026-11-07 13:20","end":"2026-11-07 15:09","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102618130\/uzmirstoji-sala","color":"#BE1E2D"},{"title":"Lobi\u0173 ie\u0161kotojai","start":"2026-11-08 11:25","end":"2026-11-08 13:03","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102618190\/lobiu-ieskotojai","color":"#BE1E2D"},{"title":"Digeris","start":"2026-11-08 13:25","end":"2026-11-08 15:34","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61026182010\/digeris","color":"#BE1E2D"},{"title":"Protas ir jausmai","start":"2026-11-07 15:35","end":"2026-11-07 17:46","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102618144\/protas-ir-jausmai","color":"#BE1E2D"},{"title":"The Relatives (specialus seansas originalo k.)","start":"2026-11-15 11:30","end":"2026-11-15 12:56","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102716340\/the-relatives-specialus-seansas-originalo-k","color":"#BE1E2D"},{"title":"Andr\u00e9 Rieu\u2019s 2026 Christmas Concert: Let It Snow","start":"2026-12-05 18:30","end":"2026-12-05 20:00","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102915330\/andre-rieus-2026-christmas-concert-let-it-snow","color":"#BE1E2D"},{"title":"Andr\u00e9 Rieu\u2019s 2026 Christmas Concert: Let It Snow","start":"2026-12-13 18:30","end":"2026-12-13 20:00","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102915341\/andre-rieus-2026-christmas-concert-let-it-snow","color":"#BE1E2D"},{"title":"Pamatysi visk\u0105","start":"2026-11-13 14:30","end":"2026-11-13 17:24","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102923010\/pamatysi-viska","color":"#BE1E2D"},{"title":"Pamatysi visk\u0105","start":"2026-11-14 11:30","end":"2026-11-14 14:24","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102923021\/pamatysi-viska","color":"#BE1E2D"},{"title":"Pamatysi visk\u0105","start":"2026-11-17 20:15","end":"2026-11-17 23:09","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6102923032\/pamatysi-viska","color":"#BE1E2D"},{"title":"\u0160v. Jok\u016bbo kelias. Terapija","start":"2026-11-08 11:20","end":"2026-11-08 13:13","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6103013276\/sv-jokubo-kelias-terapija","color":"#BE1E2D"},{"title":"Protas ir jausmai","start":"2026-11-09 20:35","end":"2026-11-09 22:46","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6103017015\/protas-ir-jausmai","color":"#BE1E2D"},{"title":"Verit\u0117","start":"2026-11-10 20:45","end":"2026-11-10 22:39","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61030170211\/verite","color":"#BE1E2D"},{"title":"Didysis eteris","start":"2026-11-10 18:10","end":"2026-11-10 19:57","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61030170515\/didysis-eteris","color":"#BE1E2D"},{"title":"Digeris","start":"2026-11-10 20:25","end":"2026-11-10 22:34","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61030170711\/digeris","color":"#BE1E2D"},{"title":"Protas ir jausmai","start":"2026-11-11 20:30","end":"2026-11-11 22:41","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6103017076\/protas-ir-jausmai","color":"#BE1E2D"},{"title":"\u010carlis ir Harper","start":"2026-11-11 18:00","end":"2026-11-11 19:42","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6103017172\/carlis-ir-harper","color":"#BE1E2D"},{"title":"\u017dv\u0117ries \u0161irdis","start":"2026-11-11 20:10","end":"2026-11-11 21:51","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6103017296\/zveries-sirdis","color":"#BE1E2D"},{"title":"Verit\u0117","start":"2026-11-13 15:45","end":"2026-11-13 17:39","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61030174512\/verite","color":"#BE1E2D"},{"title":"Odis\u0117ja","start":"2026-11-14 20:35","end":"2026-11-14 23:27","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/61030174733\/odiseja","color":"#BE1E2D"},{"title":"Lobi\u0173 ie\u0161kotojai","start":"2026-11-15 11:20","end":"2026-11-15 12:58","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6103017541\/lobiu-ieskotojai","color":"#BE1E2D"},{"title":"Protas ir jausmai","start":"2026-11-15 13:20","end":"2026-11-15 15:31","url":"https:\/\/bilietai.kcromuva.lt\/lt\/e\/6103017547\/protas-ir-jausmai","color":"#BE1E2D"}],
+            header: {
+                left:   'prev,',
+                center: 'title',
+                right:  'next'
+            },
+            defaultView: 'listWeek',
+            // minTime: "12:00",
+            eventClick: function(event) {
+                if (event.url) {
+                    window.open(event.url, "_blank");
+                    return false;
+                }
+            },
+            timeFormat: 'H:mm'
+        });
+    </script>
+            </section>
+
+        </section>
+        <div style="text-align: center; color: white" >
+        </div>
+
+        <script>
+    function lang(key, params) {
+        /* Line below will generate localization helpers warning, that it will not be included in search.
+        * It is understandable, but I have no idea how to turn it off.*/
+        var data = {"processing":"Vykdoma...","time_run_out":"U\u017esakymo laikas greitai baigsis! Laikui pasibaigus reik\u0117s rinktis bilietus i\u0161 naujo.","just_2_minutes":"U\u017esakymui u\u017ebaigti liko 2 minut\u0117s!","whoops":"Ups!, Ka\u017ekas netvarkoje.\n                   Bandykite dar kart\u0105, arba susisiekite su KC Romuva administracija jeigu problema kartosis.","whoops2":"Nepavyko! Perkraukite puslap\u012f ir bandykite dar kart\u0105","whoops_and_error":"Ups!, Ka\u017ekas netvarkoje.<br><br>:code :error","at_least_one_option":"Turite pasirinkti bent vien\u0105 parinkt\u012f.","credit_card_error":"Neteisingas kortel\u0117s numeris.","expiry_error":"Neteisinga kortel\u0117s galiojimo laiko pabaiga.","cvc_error":"Neteisingas CVC numeris.","card_validation_error":"Patikrinkite kortel\u0117s duomenis ir bandykite dar kart\u0105.","checkin_init_error":"Nepavyko nuskanuoti bilieto.","not_all_tickets_selected":"Nesutampa pasirinkt\u0173 viet\u0173 ir biliet\u0173 skai\u010dius!","too_much_tickets_to_buy":"Vienu metu perkam\u0173 biliet\u0173 skai\u010dius negali b\u016bti didesnis nei ","buy_tickets":"Pirkti Bilietus","create_tickets":"Kurti Bilietus"};
+        var string = data[key];
+        if(typeof string == 'undefined')
+            return key;
+        for(var k in params) {
+            string = string.split(":"+k).join(params[k]);
+        }
+        return string;
+    }
+</script>        <script src="https://bilietai.kcromuva.lt/js/backend.js"></script>
+        <div id="cookiePolicy">
+            Naršydami bilietai.kcromuva.lt portale sutinkate, jog bus naudojami slapukai, kurie užtikrina deramą interneto svetainės veikimą. <a href="https://www.kcromuva.lt/lt/privatumo-politika" class="red_rom" target="_blank">Plačiau</a>. <a class="cookieAccept btn btn-lg btn-primary">Sutinku</a>
+        </div>
+        <script>
+            $(document).ready(function(){   
+                
+                var cookieAccepted = Cookies.get('accept-cookies');
+                if(!cookieAccepted){
+                    setTimeout(function () {
+                        $("#cookiePolicy").fadeIn(200);
+                    }, 100);
+                }
+                $(".cookieAccept").click(function() {
+                    $("#cookiePolicy").fadeOut(200);
+                    Cookies.set('accept-cookies', 'true')
+                }); 
+                console.log(cookieAccepted);
+            }); 
+        </script>
+    </body>
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'G-N9PJGGHNKN', 'auto');
+        ga('require', 'displayfeatures');
+        ga('send', 'pageview');
+</script>
+</html>

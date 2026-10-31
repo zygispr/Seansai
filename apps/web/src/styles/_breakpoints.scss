@@ -1,0 +1,17 @@
+// Mobile-first breakpoints: styles default to phones (from 320 px) and widen from here.
+@use 'sass:map';
+
+$breakpoints: (
+  sm: 480px,
+  md: 768px,
+  lg: 1024px,
+);
+
+@mixin from($name) {
+  @if not map.has-key($breakpoints, $name) {
+    @error 'Unknown breakpoint "#{$name}". Use one of: #{map.keys($breakpoints)}';
+  }
+  @media (min-width: map.get($breakpoints, $name)) {
+    @content;
+  }
+}

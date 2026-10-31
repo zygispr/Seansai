@@ -1,0 +1,65 @@
+.chip {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+  min-width: 4.25rem;
+  padding: var(--space-1) var(--space-2) var(--space-2);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  line-height: var(--line-height-tight);
+  cursor: pointer;
+  transition: background-color var(--duration-fast);
+
+  &:hover {
+    background: var(--color-surface);
+  }
+}
+
+// No screenings of this movie on the date: still selectable, but visibly calmer.
+.quiet {
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.selected,
+.selected:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.month {
+  min-height: 1lh;
+  font-size: var(--font-size-xs);
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.weekday {
+  font-size: var(--font-size-sm);
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.day {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+}
+
+.marker {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: var(--radius-full);
+}
+
+.markerOn {
+  background: currentcolor;
+}

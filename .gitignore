@@ -16,6 +16,16 @@ coverage/
 .turbo/
 .cache/
 
+# Local data (SQLite database, WAL files)
+apps/api/data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Test reports
+playwright-report/
+test-results/
+
 # Environment / secrets
 .env
 .env.*

@@ -1,0 +1,2874 @@
+<?xml version="1.0"?>
+<Schedule xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <PubDate>2026-10-30T00:00:00+00:00</PubDate>
+  <Shows>
+    <Show>
+      <ID>983986</ID>
+      <dtAccounting>2026-10-30T00:00:00</dtAccounting>
+      <dttmShowStart>2026-10-30T15:50:00</dttmShowStart>
+      <dttmShowStartUTC>2026-10-30T13:50:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-10-30T17:11:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-10-30T15:11:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-10-30T16:05:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-10-30T14:05:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32280</EventID>
+      <Title>Monstriukė Mija (dubliuotas)</Title>
+      <OriginalTitle>Monster Mia (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>81</LengthInMinutes>
+      <dtLocalRelease>2026-10-30T00:00:00</dtLocalRelease>
+      <Rating>Įvairaus amžiaus žiūrovams</Rating>
+      <RatingLabel>V</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_V.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Animacija, Nuotykių, Fantastinis, Šeimai</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, I</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/983986/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32280/title/monstriuk%C4%97_mija_dubliuotas/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992283</ID>
+      <dtAccounting>2026-10-30T00:00:00</dtAccounting>
+      <dttmShowStart>2026-10-30T16:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-10-30T14:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-10-30T18:00:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-10-30T16:00:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-10-30T16:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-10-30T14:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32400</EventID>
+      <Title>Geriausios KANŲ LIŪTŲ reklamos 2026</Title>
+      <OriginalTitle>Geriausios KANŲ LIŪTŲ reklamos 2026</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>120</LengthInMinutes>
+      <dtLocalRelease>2026-10-27T00:00:00</dtLocalRelease>
+      <Rating>N-7. Jaunesniems būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N7</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N7.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>KANŲ LIŪTŲ reklamos</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992283/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32400/title/geriausios_kan%C5%B3_li%C5%ABt%C5%B3_reklamos_2026/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992289</ID>
+      <dtAccounting>2026-10-30T00:00:00</dtAccounting>
+      <dttmShowStart>2026-10-30T18:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-10-30T16:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-10-30T20:11:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-10-30T18:11:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-10-30T18:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-10-30T16:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31948</EventID>
+      <Title>Protas ir jausmai</Title>
+      <OriginalTitle>Sense and Sensibility (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>131</LengthInMinutes>
+      <dtLocalRelease>2026-10-23T00:00:00</dtLocalRelease>
+      <Rating>N-13. 7-12 m. vaikams būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N13</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N13.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Drama, Romantinis</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992289/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31948/title/protas_ir_jausmai/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992284</ID>
+      <dtAccounting>2026-10-30T00:00:00</dtAccounting>
+      <dttmShowStart>2026-10-30T18:50:00</dttmShowStart>
+      <dttmShowStartUTC>2026-10-30T16:50:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-10-30T20:50:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-10-30T18:50:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-10-30T19:05:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-10-30T17:05:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32400</EventID>
+      <Title>Geriausios KANŲ LIŪTŲ reklamos 2026</Title>
+      <OriginalTitle>Geriausios KANŲ LIŪTŲ reklamos 2026</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>120</LengthInMinutes>
+      <dtLocalRelease>2026-10-27T00:00:00</dtLocalRelease>
+      <Rating>N-7. Jaunesniems būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N7</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N7.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>KANŲ LIŪTŲ reklamos</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992284/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32400/title/geriausios_kan%C5%B3_li%C5%ABt%C5%B3_reklamos_2026/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>976877</ID>
+      <dtAccounting>2026-10-30T00:00:00</dtAccounting>
+      <dttmShowStart>2026-10-30T21:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-10-30T19:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-10-30T22:33:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-10-30T20:33:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-10-30T21:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-10-30T19:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31950</EventID>
+      <Title>Kita mamytė</Title>
+      <OriginalTitle>Other Mommy (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>93</LengthInMinutes>
+      <dtLocalRelease>2026-10-30T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Siaubo</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/976877/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31950/title/kita_mamyt%C4%97/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992285</ID>
+      <dtAccounting>2026-10-30T00:00:00</dtAccounting>
+      <dttmShowStart>2026-10-30T21:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-10-30T19:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-10-30T22:58:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-10-30T20:58:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-10-30T21:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-10-30T19:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32644</EventID>
+      <Title>Leviticus</Title>
+      <OriginalTitle>Leviticus (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>88</LengthInMinutes>
+      <dtLocalRelease>2026-10-09T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Siaubo, Trileris, Mistinis , Romantinis</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992285/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32644/title/leviticus/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>985857</ID>
+      <dtAccounting>2026-10-31T00:00:00</dtAccounting>
+      <dttmShowStart>2026-10-31T11:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-10-31T09:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-10-31T12:38:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-10-31T10:38:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-10-31T11:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-10-31T09:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32495</EventID>
+      <Title>Lobių ieškotojai (dubliuotas)</Title>
+      <OriginalTitle>Treasure Trekkers (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>98</LengthInMinutes>
+      <dtLocalRelease>2026-10-31T00:00:00</dtLocalRelease>
+      <Rating>N-7. Jaunesniems būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N7</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N7.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Animacija, Nuotykių, Fantastinis, Šeimai</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Dubliuotas lietuviškai</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries>Lobių ieškotojai</EventSeries>
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/985857/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32495/title/lobi%C5%B3_ie%C5%A1kotojai_dubliuotas/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992286</ID>
+      <dtAccounting>2026-10-31T00:00:00</dtAccounting>
+      <dttmShowStart>2026-10-31T11:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-10-31T09:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-10-31T13:18:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-10-31T11:18:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-10-31T11:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-10-31T09:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31986</EventID>
+      <Title>Skyrybos karo metu</Title>
+      <OriginalTitle>Skyrybos karo metu (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>108</LengthInMinutes>
+      <dtLocalRelease>2026-09-18T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Romantinė drama</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Lietuvių, anglų, rusų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992286/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31986/title/skyrybos_karo_metu/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>988251</ID>
+      <dtAccounting>2026-10-31T00:00:00</dtAccounting>
+      <dttmShowStart>2026-10-31T13:20:00</dttmShowStart>
+      <dttmShowStartUTC>2026-10-31T11:20:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-10-31T14:41:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-10-31T12:41:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-10-31T13:35:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-10-31T11:35:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32280</EventID>
+      <Title>Monstriukė Mija (dubliuotas)</Title>
+      <OriginalTitle>Monster Mia (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>81</LengthInMinutes>
+      <dtLocalRelease>2026-10-30T00:00:00</dtLocalRelease>
+      <Rating>Įvairaus amžiaus žiūrovams</Rating>
+      <RatingLabel>V</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_V.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Animacija, Nuotykių, Fantastinis, Šeimai</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, I</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/988251/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32280/title/monstriuk%C4%97_mija_dubliuotas/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992287</ID>
+      <dtAccounting>2026-10-31T00:00:00</dtAccounting>
+      <dttmShowStart>2026-10-31T14:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-10-31T12:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-10-31T15:47:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-10-31T13:47:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-10-31T14:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-10-31T12:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31916</EventID>
+      <Title>Didysis eteris</Title>
+      <OriginalTitle>Primetime (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>107</LengthInMinutes>
+      <dtLocalRelease>2026-09-25T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Drama, Trileris, Biografinis</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992287/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31916/title/didysis_eteris/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>988982</ID>
+      <dtAccounting>2026-10-31T00:00:00</dtAccounting>
+      <dttmShowStart>2026-10-31T15:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-10-31T13:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-10-31T17:03:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-10-31T15:03:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-10-31T15:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-10-31T13:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32672</EventID>
+      <Title>Įkvėpti kino. Tito Lauciaus PARADAS + filmo pristatymas</Title>
+      <OriginalTitle>Įkvėpti kino. Tito Lauciaus PARADAS + filmo pristatymas</OriginalTitle>
+      <ProductionYear>2022</ProductionYear>
+      <LengthInMinutes>93</LengthInMinutes>
+      <dtLocalRelease>2026-10-31T00:00:00</dtLocalRelease>
+      <Rating>N-13. 7-12 m. vaikams būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N13</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N13.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Komedija, Drama</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Lithuanian</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/988982/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32672/title/%C4%AFkv%C4%97pti_kino_tito_lauciaus_paradas_filmo_pristatymas/</EventURL>
+      <SpokenLanguage>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992288</ID>
+      <dtAccounting>2026-10-31T00:00:00</dtAccounting>
+      <dttmShowStart>2026-10-31T16:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-10-31T14:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-10-31T18:18:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-10-31T16:18:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-10-31T16:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-10-31T14:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31986</EventID>
+      <Title>Skyrybos karo metu</Title>
+      <OriginalTitle>Skyrybos karo metu (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>108</LengthInMinutes>
+      <dtLocalRelease>2026-09-18T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Romantinė drama</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Lietuvių, anglų, rusų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992288/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31986/title/skyrybos_karo_metu/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>988252</ID>
+      <dtAccounting>2026-10-31T00:00:00</dtAccounting>
+      <dttmShowStart>2026-10-31T18:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-10-31T16:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-10-31T19:36:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-10-31T17:36:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-10-31T18:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-10-31T16:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>30070</EventID>
+      <Title>Šiurpnaktis: Hocus Pocus (1993)</Title>
+      <OriginalTitle>Hocus Pocus (1993)</OriginalTitle>
+      <ProductionYear>1993</ProductionYear>
+      <LengthInMinutes>96</LengthInMinutes>
+      <dtLocalRelease>2025-10-31T00:00:00</dtLocalRelease>
+      <Rating>N-13. 7-12 m. vaikams būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N13</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N13.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Siaubo, Nuotykių, Fantastinis, Šeimai</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/988252/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/30070/title/%C5%A1iurpnaktis_hocus_pocus_1993/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992280</ID>
+      <dtAccounting>2026-10-31T00:00:00</dtAccounting>
+      <dttmShowStart>2026-10-31T19:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-10-31T17:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-10-31T21:00:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-10-31T19:00:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-10-31T19:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-10-31T17:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32400</EventID>
+      <Title>Geriausios KANŲ LIŪTŲ reklamos 2026</Title>
+      <OriginalTitle>Geriausios KANŲ LIŪTŲ reklamos 2026</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>120</LengthInMinutes>
+      <dtLocalRelease>2026-10-27T00:00:00</dtLocalRelease>
+      <Rating>N-7. Jaunesniems būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N7</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N7.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>KANŲ LIŪTŲ reklamos</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992280/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32400/title/geriausios_kan%C5%B3_li%C5%ABt%C5%B3_reklamos_2026/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>988253</ID>
+      <dtAccounting>2026-10-31T00:00:00</dtAccounting>
+      <dttmShowStart>2026-10-31T20:20:00</dttmShowStart>
+      <dttmShowStartUTC>2026-10-31T18:20:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-10-31T22:01:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-10-31T20:01:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-10-31T20:35:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-10-31T18:35:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32601</EventID>
+      <Title>Šiurpnaktis: Raganų klubas (1996)</Title>
+      <OriginalTitle>The Craft (1996)</OriginalTitle>
+      <ProductionYear>1996</ProductionYear>
+      <LengthInMinutes>101</LengthInMinutes>
+      <dtLocalRelease>2026-10-31T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Drama, Siaubo, Fantastinis</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/988253/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32601/title/%C5%A1iurpnaktis_ragan%C5%B3_klubas_1996/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992281</ID>
+      <dtAccounting>2026-10-31T00:00:00</dtAccounting>
+      <dttmShowStart>2026-10-31T21:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-10-31T19:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-10-31T23:30:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-10-31T21:30:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-10-31T21:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-10-31T19:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32400</EventID>
+      <Title>Geriausios KANŲ LIŪTŲ reklamos 2026</Title>
+      <OriginalTitle>Geriausios KANŲ LIŪTŲ reklamos 2026</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>120</LengthInMinutes>
+      <dtLocalRelease>2026-10-27T00:00:00</dtLocalRelease>
+      <Rating>N-7. Jaunesniems būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N7</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N7.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>KANŲ LIŪTŲ reklamos</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992281/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32400/title/geriausios_kan%C5%B3_li%C5%ABt%C5%B3_reklamos_2026/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>988550</ID>
+      <dtAccounting>2026-11-01T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-01T11:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-01T09:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-01T12:38:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-01T10:38:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-01T11:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-01T09:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32660</EventID>
+      <Title>Šeimų sekmadienis: Lobių ieškotojai (dubliuotas)</Title>
+      <OriginalTitle>Šeimų sekmadienis: Treasure Trekkers (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>98</LengthInMinutes>
+      <dtLocalRelease>2026-11-01T00:00:00</dtLocalRelease>
+      <Rating>N-7. Jaunesniems būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N7</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N7.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Animacija, Nuotykių, Fantastinis, Šeimai</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Dubliuotas lietuviškai</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries>Lobių ieškotojai</EventSeries>
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/988550/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32660/title/%C5%A1eim%C5%B3_sekmadienis_lobi%C5%B3_ie%C5%A1kotojai_dubliuotas/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992310</ID>
+      <dtAccounting>2026-11-01T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-01T11:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-01T09:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-01T13:18:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-01T11:18:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-01T11:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-01T09:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31986</EventID>
+      <Title>Skyrybos karo metu</Title>
+      <OriginalTitle>Skyrybos karo metu (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>108</LengthInMinutes>
+      <dtLocalRelease>2026-09-18T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Romantinė drama</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Lietuvių, anglų, rusų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992310/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31986/title/skyrybos_karo_metu/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>986032</ID>
+      <dtAccounting>2026-11-01T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-01T13:20:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-01T11:20:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-01T14:58:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-01T12:58:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-01T13:35:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-01T11:35:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32660</EventID>
+      <Title>Šeimų sekmadienis: Lobių ieškotojai (dubliuotas)</Title>
+      <OriginalTitle>Šeimų sekmadienis: Treasure Trekkers (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>98</LengthInMinutes>
+      <dtLocalRelease>2026-11-01T00:00:00</dtLocalRelease>
+      <Rating>N-7. Jaunesniems būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N7</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N7.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Animacija, Nuotykių, Fantastinis, Šeimai</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Dubliuotas lietuviškai</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries>Lobių ieškotojai</EventSeries>
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/986032/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32660/title/%C5%A1eim%C5%B3_sekmadienis_lobi%C5%B3_ie%C5%A1kotojai_dubliuotas/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992311</ID>
+      <dtAccounting>2026-11-01T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-01T14:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-01T12:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-01T15:47:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-01T13:47:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-01T14:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-01T12:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31916</EventID>
+      <Title>Didysis eteris</Title>
+      <OriginalTitle>Primetime (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>107</LengthInMinutes>
+      <dtLocalRelease>2026-09-25T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Drama, Trileris, Biografinis</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992311/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31916/title/didysis_eteris/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992320</ID>
+      <dtAccounting>2026-11-01T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-01T15:50:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-01T13:50:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-01T17:44:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-01T15:44:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-01T16:05:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-01T14:05:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31942</EventID>
+      <Title>Veritė</Title>
+      <OriginalTitle>Verity (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>114</LengthInMinutes>
+      <dtLocalRelease>2026-10-02T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Mistinis , Psichologinis trileris</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992320/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31942/title/verit%C4%97/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992312</ID>
+      <dtAccounting>2026-11-01T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-01T16:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-01T14:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-01T18:30:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-01T16:30:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-01T16:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-01T14:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32400</EventID>
+      <Title>Geriausios KANŲ LIŪTŲ reklamos 2026</Title>
+      <OriginalTitle>Geriausios KANŲ LIŪTŲ reklamos 2026</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>120</LengthInMinutes>
+      <dtLocalRelease>2026-10-27T00:00:00</dtLocalRelease>
+      <Rating>N-7. Jaunesniems būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N7</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N7.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>KANŲ LIŪTŲ reklamos</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992312/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32400/title/geriausios_kan%C5%B3_li%C5%ABt%C5%B3_reklamos_2026/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992321</ID>
+      <dtAccounting>2026-11-01T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-01T18:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-01T16:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-01T20:41:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-01T18:41:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-01T18:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-01T16:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31948</EventID>
+      <Title>Protas ir jausmai</Title>
+      <OriginalTitle>Sense and Sensibility (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>131</LengthInMinutes>
+      <dtLocalRelease>2026-10-23T00:00:00</dtLocalRelease>
+      <Rating>N-13. 7-12 m. vaikams būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N13</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N13.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Drama, Romantinis</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992321/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31948/title/protas_ir_jausmai/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992313</ID>
+      <dtAccounting>2026-11-01T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-01T19:10:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-01T17:10:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-01T20:57:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-01T18:57:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-01T19:25:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-01T17:25:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31916</EventID>
+      <Title>Didysis eteris</Title>
+      <OriginalTitle>Primetime (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>107</LengthInMinutes>
+      <dtLocalRelease>2026-09-25T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Drama, Trileris, Biografinis</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992313/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31916/title/didysis_eteris/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992322</ID>
+      <dtAccounting>2026-11-01T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-01T21:20:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-01T19:20:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-01T23:28:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-01T21:28:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-01T21:35:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-01T19:35:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32646</EventID>
+      <Title>Sukilimas</Title>
+      <OriginalTitle>The Uprising (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>128</LengthInMinutes>
+      <dtLocalRelease>2026-10-30T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Veiksmo, Drama, Istorinis </Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992322/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32646/title/sukilimas/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992304</ID>
+      <dtAccounting>2026-11-01T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-01T21:50:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-01T19:50:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-01T23:50:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-01T21:50:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-01T22:05:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-01T20:05:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32400</EventID>
+      <Title>Geriausios KANŲ LIŪTŲ reklamos 2026</Title>
+      <OriginalTitle>Geriausios KANŲ LIŪTŲ reklamos 2026</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>120</LengthInMinutes>
+      <dtLocalRelease>2026-10-27T00:00:00</dtLocalRelease>
+      <Rating>N-7. Jaunesniems būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N7</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N7.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>KANŲ LIŪTŲ reklamos</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992304/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32400/title/geriausios_kan%C5%B3_li%C5%ABt%C5%B3_reklamos_2026/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992323</ID>
+      <dtAccounting>2026-11-02T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-02T14:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-02T12:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-02T15:38:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-02T13:38:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-02T14:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-02T12:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32495</EventID>
+      <Title>Lobių ieškotojai (dubliuotas)</Title>
+      <OriginalTitle>Treasure Trekkers (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>98</LengthInMinutes>
+      <dtLocalRelease>2026-10-31T00:00:00</dtLocalRelease>
+      <Rating>N-7. Jaunesniems būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N7</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N7.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Animacija, Nuotykių, Fantastinis, Šeimai</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Dubliuotas lietuviškai</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992323/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32495/title/lobi%C5%B3_ie%C5%A1kotojai_dubliuotas/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992305</ID>
+      <dtAccounting>2026-11-02T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-02T14:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-02T12:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-02T16:18:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-02T14:18:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-02T14:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-02T12:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31986</EventID>
+      <Title>Skyrybos karo metu</Title>
+      <OriginalTitle>Skyrybos karo metu (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>108</LengthInMinutes>
+      <dtLocalRelease>2026-09-18T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Romantinė drama</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Lietuvių, anglų, rusų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992305/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31986/title/skyrybos_karo_metu/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992314</ID>
+      <dtAccounting>2026-11-02T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-02T16:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-02T14:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-02T18:41:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-02T16:41:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-02T16:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-02T14:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31948</EventID>
+      <Title>Protas ir jausmai</Title>
+      <OriginalTitle>Sense and Sensibility (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>131</LengthInMinutes>
+      <dtLocalRelease>2026-10-23T00:00:00</dtLocalRelease>
+      <Rating>N-13. 7-12 m. vaikams būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N13</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N13.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Drama, Romantinis</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992314/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31948/title/protas_ir_jausmai/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992306</ID>
+      <dtAccounting>2026-11-02T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-02T17:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-02T15:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-02T19:00:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-02T17:00:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-02T17:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-02T15:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32400</EventID>
+      <Title>Geriausios KANŲ LIŪTŲ reklamos 2026</Title>
+      <OriginalTitle>Geriausios KANŲ LIŪTŲ reklamos 2026</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>120</LengthInMinutes>
+      <dtLocalRelease>2026-10-27T00:00:00</dtLocalRelease>
+      <Rating>N-7. Jaunesniems būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N7</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N7.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>KANŲ LIŪTŲ reklamos</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992306/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32400/title/geriausios_kan%C5%B3_li%C5%ABt%C5%B3_reklamos_2026/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992315</ID>
+      <dtAccounting>2026-11-02T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-02T19:20:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-02T17:20:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-02T21:28:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-02T19:28:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-02T19:35:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-02T17:35:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31941</EventID>
+      <Title>Digeris</Title>
+      <OriginalTitle>Digger (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>128</LengthInMinutes>
+      <dtLocalRelease>2026-10-02T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Drama, Juodoji komedija</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992315/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31941/title/digeris/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992307</ID>
+      <dtAccounting>2026-11-02T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-02T19:50:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-02T17:50:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-02T21:37:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-02T19:37:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-02T20:05:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-02T18:05:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31916</EventID>
+      <Title>Didysis eteris</Title>
+      <OriginalTitle>Primetime (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>107</LengthInMinutes>
+      <dtLocalRelease>2026-09-25T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Drama, Trileris, Biografinis</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992307/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31916/title/didysis_eteris/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992316</ID>
+      <dtAccounting>2026-11-03T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-03T13:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-03T11:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-03T15:08:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-03T13:08:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-03T13:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-03T11:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32495</EventID>
+      <Title>Lobių ieškotojai (dubliuotas)</Title>
+      <OriginalTitle>Treasure Trekkers (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>98</LengthInMinutes>
+      <dtLocalRelease>2026-10-31T00:00:00</dtLocalRelease>
+      <Rating>N-7. Jaunesniems būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N7</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N7.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Animacija, Nuotykių, Fantastinis, Šeimai</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Dubliuotas lietuviškai</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992316/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32495/title/lobi%C5%B3_ie%C5%A1kotojai_dubliuotas/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992308</ID>
+      <dtAccounting>2026-11-03T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-03T14:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-03T12:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-03T15:15:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-03T13:15:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-03T14:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-03T12:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32282</EventID>
+      <Title>Kirstukų miško pranašystė</Title>
+      <OriginalTitle>Kirstukų miško pranašystė (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>75</LengthInMinutes>
+      <dtLocalRelease>2026-10-16T00:00:00</dtLocalRelease>
+      <Rating>Įvairaus amžiaus žiūrovams</Rating>
+      <RatingLabel>V</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_V.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Komedija, Animacija, Nuotykių, Šeimai</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Lithuanian</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992308/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32282/title/kirstuk%C5%B3_mi%C5%A1ko_prana%C5%A1yst%C4%97/</EventURL>
+      <SpokenLanguage>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992317</ID>
+      <dtAccounting>2026-11-03T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-03T15:50:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-03T13:50:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-03T17:21:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-03T15:21:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-03T16:05:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-03T14:05:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31908</EventID>
+      <Title>Aviukas Šonas ir baimės pilnos kelnės (dubliuotas)</Title>
+      <OriginalTitle>Shaun the Sheep: The Beast of Mossy Bottom (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>91</LengthInMinutes>
+      <dtLocalRelease>2026-09-25T00:00:00</dtLocalRelease>
+      <Rating>Įvairaus amžiaus žiūrovams</Rating>
+      <RatingLabel>V</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_V.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Komedija, Animacija, Šeimai</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Dubliuotas lietuviškai</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992317/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31908/title/aviukas_%C5%A1onas_ir_baim%C4%97s_pilnos_keln%C4%97s_dubliuotas/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992309</ID>
+      <dtAccounting>2026-11-03T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-03T16:20:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-03T14:20:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-03T17:40:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-03T15:40:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-03T16:35:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-03T14:35:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32117</EventID>
+      <Title>Lidija ir miglų skrodėjas (įgarsinta lietuviškai)</Title>
+      <OriginalTitle>Lydia et le vaisseau des tempêtes (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>80</LengthInMinutes>
+      <dtLocalRelease>2026-08-18T00:00:00</dtLocalRelease>
+      <Rating>Įvairaus amžiaus žiūrovams</Rating>
+      <RatingLabel>V</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_V.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Animacija, Nuotykių, Fantastinis, Šeimai</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, I</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992309/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32117/title/lidija_ir_migl%C5%B3_skrod%C4%97jas_%C4%AFgarsinta_lietuvi%C5%A1kai/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992318</ID>
+      <dtAccounting>2026-11-03T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-03T18:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-03T16:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-03T20:11:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-03T18:11:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-03T18:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-03T16:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31948</EventID>
+      <Title>Protas ir jausmai</Title>
+      <OriginalTitle>Sense and Sensibility (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>131</LengthInMinutes>
+      <dtLocalRelease>2026-10-23T00:00:00</dtLocalRelease>
+      <Rating>N-13. 7-12 m. vaikams būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N13</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N13.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Drama, Romantinis</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992318/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31948/title/protas_ir_jausmai/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992299</ID>
+      <dtAccounting>2026-11-03T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-03T18:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-03T16:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-03T19:35:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-03T17:35:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-03T18:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-03T16:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32793</EventID>
+      <Title>Specialioji operacija</Title>
+      <OriginalTitle>Спеціальна операція (2025)</OriginalTitle>
+      <ProductionYear>2025</ProductionYear>
+      <LengthInMinutes>65</LengthInMinutes>
+      <dtLocalRelease>2026-10-31T00:00:00</dtLocalRelease>
+      <Rating>N-13. 7-12 m. vaikams būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N13</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N13.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Dokumentika</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Ukrainiečių, rusų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992299/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32793/title/specialioji_operacija/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992300</ID>
+      <dtAccounting>2026-11-03T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-03T20:10:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-03T18:10:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-03T21:58:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-03T19:58:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-03T20:25:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-03T18:25:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31986</EventID>
+      <Title>Skyrybos karo metu</Title>
+      <OriginalTitle>Skyrybos karo metu (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>108</LengthInMinutes>
+      <dtLocalRelease>2026-09-18T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Romantinė drama</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Lietuvių, anglų, rusų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992300/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31986/title/skyrybos_karo_metu/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992319</ID>
+      <dtAccounting>2026-11-03T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-03T20:50:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-03T18:50:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-03T22:58:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-03T20:58:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-03T21:05:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-03T19:05:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32646</EventID>
+      <Title>Sukilimas</Title>
+      <OriginalTitle>The Uprising (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>128</LengthInMinutes>
+      <dtLocalRelease>2026-10-30T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Veiksmo, Drama, Istorinis </Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992319/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32646/title/sukilimas/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992352</ID>
+      <dtAccounting>2026-11-04T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-04T13:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-04T11:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-04T14:51:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-04T12:51:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-04T13:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-04T11:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32280</EventID>
+      <Title>Monstriukė Mija (dubliuotas)</Title>
+      <OriginalTitle>Monster Mia (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>81</LengthInMinutes>
+      <dtLocalRelease>2026-10-30T00:00:00</dtLocalRelease>
+      <Rating>Įvairaus amžiaus žiūrovams</Rating>
+      <RatingLabel>V</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_V.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Animacija, Nuotykių, Fantastinis, Šeimai</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, I</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992352/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32280/title/monstriuk%C4%97_mija_dubliuotas/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992353</ID>
+      <dtAccounting>2026-11-04T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-04T15:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-04T13:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-04T17:08:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-04T15:08:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-04T15:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-04T13:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32495</EventID>
+      <Title>Lobių ieškotojai (dubliuotas)</Title>
+      <OriginalTitle>Treasure Trekkers (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>98</LengthInMinutes>
+      <dtLocalRelease>2026-10-31T00:00:00</dtLocalRelease>
+      <Rating>N-7. Jaunesniems būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N7</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N7.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Animacija, Nuotykių, Fantastinis, Šeimai</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Dubliuotas lietuviškai</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992353/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32495/title/lobi%C5%B3_ie%C5%A1kotojai_dubliuotas/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992354</ID>
+      <dtAccounting>2026-11-04T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-04T18:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-04T16:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-04T19:54:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-04T17:54:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-04T18:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-04T16:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31942</EventID>
+      <Title>Veritė</Title>
+      <OriginalTitle>Verity (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>114</LengthInMinutes>
+      <dtLocalRelease>2026-10-02T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Mistinis , Psichologinis trileris</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992354/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31942/title/verit%C4%97/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992348</ID>
+      <dtAccounting>2026-11-04T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-04T18:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-04T16:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-04T20:18:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-04T18:18:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-04T18:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-04T16:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31986</EventID>
+      <Title>Skyrybos karo metu</Title>
+      <OriginalTitle>Skyrybos karo metu (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>108</LengthInMinutes>
+      <dtLocalRelease>2026-09-18T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Romantinė drama</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Lietuvių, anglų, rusų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992348/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31986/title/skyrybos_karo_metu/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992355</ID>
+      <dtAccounting>2026-11-04T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-04T20:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-04T18:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-04T22:38:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-04T20:38:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-04T20:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-04T18:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31941</EventID>
+      <Title>Digeris</Title>
+      <OriginalTitle>Digger (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>128</LengthInMinutes>
+      <dtLocalRelease>2026-10-02T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Drama, Juodoji komedija</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992355/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31941/title/digeris/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992349</ID>
+      <dtAccounting>2026-11-04T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-04T21:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-04T19:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-04T23:00:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-04T21:00:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-04T21:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-04T19:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32400</EventID>
+      <Title>Geriausios KANŲ LIŪTŲ reklamos 2026</Title>
+      <OriginalTitle>Geriausios KANŲ LIŪTŲ reklamos 2026</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>120</LengthInMinutes>
+      <dtLocalRelease>2026-10-27T00:00:00</dtLocalRelease>
+      <Rating>N-7. Jaunesniems būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N7</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N7.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>KANŲ LIŪTŲ reklamos</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992349/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32400/title/geriausios_kan%C5%B3_li%C5%ABt%C5%B3_reklamos_2026/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992380</ID>
+      <dtAccounting>2026-11-05T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-05T14:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-05T12:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-05T16:18:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-05T14:18:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-05T14:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-05T12:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32814</EventID>
+      <Title>Filmų laboratorija: Lobių ieškotojai + dirbtuvės</Title>
+      <OriginalTitle>Filmų laboratorija: Treasure Trekkers + dirbtuvės</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>138</LengthInMinutes>
+      <dtLocalRelease>2026-10-28T00:00:00</dtLocalRelease>
+      <Rating>N-7. Jaunesniems būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N7</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N7.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Animacija, Nuotykių, Fantastinis, Dirbtuvės</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, I</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992380/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32814/title/film%C5%B3_laboratorija_lobi%C5%B3_ie%C5%A1kotojai_dirbtuv%C4%97s/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992356</ID>
+      <dtAccounting>2026-11-05T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-05T18:10:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-05T16:10:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-05T19:43:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-05T17:43:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-05T18:25:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-05T16:25:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31950</EventID>
+      <Title>Kita mamytė</Title>
+      <OriginalTitle>Other Mommy (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>93</LengthInMinutes>
+      <dtLocalRelease>2026-10-30T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Siaubo</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992356/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31950/title/kita_mamyt%C4%97/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>985909</ID>
+      <dtAccounting>2026-11-05T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-05T20:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-05T18:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-05T22:47:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-05T20:47:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-05T20:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-05T18:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32513</EventID>
+      <Title>V for Vendetta</Title>
+      <OriginalTitle>V for Vendetta (2005)</OriginalTitle>
+      <ProductionYear>2005</ProductionYear>
+      <LengthInMinutes>137</LengthInMinutes>
+      <dtLocalRelease>2026-11-05T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Veiksmo, Drama, Trileris</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/985909/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32513/title/v_for_vendetta/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992350</ID>
+      <dtAccounting>2026-11-05T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-05T21:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-05T19:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-05T22:47:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-05T20:47:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-05T21:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-05T19:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>31916</EventID>
+      <Title>Didysis eteris</Title>
+      <OriginalTitle>Primetime (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>107</LengthInMinutes>
+      <dtLocalRelease>2026-09-25T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Drama, Trileris, Biografinis</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992350/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/31916/title/didysis_eteris/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992381</ID>
+      <dtAccounting>2026-11-06T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-06T14:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-06T12:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-06T16:18:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-06T14:18:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-06T14:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-06T12:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32814</EventID>
+      <Title>Filmų laboratorija: Lobių ieškotojai + dirbtuvės</Title>
+      <OriginalTitle>Filmų laboratorija: Treasure Trekkers + dirbtuvės</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>138</LengthInMinutes>
+      <dtLocalRelease>2026-10-28T00:00:00</dtLocalRelease>
+      <Rating>N-7. Jaunesniems būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N7</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N7.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Animacija, Nuotykių, Fantastinis, Dirbtuvės</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, I</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992381/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32814/title/film%C5%B3_laboratorija_lobi%C5%B3_ie%C5%A1kotojai_dirbtuv%C4%97s/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>983987</ID>
+      <dtAccounting>2026-11-07T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-07T11:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-07T09:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-07T12:31:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-07T10:31:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-07T11:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-07T09:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32281</EventID>
+      <Title>Katinas su skrybele (dubliuotas)</Title>
+      <OriginalTitle>The Cat in the Hat (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>91</LengthInMinutes>
+      <dtLocalRelease>2026-11-06T00:00:00</dtLocalRelease>
+      <Rating>Įvairaus amžiaus žiūrovams</Rating>
+      <RatingLabel>V</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_V.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Komedija, Animacija, Nuotykių, Fantastinis, Šeimai</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, I</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/983987/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32281/title/katinas_su_skrybele_dubliuotas/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>991106</ID>
+      <dtAccounting>2026-11-07T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-07T20:20:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-07T18:20:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-07T22:19:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-07T20:19:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-07T20:35:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-07T18:35:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32746</EventID>
+      <Title>SCA26: Kruvinoji grafienė</Title>
+      <OriginalTitle>SCA26: Die Blutgräfin (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>119</LengthInMinutes>
+      <dtLocalRelease>2026-11-05T00:00:00</dtLocalRelease>
+      <Rating>N-13. 7-12 m. vaikams būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N13</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N13.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Fantastinis, Detektyvas, Juodoji komedija</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, vokiečių, prancūzų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/991106/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32746/title/sca26_kruvinoji_grafien%C4%97/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>986033</ID>
+      <dtAccounting>2026-11-08T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-08T10:40:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-08T08:40:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-08T12:11:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-08T10:11:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-08T10:55:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-08T08:55:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32287</EventID>
+      <Title>Šeimų sekmadienis: Katinas su skrybele (dubliuotas)</Title>
+      <OriginalTitle>Šeimų sekmadienis: The Cat In The Hat (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>91</LengthInMinutes>
+      <dtLocalRelease>2026-11-08T00:00:00</dtLocalRelease>
+      <Rating>Įvairaus amžiaus žiūrovams</Rating>
+      <RatingLabel>V</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_V.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Komedija, Animacija, Nuotykių, Fantastinis, Šeimai</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Dubliuotas lietuviškai</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/986033/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32287/title/%C5%A1eim%C5%B3_sekmadienis_katinas_su_skrybele_dubliuotas/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>986034</ID>
+      <dtAccounting>2026-11-08T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-08T13:10:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-08T11:10:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-08T14:41:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-08T12:41:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-08T13:25:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-08T11:25:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32287</EventID>
+      <Title>Šeimų sekmadienis: Katinas su skrybele (dubliuotas)</Title>
+      <OriginalTitle>Šeimų sekmadienis: The Cat In The Hat (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>91</LengthInMinutes>
+      <dtLocalRelease>2026-11-08T00:00:00</dtLocalRelease>
+      <Rating>Įvairaus amžiaus žiūrovams</Rating>
+      <RatingLabel>V</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_V.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Komedija, Animacija, Nuotykių, Fantastinis, Šeimai</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Dubliuotas lietuviškai</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/986034/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32287/title/%C5%A1eim%C5%B3_sekmadienis_katinas_su_skrybele_dubliuotas/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>991131</ID>
+      <dtAccounting>2026-11-08T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-08T15:40:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-08T13:40:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-08T17:13:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-08T15:13:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-08T15:55:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-08T13:55:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32752</EventID>
+      <Title>SCA26: Rozė</Title>
+      <OriginalTitle>SCA26: Rose (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>93</LengthInMinutes>
+      <dtLocalRelease>2026-11-05T00:00:00</dtLocalRelease>
+      <Rating>N-13. 7-12 m. vaikams būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N13</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N13.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Drama, Istorinis </Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Vokiečių</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/991131/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32752/title/sca26_roz%C4%97/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992282</ID>
+      <dtAccounting>2026-11-09T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-09T15:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-09T13:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-09T16:46:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-09T14:46:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-09T15:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-09T13:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32805</EventID>
+      <Title>Seansai su mažyliais: Tonis</Title>
+      <OriginalTitle>Seansai su mažyliais: Tony (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>106</LengthInMinutes>
+      <dtLocalRelease>2026-11-09T00:00:00</dtLocalRelease>
+      <Rating>Žiūrovams nuo 16 metų</Rating>
+      <RatingLabel>N16</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N16.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Drama, Biografinis</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992282/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32805/title/seansai_su_ma%C5%BEyliais_tonis/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992680</ID>
+      <dtAccounting>2026-11-13T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-13T14:10:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-13T12:10:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-13T17:04:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-13T15:04:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-13T14:25:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-13T12:25:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32901</EventID>
+      <Title>Pamatysi viską</Title>
+      <OriginalTitle>You Can See Everything (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>174</LengthInMinutes>
+      <dtLocalRelease>2026-11-13T00:00:00</dtLocalRelease>
+      <Rating>N-13. 7-12 m. vaikams būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N13</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N13.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Dokumentika</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992680/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32901/title/pamatysi_visk%C4%85/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992683</ID>
+      <dtAccounting>2026-11-13T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-13T14:50:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-13T12:50:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-13T17:44:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-13T15:44:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-13T15:05:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-13T13:05:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32901</EventID>
+      <Title>Pamatysi viską</Title>
+      <OriginalTitle>You Can See Everything (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>174</LengthInMinutes>
+      <dtLocalRelease>2026-11-13T00:00:00</dtLocalRelease>
+      <Rating>N-13. 7-12 m. vaikams būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N13</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N13.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Dokumentika</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992683/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32901/title/pamatysi_visk%C4%85/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992616</ID>
+      <dtAccounting>2026-11-13T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-13T18:00:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-13T16:00:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-13T20:54:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-13T18:54:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-13T18:15:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-13T16:15:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32907</EventID>
+      <Title>Go3 premjera: Pamatysi viską</Title>
+      <OriginalTitle>Go3 premjera: Pamatysi viską</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>174</LengthInMinutes>
+      <dtLocalRelease>2026-10-29T00:00:00</dtLocalRelease>
+      <Rating>N-13. 7-12 m. vaikams būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N13</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N13.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Dokumentika</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992616/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32907/title/go3_premjera_pamatysi_visk%C4%85/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992679</ID>
+      <dtAccounting>2026-11-13T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-13T18:30:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-13T16:30:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-13T21:24:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-13T19:24:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-13T18:45:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-13T16:45:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32901</EventID>
+      <Title>Pamatysi viską</Title>
+      <OriginalTitle>You Can See Everything (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>174</LengthInMinutes>
+      <dtLocalRelease>2026-11-13T00:00:00</dtLocalRelease>
+      <Rating>N-13. 7-12 m. vaikams būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N13</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N13.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Dokumentika</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1426</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, Vilnelės salė [šioje salėje vietos nėra žymimos]</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992679/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32901/title/pamatysi_visk%C4%85/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+    <Show>
+      <ID>992666</ID>
+      <dtAccounting>2026-11-13T00:00:00</dtAccounting>
+      <dttmShowStart>2026-11-13T21:40:00</dttmShowStart>
+      <dttmShowStartUTC>2026-11-13T19:40:00Z</dttmShowStartUTC>
+      <dttmShowEnd>2026-11-14T00:34:00</dttmShowEnd>
+      <dttmShowEndUTC>2026-11-13T22:34:00Z</dttmShowEndUTC>
+      <ShowSalesStartTime>2000-01-01T00:00:00</ShowSalesStartTime>
+      <ShowSalesStartTimeUTC>2000-01-01T00:00:00Z</ShowSalesStartTimeUTC>
+      <ShowSalesEndTime>2026-11-13T21:55:00</ShowSalesEndTime>
+      <ShowSalesEndTimeUTC>2026-11-13T19:55:00Z</ShowSalesEndTimeUTC>
+      <ShowReservationStartTime>0001-01-01T00:00:00</ShowReservationStartTime>
+      <ShowReservationStartTimeUTC>0001-01-01T00:00:00Z</ShowReservationStartTimeUTC>
+      <ShowReservationEndTime>0001-01-01T00:00:00</ShowReservationEndTime>
+      <ShowReservationEndTimeUTC>0001-01-01T00:00:00Z</ShowReservationEndTimeUTC>
+      <EventID>32901</EventID>
+      <Title>Pamatysi viską</Title>
+      <OriginalTitle>You Can See Everything (2026)</OriginalTitle>
+      <ProductionYear>2026</ProductionYear>
+      <LengthInMinutes>174</LengthInMinutes>
+      <dtLocalRelease>2026-11-13T00:00:00</dtLocalRelease>
+      <Rating>N-13. 7-12 m. vaikams būtina suaugusiojo palyda</Rating>
+      <RatingLabel>N13</RatingLabel>
+      <RatingImageUrl>https://mcswebsites.blob.core.windows.net/kinopasaka-lt/images/rating_large_N13.png</RatingImageUrl>
+      <EventType>Movie</EventType>
+      <Genres>Dokumentika</Genres>
+      <TheatreID>1108</TheatreID>
+      <TheatreAuditriumID>1425</TheatreAuditriumID>
+      <Theatre>Paupio „Pasaka“</Theatre>
+      <TheatreAuditorium>„Paupio“ salė</TheatreAuditorium>
+      <TheatreAndAuditorium>Paupio „Pasaka“, „Paupio“ salė</TheatreAndAuditorium>
+      <PresentationMethodAndLanguage>2D, Anglų</PresentationMethodAndLanguage>
+      <PresentationMethod>2D</PresentationMethod>
+      <EventSeries />
+      <ShowURL>http://bilietai.kinopasaka.lt/websales/show/992666/</ShowURL>
+      <EventURL>http://bilietai.kinopasaka.lt/event/32901/title/pamatysi_visk%C4%85/</EventURL>
+      <SpokenLanguage>
+        <Name />
+        <NameInLanguage />
+        <ISOTwoLetterCode />
+      </SpokenLanguage>
+      <SubtitleLanguage1>
+        <Name>Lithuanian</Name>
+        <NameInLanguage />
+        <ISOTwoLetterCode>lt</ISOTwoLetterCode>
+      </SubtitleLanguage1>
+      <Images />
+      <ContentDescriptors />
+    </Show>
+  </Shows>
+</Schedule>
