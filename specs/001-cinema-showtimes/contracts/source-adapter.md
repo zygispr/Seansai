@@ -65,7 +65,7 @@ type SourceScreening = {
 | Adapter | Cinemas | Notes |
 |---------|---------|-------|
 | `mcs` (configured twice: `apollo`, `pasaka`) | Apollo Kinas, Pasaka | Markus Cinema System feed; JSON (Apollo) or XML (Pasaka) |
-| `forum` | Forum Cinemas | REST API; screenings per region + movie details per movie id |
+| `forum` | Forum Cinemas | REST API; screenings per region + the movie list (single movies only when missing) + hall names once a day |
 | `skalvija` | Skalvija | WordPress JSON with PHP-warning prefix; title/start/ticket URL only |
 | `fliko` (configured per site: `atlantis`, `garsas`, `spindulys`, `minija`) | Atlantis, Garsas, Spindulys, Minija | Server-rendered `/filmai/{slug}` pages of the shared Fliko site template; never calls the `back.*` backends |
 | `romuva` | Romuva | JSON calendar array embedded in the ticket page; title/start/ticket URL only |

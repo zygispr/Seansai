@@ -73,8 +73,17 @@ function withoutLeadingArticle(key: string): string {
   return stripped.length > 0 ? stripped : key;
 }
 
+/**
+ * Festival programmes cinemas put around a title: the Scanorama label ("SCA26: Rozė",
+ * "SCA: Rozė", "SCANORAMA '26: „Rozė“") and the Fliko sites' "Rozė | Scanorama".
+ */
+const PROGRAMME_AFTER_BAR = /\s+\|\s+.*$/;
+const SCANORAMA_LABEL = /^(?:sca|scanorama)(?: ?\d{2})? (?=\S)/;
+
 function keyOf(title: string): string {
-  return withoutLeadingArticle(normalizeTitle(title));
+  const withoutProgramme = title.replace(PROGRAMME_AFTER_BAR, '');
+  const key = normalizeTitle(withoutProgramme.length > 0 ? withoutProgramme : title);
+  return withoutLeadingArticle(key.replace(SCANORAMA_LABEL, ''));
 }
 
 /**

@@ -4,7 +4,8 @@ import { expect, type APIRequestContext, type BrowserContext, type Page } from '
 
 /**
  * The e2e tests run against the fixture data (SOURCES_MODE=fixtures). The fixture clock is the
- * capture instant in apps/api/tests/fixtures/README.md: Friday 30 October 2026, 19:46 in Vilnius.
+ * earliest capture instant in apps/api/tests/fixtures/README.md: Friday 30 October 2026, 19:39 in
+ * Vilnius. Forum was captured a day later, so its screenings start on Saturday 31 October.
  */
 
 /** Tests never contact cinema websites: posters and ticket pages are answered locally. */
@@ -23,13 +24,10 @@ export async function expectNoAccessibilityViolations(page: Page) {
   expect(results.violations).toEqual([]);
 }
 
-/** Sources without an adapter yet (Forum, see tasks T049/T061) never load. */
-const SOURCES_WITHOUT_ADAPTER = new Set(['forum']);
-
 /**
  * The API answers as soon as it listens, but loads the fixtures just after, and slower when
- * several test servers start at once. Waits until every source with an adapter has loaded, so
- * counts are final. `request` uses the test's baseURL.
+ * several test servers start at once. Waits until every source has loaded, so counts are final.
+ * `request` uses the test's baseURL.
  */
 export async function waitForSources(request: APIRequestContext) {
   await expect
@@ -38,9 +36,7 @@ export async function waitForSources(request: APIRequestContext) {
         const response = await request.get('/api/v1/health');
         if (!response.ok()) return ['API not up'];
         return HealthResponseSchema.parse(await response.json())
-          .sources.filter(
-            (source) => !SOURCES_WITHOUT_ADAPTER.has(source.id) && source.lastSuccessAt === null,
-          )
+          .sources.filter((source) => source.lastSuccessAt === null)
           .map((source) => source.id);
       },
       { message: 'sources still loading', timeout: 30_000 },

@@ -8,9 +8,7 @@ import { RESILIENCE_PORT } from './ports.ts';
 
 /**
  * FR-015 / SC-005 (quickstart "Resilience"): the API behind this server cannot refresh Vue
- * (FIXTURE_FAIL=vue) and last succeeded 4 hours ago. Vue stands in for Forum here: Forum has no
- * adapter yet (its fixtures could not be captured), so it is always reported stale and would not
- * prove that a failing refresh is handled.
+ * (FIXTURE_FAIL=vue) and last succeeded 4 hours ago.
  */
 const baseURL = `http://localhost:${String(RESILIENCE_PORT)}`;
 test.use({ baseURL });

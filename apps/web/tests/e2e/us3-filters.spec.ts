@@ -7,9 +7,8 @@ import {
 } from './helpers.ts';
 
 /**
- * Quickstart US3 against the fixture data (see helpers.ts for the fixture clock). The fixtures hold
- * only 2D screenings (Forum, which has 3D and IMAX, is blocked), so the format group is not
- * offered here; the format filter is covered by the unit and component tests.
+ * Quickstart US3 against the fixture data (see helpers.ts for the fixture clock). No cinema had a 3D
+ * screening when the fixtures were captured, so the format step filters Forum's IMAX screenings.
  */
 
 test.beforeEach(async ({ context, request }) => {
@@ -69,8 +68,9 @@ test('US3: changing city and filtering screenings', async ({ page }) => {
   await page.getByRole('link', { name: /Užmirštoji sala/ }).click();
   await page.getByRole('toolbar', { name: 'Pasirinkite datą' }).getByRole('button').nth(2).click();
   await expect(page).toHaveURL(/\?date=2026-11-01$/);
-  await expect(rows).toHaveCount(10);
+  await expect(rows).toHaveCount(13);
   await showFilters(page);
+  // Every screening of it that day is 2D, so there is no format to choose.
   await expect(page.getByRole('group', { name: 'Formatas' })).toHaveCount(0);
 
   const cinemas = page.getByRole('group', { name: 'Kino teatras' });
@@ -79,27 +79,42 @@ test('US3: changing city and filtering screenings', async ({ page }) => {
   await expect(rows.first()).toBeVisible();
   await expect(rows.filter({ hasNotText: 'Vue Vilnius' })).toHaveCount(0);
   await cinemas.getByRole('button', { name: 'Vue Vilnius' }).click();
-  await expect(rows).toHaveCount(10);
+  await expect(rows).toHaveCount(13);
 
   await page
     .getByRole('group', { name: 'Kalba' })
     .getByRole('button', { name: 'Originalo kalba' })
     .click();
   await expect(page).toHaveURL(/[?&]audio=original(&|$)/);
-  await expect(rows).toHaveCount(1);
-  await expect(page.getByText('Rodoma 1 iš 10')).toBeVisible();
+  await expect(rows).toHaveCount(2);
+  await expect(page.getByText('Rodoma 2 iš 13')).toBeVisible();
   await expectNoAccessibilityViolations(page);
 
   // 3. Filters that match nothing explain so and clear with one click.
-  const shownRow = (await rows.first().textContent()) ?? '';
+  const shownRows = (await rows.allTextContents()).join(' ');
   const names = await cinemas.getByRole('button').allTextContents();
-  const otherCinema = names.find((name) => !shownRow.includes(name)) ?? '';
+  const otherCinema = names.find((name) => !shownRows.includes(name)) ?? '';
   await cinemas.getByRole('button', { name: otherCinema }).click();
   await expect(rows).toHaveCount(0);
   const noMatch = page.getByText('Pagal pasirinktus filtrus seansų nėra');
   await expect(noMatch).toBeVisible();
   await expectNoAccessibilityViolations(page);
   await page.getByRole('main').getByRole('button', { name: 'Išvalyti filtrus' }).last().click();
-  await expect(rows).toHaveCount(10);
+  await expect(rows).toHaveCount(13);
   await expect(page).toHaveURL(/\/lt\/movie\/[\w-]+\?date=2026-11-01$/);
+
+  // 2 (format). "Odisėja" runs in 2D at Vue and in IMAX at Forum Cinemas Vingis that day.
+  await page.getByRole('link', { name: 'Seansai', exact: true }).click();
+  await page.getByRole('searchbox').fill('Odisėja');
+  await page.getByRole('link', { name: /Odisėja/ }).click();
+  await page.getByRole('toolbar', { name: 'Pasirinkite datą' }).getByRole('button').nth(2).click();
+  await expect(page).toHaveURL(/\?date=2026-11-01$/);
+  await expect(rows).toHaveCount(4);
+  await showFilters(page);
+  await page.getByRole('group', { name: 'Formatas' }).getByRole('button', { name: 'IMAX' }).click();
+  await expect(page).toHaveURL(/[?&]format=IMAX(&|$)/);
+  await expect(rows).toHaveCount(2);
+  await expect(rows.filter({ hasNotText: 'Forum Cinemas Vingis' })).toHaveCount(0);
+  await expect(page.getByText('Rodoma 2 iš 4')).toBeVisible();
+  await expectNoAccessibilityViolations(page);
 });

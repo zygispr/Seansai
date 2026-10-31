@@ -10,7 +10,7 @@ import { startScheduler } from './refresh/scheduler.ts';
 import { cinemaRegistry } from './registry/cinemas.ts';
 import { buildServer } from './server.ts';
 import { adapters, findSourceConfig, logRobotsOverrides, sourceConfigs } from './sources/index.ts';
-import { createClock, createHttpClient } from './sources/runtime.ts';
+import { adapterNow, createClock, createHttpClient } from './sources/runtime.ts';
 
 const WEB_DIST_DIR = fileURLToPath(new URL('../../web/dist', import.meta.url));
 const HOUR_MS = 60 * 60 * 1000;
@@ -59,6 +59,7 @@ async function main(): Promise<void> {
         registry: cinemaRegistry,
         http,
         now,
+        sourceNow: adapterNow(adapter.id, config, now),
         aliases,
         logger,
         disabledSources: config.disabledSources,

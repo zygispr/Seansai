@@ -1,10 +1,15 @@
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import type { Db } from '../../src/db/index.ts';
 import { Repository } from '../../src/db/repository.ts';
+import { loadAliases } from '../../src/matching/match.ts';
 import { titleKeysOf } from '../../src/matching/normalize.ts';
 import { refreshSource } from '../../src/refresh/refresh-source.ts';
 import { cinemaRegistry } from '../../src/registry/cinemas.ts';
-import { FixtureHttpClient, readFixtureNow } from '../../src/sources/fixture-http.ts';
+import {
+  FixtureHttpClient,
+  readCaptureInstant,
+  readFixtureNow,
+} from '../../src/sources/fixture-http.ts';
 import { adapters } from '../../src/sources/index.ts';
 import { createTempDb } from '../helpers/temp-db.ts';
 import { createTestLogger } from '../helpers/test-logger.ts';
@@ -23,7 +28,9 @@ async function refreshAll(order: 'forward' | 'reverse'): Promise<{ db: Db; clean
       registry: cinemaRegistry,
       http: new FixtureHttpClient({ sourceId: adapter.id, failingSources: [] }),
       now,
-      aliases: [],
+      sourceNow: readCaptureInstant(adapter.id) ?? now,
+      // The maintainer's merge decisions apply, as in production.
+      aliases: loadAliases(),
       logger: createTestLogger().logger,
       disabledSources: [],
     });
@@ -67,7 +74,7 @@ describe.each(['forward', 'reverse'] as const)('all fixtures, refreshed %s', (or
 
     expect(shared).toEqual([]);
     expect(db.prepare('SELECT count(DISTINCT movie_id) AS movies FROM screenings').get()).toEqual({
-      movies: 195,
+      movies: 230,
     });
   });
 
@@ -84,10 +91,19 @@ describe.each(['forward', 'reverse'] as const)('all fixtures, refreshed %s', (or
     ['Forgotten Island', /^Forgotten Island$/],
     // Romuva publishes only the Lithuanian title.
     ['Kita mamytė', /^Other Mommy$/],
+    // Forum's "Odisėja" and the same film at other cinemas.
+    ['Odisėja', /^The Odyssey$/],
   ])('"%s" is one movie, under its English title', (title, englishTitle) => {
     const movies = moviesKnownAs(db, title);
 
     expect(movies).toHaveLength(1);
     expect(movies[0]?.englishTitle).toMatch(englishTitle);
   });
+
+  test.each(['Aukso amžius', 'Rozė', 'Paukščių šneka', 'Zeitūno melodija'])(
+    'Scanorama film "%s" is one movie at every cinema that shows it',
+    (title) => {
+      expect(moviesKnownAs(db, title)).toHaveLength(1);
+    },
+  );
 });

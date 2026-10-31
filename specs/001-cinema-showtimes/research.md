@@ -13,7 +13,7 @@ its `robots.txt` rules.
 | Cinema | Cities (verified) | Source | Format | robots.txt | Verdict |
 |--------|-------------------|--------|--------|------------|---------|
 | Apollo Kinas | Vilnius (Akropolis, Outlet), Panevėžys (Molas) | `https://www.apollokinas.lt/xml/` (Markus Cinema System feed: `TheatreAreas`, `ScheduleDates`, `Schedule?area=&dt=&nrOfDays=`, `Events`) | JSON | Only `/websales/`, `/account/`, `/mypage/` disallowed | ✅ Use |
-| Forum Cinemas | Vilnius (Vingis), Kaunas, Klaipėda, Šiauliai | `https://restapi.forumcinemas.lt/api` (`/region`, `/cinema`, `/region/{id}/screening?dateTimeFrom=&dateTimeTo=`, `/movie/{id}`) — the public API behind their own website | JSON | No robots.txt (404); main site allows all | ✅ Use |
+| Forum Cinemas | Vilnius (Vingis), Kaunas, Klaipėda, Šiauliai | `https://restapi.forumcinemas.lt/api` (`/region`, `/cinema`, `/region/{id}/screening?dateTimeFrom=&dateTimeTo=`, `/movie`, `/movie/{id}`, `/cinema/{id}/screen`) — the public API behind their own website (its `config.json` names this `apiUrl`) | JSON | No robots.txt (404); main site allows all | ✅ Use |
 | Pasaka | Vilnius (Paupio, Senamiesčio; seasonal Kalnų parko estrada) | `https://bilietai.kinopasaka.lt/xml/` (same Markus Cinema System feed as Apollo) | XML | Allows `*`; blocks named AI/training bots only; `Content-Signal: search=yes` | ✅ Use (same adapter as Apollo) |
 | Skalvija | Vilnius | `https://skalvija.lt/wp-json/data/v1/get_shows` (WordPress endpoint used by their site) | JSON, but prefixed with PHP warnings | Allows all | ✅ Use, tolerant parsing; title + start + ticket URL only (no format/language) |
 | Atlantis | Šiauliai | Server-rendered movie pages `https://atlantiscinemas.lt/filmai` → `/filmai/{slug}` (several days of screenings in the HTML, `<time datetime>` + `/kasa/seansas/{id}` links) | HTML | Main site allows all except `/checkout/`, `/kasa/`; its backend `back.atlantiscinemas.lt` disallows all | ✅ Use HTML pages only; never call the backend |
@@ -100,7 +100,17 @@ Conditions, so the decision stays low-risk and reversible:
 - **Forum**: the `/cinema` endpoint reports Vingis' city as "Kaunas" although its address
   (Savanorių pr. 7) is in Vilnius → city assignment comes from our own cinema registry, not the
   feed. A "Sandėlys" region exists without a matching cinema → ignored unless it has screenings,
-  then mapped via the registry.
+  then mapped via the registry. The API host has no robots.txt (404), but its error page fails
+  with HTTP 500 when the request says `Accept-Language: *` (the default of Node's `fetch`); a 5xx
+  robots.txt means "disallow everything" (RFC 9309), so the polite client sends
+  `Accept-Language: lt` (found 2026-10-31). Screenings carry no ticket link: the site opens
+  `https://forumcinemas.lt/lt/ekranas/?id={screeningId}&cid={cinemaId}`. One `/movie` request
+  lists the movies (121 of 122 on 2026-10-31); only missing ones are fetched one by one. Hall
+  names come from `/cinema/{id}/screen`, whose answer includes seat maps (~0.6 MB), so they are
+  fetched once a day. Titles carry programme labels and version notes ("SCA'26: Išganymas",
+  "Pamatyk kine: Kiti (2001)", "Užmirštoji sala (dubliuotas)"), which the adapter drops; the
+  Scanorama label in other cinemas' titles ("SCA26:", "SCA:", "Rozė | Scanorama") is ignored when
+  matching. Years such as "1753" occur and are treated as unknown.
 - **Apollo/Pasaka (MCS)**: `dttmShowStart` is local time without offset; `dttmShowStartUTC` is
   UTC → use the UTC field. `dtAccounting` is the cinema's business day and can differ from the
   calendar date after midnight → the spec's rule (calendar date of start, Europe/Vilnius) wins.

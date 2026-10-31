@@ -26,7 +26,8 @@ test('US2: choosing a future date, sharing it and the date picker', async ({ pag
   const heading = page.getByRole('heading', { level: 2 });
   await expect(heading).toHaveText(/lapkričio 2 d\./i);
   const list = page.getByRole('list', { name: 'Seansai' });
-  await expect(list.getByRole('listitem')).toHaveCount(7);
+  await expect(list.getByRole('listitem')).toHaveCount(11);
+  await expect(list).toContainText('Forum Cinemas Vingis');
   const rows = await list.getByRole('listitem').allTextContents();
   await expectNoAccessibilityViolations(page);
 

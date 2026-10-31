@@ -16,6 +16,8 @@ export type RefreshContext = {
   registry: CinemaRegistry;
   http: HttpClient;
   now: Date;
+  /** The adapter's clock when it differs from `now` (fixture mode replays each capture). */
+  sourceNow?: Date;
   aliases: readonly Alias[];
   logger: Logger;
   /** Kill switch (DISABLED_SOURCES): these sources are not refreshed at all. */
@@ -62,7 +64,11 @@ export async function refreshSource(
 
   try {
     ctx.http.beginCycle();
-    const result = await adapter.fetchScreenings({ now, http: ctx.http, registry });
+    const result = await adapter.fetchScreenings({
+      now: ctx.sourceNow ?? now,
+      http: ctx.http,
+      registry,
+    });
     const screenings = validateScreenings(result.screenings);
 
     const known = screenings.filter((screening) => registry.get(screening.cinemaId) !== undefined);

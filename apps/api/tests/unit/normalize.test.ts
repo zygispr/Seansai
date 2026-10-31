@@ -104,4 +104,34 @@ describe('titleKeysOf', () => {
       titleKeysOf({ title: 'Instruktorius', originalTitle: 'Instruktorius', englishTitle: null }),
     ).toEqual(['instruktorius']);
   });
+
+  test('ignores the Scanorama festival label, however a cinema spells it', () => {
+    for (const title of [
+      'SCA26: Aukso amžius',
+      'SCA: Aukso amžius',
+      "SCA'26: Aukso amžius",
+      'SCANORAMA ’26: „Aukso amžius“',
+    ]) {
+      expect(titleKeysOf({ title, originalTitle: null, englishTitle: null })).toEqual([
+        'aukso amzius',
+      ]);
+    }
+    // A film whose title merely starts with the letters stays as it is.
+    expect(titleKeysOf({ title: 'Scarface', originalTitle: null, englishTitle: null })).toEqual([
+      'scarface',
+    ]);
+  });
+
+  test('ignores the programme Fliko cinemas add after a bar', () => {
+    expect(
+      titleKeysOf({ title: 'Aukso amžius | Scanorama', originalTitle: null, englishTitle: null }),
+    ).toEqual(['aukso amzius']);
+    expect(
+      titleKeysOf({
+        title: 'Septintasis antspaudas | Klasikos popietė',
+        originalTitle: null,
+        englishTitle: null,
+      }),
+    ).toEqual(['septintasis antspaudas']);
+  });
 });

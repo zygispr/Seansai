@@ -20,8 +20,10 @@ SEANSAI_CONTACT=https://github.com/zygispr/Seansai npm run fixtures:capture -- <
 ```
 
 The capture log below records when each source was captured. In fixture mode the API uses the
-latest capture instant as its clock (unless `FIXTURE_NOW` is set), so "today" and "already
-started" match the saved data.
+earliest capture instant as its clock (unless `FIXTURE_NOW` is set), so "today" and "already
+started" match the saved data and no source's screenings are already in the past. Each adapter
+replays its own capture instant, so the dated URLs it requests are the ones that were saved; a
+source captured on a later day (Forum) simply starts on a later date.
 
 ## Source notes
 
@@ -34,8 +36,12 @@ started" match the saved data.
   plus eight movie pages; in fixture mode the other movies answer "not found" and are skipped.
   HTML fixtures are saved without their inline `<style>` contents (megabytes of CSS no adapter
   reads).
-- **Forum** — not captured yet: on 2026-10-30 `https://restapi.forumcinemas.lt/robots.txt`
-  answered HTTP 500 to the capture client, which RFC 9309 treats as "disallow everything".
+- **Forum** — captured on 2026-10-31, a day after the others. Its API host has no robots.txt
+  (404, no restrictions), but answers that request with HTTP 500 when the request says
+  `Accept-Language: *`, the default of Node's `fetch`, which RFC 9309 reads as "disallow
+  everything"; the polite client therefore sends `Accept-Language: lt`. `urls.json` lists the
+  regions, each region's 14 days of screenings, the movie list, the one movie missing from it
+  and each cinema's halls (those answers carry seat maps, so the adapter asks once a day).
 
 <!-- capture-log:start -->
 | Source | Captured at (UTC) |
@@ -43,6 +49,7 @@ started" match the saved data.
 | apollo | 2026-10-30T17:39:42.136Z |
 | atlantis | 2026-10-30T17:45:40.919Z |
 | cinamon | 2026-10-30T17:41:11.578Z |
+| forum | 2026-10-31T16:37:09.442Z |
 | garsas | 2026-10-30T17:45:56.804Z |
 | minija | 2026-10-30T17:46:21.519Z |
 | pasaka | 2026-10-30T17:39:44.737Z |

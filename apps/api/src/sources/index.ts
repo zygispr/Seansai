@@ -6,6 +6,7 @@ import {
   minijaAdapter,
   spindulysAdapter,
 } from './fliko/adapter.ts';
+import { forumAdapter } from './forum/adapter.ts';
 import { apolloAdapter, pasakaAdapter } from './mcs/adapter.ts';
 import { romuvaAdapter } from './romuva/adapter.ts';
 import { skalvijaAdapter } from './skalvija/adapter.ts';
@@ -43,13 +44,10 @@ export const sourceConfigs: readonly SourceConfig[] = [
   { id: 'cinamon', enabled: true, robotsOverride: true, overrideReason: OWNER_OVERRIDE_REASON },
 ];
 
-/**
- * One adapter per configured source. Forum has none yet: its fixtures could not be captured
- * (its API answered robots.txt with HTTP 500, which means "disallow"), so its cinemas show as
- * stale until the adapter is built.
- */
+/** One adapter per configured source. */
 export const adapters: readonly SourceAdapter[] = [
   apolloAdapter,
+  forumAdapter,
   pasakaAdapter,
   skalvijaAdapter,
   atlantisAdapter,

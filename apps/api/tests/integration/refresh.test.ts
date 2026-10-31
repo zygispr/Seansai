@@ -125,6 +125,18 @@ describe('refreshSource', () => {
     });
   });
 
+  test('runs the adapter on its own clock when one is given (fixture replay)', async () => {
+    const adapter = stubAdapter({ screenings: [], skipped: [] });
+    const capturedAt = new Date(NOW.getTime() + 24 * 60 * 60 * 1000);
+
+    await refreshSource(adapter, context({ sourceNow: capturedAt }));
+
+    expect(adapter.fetchScreeningsMock).toHaveBeenCalledWith(
+      expect.objectContaining({ now: capturedAt }),
+    );
+    expect(repo.listSources()[0]?.lastAttemptAt).toEqual(NOW);
+  });
+
   test('a result failing SourceScreeningSchema keeps the previous data and records the error', async () => {
     await refreshSource(stubAdapter({ screenings: [screening()], skipped: [] }), context());
 

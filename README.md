@@ -22,9 +22,6 @@ The feature spec, plan and design documents are in
 
 **Known gaps**
 
-- **Forum Cinemas** has no adapter yet. Its API answered our robots.txt request with HTTP 500,
-  which means "disallow", so its four cinemas are listed and always flagged as possibly out of
-  date.
 - **Cinamon** publishes only today's sessions in a form we can read (`today-only`), and its ticket
   links point to the cinema's schedule page.
 

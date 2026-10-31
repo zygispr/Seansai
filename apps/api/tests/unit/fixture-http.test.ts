@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { SourceBlockedError, SourceRequestError } from '../../src/lib/errors.ts';
 import {
   FixtureHttpClient,
+  readCaptureInstant,
   readFixtureNow,
   recordCapture,
   resolveFixtureUrl,
@@ -122,20 +123,32 @@ describe('resolveFixtureUrl', () => {
 });
 
 describe('capture log', () => {
-  test('records captures per source and uses the latest one as the fixture clock', () => {
+  test('records captures per source and uses the earliest one as the fixture clock', () => {
+    // The earliest capture, so no source's saved screenings are already in the past.
     const readme = '# Fixtures\n\nSome notes.\n';
     const first = recordCapture(readme, 'forum', new Date('2026-10-30T09:00:00Z'));
     const second = recordCapture(first, 'apollo', new Date('2026-10-30T09:05:00Z'));
-    const recaptured = recordCapture(second, 'forum', new Date('2026-10-30T09:10:00Z'));
+    const recaptured = recordCapture(second, 'forum', new Date('2026-10-31T09:10:00Z'));
 
     expect(recaptured).toContain('Some notes.');
     expect(recaptured.match(/\| forum \|/g)).toHaveLength(1);
 
     writeFileSync(join(fixturesDir, 'README.md'), recaptured);
-    expect(readFixtureNow(fixturesDir)?.toISOString()).toBe('2026-10-30T09:10:00.000Z');
+    expect(readFixtureNow(fixturesDir)?.toISOString()).toBe('2026-10-30T09:05:00.000Z');
+  });
+
+  test('knows when each source was captured', () => {
+    const readme = recordCapture('# Fixtures\n', 'forum', new Date('2026-10-31T09:10:00Z'));
+    writeFileSync(join(fixturesDir, 'README.md'), readme);
+
+    expect(readCaptureInstant('forum', fixturesDir)?.toISOString()).toBe(
+      '2026-10-31T09:10:00.000Z',
+    );
+    expect(readCaptureInstant('apollo', fixturesDir)).toBeNull();
   });
 
   test('has no fixture clock before anything was captured', () => {
     expect(readFixtureNow(fixturesDir)).toBeNull();
+    expect(readCaptureInstant('forum', fixturesDir)).toBeNull();
   });
 });

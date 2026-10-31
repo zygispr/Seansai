@@ -11,7 +11,7 @@ import { createLogger } from '../src/lib/logger.ts';
 import { cinemaRegistry } from '../src/registry/cinemas.ts';
 import { checkSource, formatReport, type SourceCheck } from '../src/sources/check.ts';
 import { adapters, findSourceConfig, sourceConfigs } from '../src/sources/index.ts';
-import { createClock, createHttpClient } from '../src/sources/runtime.ts';
+import { adapterNow, createClock, createHttpClient } from '../src/sources/runtime.ts';
 
 const fixtures = process.argv.includes('--fixtures');
 let config: ReturnType<typeof loadConfig>;
@@ -51,7 +51,7 @@ const reports: SourceCheck[] = await Promise.all(
       };
     }
     return checkSource(adapter, {
-      now,
+      now: adapterNow(adapter.id, config, now),
       http: createHttpClient(adapter, config, logger),
       registry: cinemaRegistry,
       robotsOverride: findSourceConfig(adapter.id)?.robotsOverride ?? false,

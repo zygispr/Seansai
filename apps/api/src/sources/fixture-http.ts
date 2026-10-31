@@ -133,14 +133,30 @@ function parseCaptureLog(readme: string): Map<string, Date> {
   return captures;
 }
 
+function readCaptureLog(fixturesDir: string): Map<string, Date> {
+  const readmePath = join(fixturesDir, 'README.md');
+  if (!existsSync(readmePath)) return new Map();
+  return parseCaptureLog(readFileSync(readmePath, 'utf8'));
+}
+
 /**
- * The fixture clock: the most recent capture instant in the fixtures README, so "today" and
- * "already started" match the data the fixtures contain. Null when nothing was captured yet.
+ * The fixture clock: the earliest capture instant in the fixtures README, so "today" and
+ * "already started" match the saved data and no source's screenings are already in the past
+ * (sources captured on a later day simply start on a later date). Null when nothing was captured.
  */
 export function readFixtureNow(fixturesDir = DEFAULT_FIXTURES_DIR): Date | null {
-  const readmePath = join(fixturesDir, 'README.md');
-  if (!existsSync(readmePath)) return null;
-  const instants = [...parseCaptureLog(readFileSync(readmePath, 'utf8')).values()];
+  const instants = [...readCaptureLog(fixturesDir).values()];
   if (instants.length === 0) return null;
-  return new Date(Math.max(...instants.map((instant) => instant.getTime())));
+  return new Date(Math.min(...instants.map((instant) => instant.getTime())));
+}
+
+/**
+ * When one source was captured. In fixture mode its adapter runs at this instant, so the dated
+ * URLs it builds are the ones that were saved.
+ */
+export function readCaptureInstant(
+  sourceId: string,
+  fixturesDir = DEFAULT_FIXTURES_DIR,
+): Date | null {
+  return readCaptureLog(fixturesDir).get(sourceId) ?? null;
 }

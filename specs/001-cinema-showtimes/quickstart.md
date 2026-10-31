@@ -84,8 +84,8 @@ SOURCES_MODE=fixtures FIXTURE_FAIL=vue FIXTURE_VUE_LAST_SUCCESS_HOURS=4 npm run 
 ```
 
 **Expect**: screenings from other cinemas still shown; a notice says Vue Vilnius times may be
-missing or outdated; "last updated" time is shown. (Vue stands in for Forum, which has no adapter
-yet and so is always flagged; `apps/web/tests/e2e/resilience.spec.ts` automates this scenario.)
+missing or outdated; "last updated" time is shown (`apps/web/tests/e2e/resilience.spec.ts`
+automates this scenario).
 
 ### Live sources (manual, not in CI)
 

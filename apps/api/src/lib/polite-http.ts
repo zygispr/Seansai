@@ -154,7 +154,9 @@ export class PoliteHttpClient implements HttpClient {
     }, TIMEOUT_MS);
     try {
       return await this.#fetch(url, {
-        headers: { 'user-agent': this.#userAgent },
+        // An explicit language replaces fetch's default "Accept-Language: *", which makes Forum's
+        // API answer its missing robots.txt with HTTP 500 (read as "disallow") instead of 404.
+        headers: { 'user-agent': this.#userAgent, 'accept-language': 'lt' },
         signal: controller.signal,
         redirect: 'follow',
       });

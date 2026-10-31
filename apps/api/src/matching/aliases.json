@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "matchKey": "conference of the birds",
+    "movieIdA": "conference-of-the-birds-2024",
+    "movieIdB": "conference-of-the-birds-2025",
+    "resolution": "merge"
+  },
+  {
+    "matchKey": "zejtune",
+    "movieIdA": "zejtune-2025",
+    "movieIdB": "zejtune-2026",
+    "resolution": "merge"
+  }
+]

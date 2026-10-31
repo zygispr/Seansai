@@ -109,7 +109,24 @@ describe('PoliteHttpClient', () => {
 
     await settle(client.getText('https://cinema.lt/schedule'));
 
-    expect([...(calls.at(-1)?.headers.keys() ?? [])]).toEqual(['user-agent']);
+    expect([...(calls.at(-1)?.headers.keys() ?? [])].sort()).toEqual([
+      'accept-language',
+      'user-agent',
+    ]);
+  });
+
+  test('asks for Lithuanian instead of fetch’s default "Accept-Language: *"', async () => {
+    // Forum's API answers its missing robots.txt with HTTP 500 instead of 404 when the language
+    // is "*", which RFC 9309 would read as "disallow everything".
+    const { client, calls } = createClient({
+      'https://cinema.lt/robots.txt': ALLOW_ALL,
+      'https://cinema.lt/schedule': { body: 'ok' },
+    });
+
+    await settle(client.getText('https://cinema.lt/schedule'));
+
+    expect(calls).toHaveLength(2);
+    for (const call of calls) expect(call.headers.get('accept-language')).toBe('lt');
   });
 
   test('waits at least 500 ms between requests to the same host', async () => {
