@@ -27,7 +27,7 @@ Expected: everything passes.
 ## 2. Both services together under `vercel dev` (US1, US3)
 
 ```bash
-printf 'SOURCES_MODE=fixtures\nCRON_SECRET=local\n' > .env      # gitignored; delete afterwards
+printf 'SOURCES_MODE=fixtures\nCRON_SECRET=0123456789abcdef0123456789abcdef\n' > .env      # gitignored; delete afterwards
 vercel dev --local --listen 3333
 ```
 
@@ -38,7 +38,7 @@ vercel dev --local --listen 3333
 | `curl -sI localhost:3333/ \| grep -i content-security-policy`   | the CSP header                                              |
 | `curl -s localhost:3333/api/v1/cron/daily`                     | `404` with the `not_found` body                             |
 | `curl -s -H 'Authorization: Bearer wrong' localhost:3333/api/v1/cron/daily` | `404`                                          |
-| `curl -s -H 'Authorization: Bearer local' localhost:3333/api/v1/cron/daily` | `200`, every source listed, `cleanup` counts   |
+| `curl -s -H 'Authorization: Bearer 0123456789abcdef0123456789abcdef' localhost:3333/api/v1/cron/daily` | `200`, every source listed, `cleanup` counts   |
 
 Delete `.env` when done.
 
@@ -58,10 +58,11 @@ curl -s localhost:3000/ | head -c 100     # the web app's index.html
 1. Run `vercel link` and create the project on the **Hobby** team.
 2. Set up the database:
    - Run `vercel integration add turso` and choose **Free**.
-   - If that asks for a paid plan or a card, stop. Create the database at turso.tech in the EU
-     region nearest Frankfurt instead, then
-     `vercel env add TURSO_DATABASE_URL` and `vercel env add TURSO_AUTH_TOKEN` for Production and
+   - Create two databases: `seansai` connected to Production, and `seansai-preview` connected to
      Preview.
+   - If that asks for a paid plan or a card, stop. Create both databases at turso.tech in the EU
+     region nearest Frankfurt instead. Then run `vercel env add TURSO_DATABASE_URL` and
+     `vercel env add TURSO_AUTH_TOKEN` once per environment, with that environment's database.
 3. Add the remaining variables:
    - `vercel env add CRON_SECRET production` with the output of `openssl rand -hex 32`;
    - `vercel env add SEANSAI_CONTACT` with `https://github.com/zygispr/Seansai`.
@@ -84,7 +85,8 @@ curl -s localhost:3000/ | head -c 100     # the web app's index.html
 
 ## 5. Daily refresh works without anyone (US2)
 
-- On two consecutive mornings, before 08:00 Vilnius time:
+- On two consecutive mornings (the release gate), and then on each of the first 7 days (SC-003,
+  checked at the one-week review), before 08:00 Vilnius time:
   - Vercel's Cron Jobs tab shows a successful run after 22:00 UTC;
   - `/health` shows each source's `lastSuccessAt` from that night;
   - the site lists today's screenings and none from yesterday (SC-003).

@@ -59,6 +59,10 @@ measurements come from the developer's live database on the same day.
      plan. It sets `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` on the project.
   2. If (1) asks for a paid plan or a card on a Hobby team, sign up at turso.tech instead (free,
      no card) and add the two variables with `vercel env add`.
+
+  Either way, create **two** databases: `seansai` for Production and `seansai-preview` for
+  Preview. Otherwise a preview of a branch with a new migration would change production's schema
+  before the merge. Free allows up to 100 databases.
 - **Alternatives considered**:
   - Neon Postgres (free): rewrite the schema and queries for Postgres. More work, no benefit for
     about 3,000 rows.

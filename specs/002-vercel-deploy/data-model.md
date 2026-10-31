@@ -11,7 +11,8 @@ data lives, how it's written, and adds a few runtime-only values.
 
 | Environment                     | Database URL                                   | Refresh                         | Stale after |
 | ------------------------------- | ---------------------------------------------- | ------------------------------- | ----------- |
-| Vercel production and previews  | `TURSO_DATABASE_URL` + `TURSO_AUTH_TOKEN`      | daily cron, production only     | 27 h        |
+| Vercel production               | `TURSO_DATABASE_URL` + `TURSO_AUTH_TOKEN` (database `seansai`) | daily cron | 27 h |
+| Vercel previews                 | `TURSO_DATABASE_URL` + `TURSO_AUTH_TOKEN` (database `seansai-preview`) | none; filled from a laptop when needed | 27 h |
 | Vercel in fixture mode          | `:memory:` (`vercel dev` with saved test data) | one startup refresh, from files | 3 h         |
 | Docker                          | `file:/data/seansai.sqlite` (`DB_PATH`)        | in-process scheduler, hourly    | 3 h         |
 | Local `npm run dev`, live       | `file:apps/api/data/seansai.sqlite`            | in-process scheduler, hourly    | 3 h         |

@@ -1,6 +1,5 @@
 ---
-
-description: "Task list for Free Public Hosting on Vercel"
+description: 'Task list for Free Public Hosting on Vercel'
 ---
 
 # Tasks: Free Public Hosting on Vercel
@@ -15,6 +14,7 @@ acceptance criteria. Test tasks come first in each phase and must fail before th
 tasks.
 
 **Organization**:
+
 - Phases 1–2: the shared async data layer.
 - Phases 3–5: one phase per user story, in priority order.
 - Each story phase ends with a commit.
@@ -27,6 +27,7 @@ tasks.
 ## Path Conventions
 
 npm workspaces monorepo:
+
 - API source in `apps/api/src/`, API tests in `apps/api/tests/`;
 - deployment files (`vercel.json`, `Dockerfile`, `README.md`) at the repository root.
 
@@ -56,11 +57,12 @@ each source refresh as one batch ([research.md §2](./research.md#2-shared-data-
 ### Tests for the data layer ⚠️ (write first, confirm they fail)
 
 - [ ] T002 [P] Make the test helpers async.
-  - `apps/api/tests/helpers/temp-db.ts`: `createTempDb(): Promise<{ db: Db; path: string; cleanup: () => void }>`, opening `openDb(\`file:${path}\`)`. `cleanup` calls `db.close()` and then removes the temporary directory.
+  - `apps/api/tests/helpers/temp-db.ts`: `createTempDb(): Promise<{ db: Db; path: string; cleanup: () => void }>`, opening `openDb(\`file:${path}\`)`. `cleanup`calls`db.close()` and then removes the temporary directory.
   - `apps/api/tests/helpers/catalog.ts` and `apps/api/tests/helpers/large-catalog.ts`: seed through `await repo.upsertMovie(...)`, `await repo.replaceSourceScreenings(...)` and `await repo.recordSourceSuccess(...)`, and become `async`.
 - [ ] T003 [P] Add data-layer tests to `apps/api/tests/integration/repository.test.ts` and convert the existing ones to `await`.
   - `splitStatements` ignores comments and empty statements: `'-- a; b\nCREATE TABLE a (x);\n\n-- c\nCREATE INDEX i ON a (x);\n'` → `['CREATE TABLE a (x)', 'CREATE INDEX i ON a (x)']`.
-  - Reopening a database file doesn't run migrations again: after closing and reopening with `openDb(\`file:${path}\`)`, `PRAGMA user_version` is `2` and no error is thrown.
+  - Reopening a database file doesn't run migrations again: close it, reopen it with `openDb('file:' + path)`, and `PRAGMA user_version` is `2` with no error thrown.
+  - Two servers starting at once migrate safely (U1): on a fresh temporary file, `await Promise.all([openDb(url), openDb(url)])` resolves both. `PRAGMA user_version` is `2`, and `SELECT COUNT(*) FROM sqlite_master WHERE name = 'movies'` is `1`.
   - `storeRefresh` writes one source refresh and counts only new reviews:
     - two movies (`digger-2026` with keys `['kasejas']`, and `digger-2025`), one screening, one review;
     - the first call returns `{ newReviews: 1 }`, the second `{ newReviews: 0 }`;
@@ -70,6 +72,7 @@ each source refresh as one batch ([research.md §2](./research.md#2-shared-data-
     - store one refresh, then call it again with a screening whose `format` is `'VHS'` (violates the schema's CHECK);
     - the second call rejects;
     - the source's screenings and `lastSuccessAt` are still those of the first call.
+  - Two refreshes of the same source at once leave no duplicates (spec edge case): `await Promise.all([repo.storeRefresh(r), repo.storeRefresh(r)])` with the same three screenings. Afterwards the source has exactly 3 screenings, and both calls resolved.
   - `deleteStaleMovies` leaves no orphaned keys or reviews:
     - two movies with no screenings and `last_screening_at` NULL, one with keys, plus a review between them;
     - returns `2`;
@@ -80,11 +83,13 @@ each source refresh as one batch ([research.md §2](./research.md#2-shared-data-
 - [ ] T004 Rewrite `apps/api/src/db/index.ts`.
   - `export type Db = Client` (from `@libsql/client`).
   - `export async function openDb(url: string, authToken: string | null = null): Promise<Db>`:
-    - for `file:` URLs, create the parent directory and run `PRAGMA journal_mode = WAL`;
+    - for `file:` URLs, create the parent directory and run `PRAGMA journal_mode = WAL` and `PRAGMA busy_timeout = 5000`, so a second starting server waits for the first one's migration instead of failing;
     - read `PRAGMA user_version`;
-    - apply each pending migration with one `db.batch([...splitStatements(sql), \`PRAGMA user_version = ${n}\`], 'write')`.
+    - apply each pending migration `n` with one `db.batch([...splitStatements(sql), 'PRAGMA user_version = ' + n], 'write')`;
+    - if a migration batch rejects, re-read `PRAGMA user_version`. If it's now `>= n`, another server applied it, so continue. Otherwise rethrow the original error.
+    - Comment _why_: two new Vercel function instances can start against the same database at once.
   - `export function splitStatements(sql: string): string[]`: drop `--` comment lines, split on `;`, trim, drop empty strings.
-  - Comment *why* `PRAGMA foreign_keys` isn't set: Turso remote requests don't keep it, so deletes are explicit.
+  - Comment _why_ `PRAGMA foreign_keys` isn't set: Turso remote requests don't keep it, so deletes are explicit.
 - [ ] T005 Rewrite `apps/api/src/db/repository.ts` as async on `Db`.
   - Every public method returns a Promise: `upsertMovie`, `getMovie`, `listMovieIdentities`, `replaceSourceScreenings`, `recordSourceAttempt`, `recordSourceSuccess`, `getSource`, `listSources`, `deletePastScreenings` → `Promise<number>`, `deleteStaleMovies` → `Promise<number>`, `insertMatchReview` → `Promise<boolean>`.
   - Keep the SQL text unchanged, as constants built into `InStatement`s by private helpers. Pass `null`, never `undefined`. Cast rows with `as unknown as RowType[]`.
@@ -98,7 +103,7 @@ each source refresh as one batch ([research.md §2](./research.md#2-shared-data-
     6. `recordSuccess`.
   - `newReviews` = review inserts with `rowsAffected > 0`.
   - `deleteStaleMovies`: one batch that deletes the stale movies' `movie_keys` and `match_reviews` rows, then the movies. It returns the movies delete's `rowsAffected`.
-  - Remove `transaction()` and the `better-sqlite3` import. Comment *why*: Turso interactive transactions time out after 5 s and cost a round trip per statement.
+  - Remove `transaction()` and the `better-sqlite3` import. Comment _why_: Turso interactive transactions time out after 5 s and cost a round trip per statement.
 - [ ] T006 Make `apps/api/src/db/queries.ts` async on `Db`.
   - These return Promises: `listMovies`, `getMovie`, `screeningDates`, `availableDates`, `listScreenings`, `nextDateWithScreenings`, `freshness`.
   - These stay synchronous: `cinemasIn`, `listCities`, `isCity`.
@@ -112,13 +117,13 @@ each source refresh as one batch ([research.md §2](./research.md#2-shared-data-
   - Update `apps/api/tests/unit/scheduler.test.ts` so the cleanup mock resolves, and add a test that a rejected cleanup is logged and the next cleanup is still scheduled.
 - [ ] T009 [P] Make the route handlers in `apps/api/src/routes/health.ts`, `apps/api/src/routes/movies.ts` and `apps/api/src/routes/screenings.ts` `async` and await the repo and queries calls. `findMovie(queries, movieId)` becomes `async` and returns `Promise<MovieRecord>`.
 - [ ] T010 Update `apps/api/src/main.ts`:
-  - `const db = await openDb(config.dbPath === ':memory:' ? ':memory:' : \`file:${config.dbPath}\`)` (US1 replaces this with `config.db`);
+  - `const db = await openDb(config.dbPath === ':memory:' ? ':memory:' : \`file:${config.dbPath}\`)`(US1 replaces this with`config.db`);
   - await `repo.recordSourceSuccess(...)` in the fixture loop;
   - the scheduler's `cleanup` becomes an `async` callback awaiting `deletePastScreenings` and `deleteStaleMovies`.
 - [ ] T011 Convert the remaining API tests to `await` the async helpers, repo and queries:
   - `apps/api/tests/integration/{health,cities,movies,screenings,refresh,matching-fixtures,performance,server}.test.ts`;
   - `apps/api/tests/load/peak.test.ts`.
-  Assertions don't change.
+    Assertions don't change.
 - [ ] T012 Verify, then commit.
   - `npm test -w @seansai/api` passes.
   - `npm run test:load` passes with p95 < 300 ms.
@@ -136,9 +141,10 @@ each source refresh as one batch ([research.md §2](./research.md#2-shared-data-
 starts never contact cinemas, and list responses are cached by the CDN.
 
 **Independent Test**:
+
 1. Provision Vercel Hobby and Turso Free.
 2. Deploy a preview.
-3. Fill Turso once from a laptop (T024).
+3. Fill Turso once from a laptop (T027).
 4. Follow feature 001's journeys on the preview: city prompt, movie list, screenings, dates, filters, ticket link, deep-link reload. The results match a self-hosted copy (spec US1, SC-001).
 
 ### Tests for User Story 1 ⚠️ (write first, confirm they fail)
@@ -157,13 +163,34 @@ starts never contact cinemas, and list responses are cached by the CDN.
     - defaults include `refreshMode: 'scheduler'`.
   - Delete the `/tmp` test added in commit `156fa6c`.
 - [ ] T014 [P] [US1] Change the expected list cache header to `'public, max-age=300, s-maxage=300'` in `apps/api/tests/integration/movies.test.ts:87`, `apps/api/tests/integration/cities.test.ts:39` and `apps/api/tests/integration/server.test.ts:101`. In `apps/api/tests/integration/screenings.test.ts`, add the same assertion for `GET /api/v1/movies/:id/screenings` ([contracts/hosting.md](./contracts/hosting.md#api-response-caching-change-to-feature-001s-public-api)).
-- [ ] T015 [P] [US1] Add N+1 regression tests: `vi.spyOn(Repository.prototype, 'getSource')` is never called and `listSources` is called exactly once per request for:
+- [ ] T015 [US1] Add N+1 regression tests: `vi.spyOn(Repository.prototype, 'getSource')` is never called and `listSources` is called exactly once per request for:
   - `GET /api/v1/movies?city=all` in `apps/api/tests/integration/movies.test.ts`;
   - `GET /api/v1/health` in `apps/api/tests/integration/health.test.ts`.
+- [ ] T016 [P] [US1] Create `apps/api/tests/unit/vercel-config.test.ts`. It reads the repository's `vercel.json` (`new URL('../../../../vercel.json', import.meta.url)`) and asserts the routing and headers that FR-001, FR-002 and FR-012 depend on, so they're tested in CI and not only by hand:
+  - **Top-level `rewrites`**: exactly two, in this order:
+    1. `{ source: '/api/(.*)', destination: { service: 'api' } }`;
+    2. `{ source: '/(.*)', destination: { service: 'web' } }` (the catch-all must be last).
+  - **`services.api`**: `{ root: 'apps/api', framework: 'fastify', entrypoint: 'index.ts' }`, and the file `apps/api/index.ts` exists.
+  - **`services.web.rewrites`** contains `{ source: '/(.*)', destination: '/index.html' }` (deep links, FR-002).
+  - **`services.web.headers`**: the `/(.*)` rule has:
+    - `Content-Security-Policy` equal to `SECURITY_HEADERS['content-security-policy']` imported from `apps/api/src/server.ts`;
+    - `X-Content-Type-Options: nosniff`;
+    - `Referrer-Policy: strict-origin-when-cross-origin`.
+
+    This keeps the two copies of the CSP from drifting apart.
+
+  - **`regions`** equals `['fra1']`.
+  - **No bindings**: no service has `bindings`.
+- [ ] T017 [P] [US1] Create `apps/api/tests/unit/startup.test.ts` for `startBackgroundRefresh` (T019), using `vi.useFakeTimers()` and a stub adapter whose `refresh` is a `vi.fn()`. This pins FR-007, US1 scenario 4 and SC-006.
+  - **`'cron'` mode**:
+    - returns `null`;
+    - after `vi.advanceTimersByTimeAsync(2 * 60 * 60 * 1000)`, `refresh` and `cleanup` have **never** been called;
+    - logs `'Refresh runs from Vercel Cron; scheduler not started'` once.
+  - **`'scheduler'` mode, `live`**: returns a `Scheduler`, and `refresh` was called once per adapter at startup.
 
 ### Implementation for User Story 1
 
-- [ ] T016 [US1] Change `apps/api/src/config.ts`.
+- [ ] T018 [US1] Change `apps/api/src/config.ts`.
   - Replace `dbPath` with `db: { url: string; authToken: string | null }`. Add `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` and `VERCEL` to the env schema.
   - Choose `db.url` in this order:
     1. `TURSO_DATABASE_URL`, with `TURSO_AUTH_TOKEN`;
@@ -173,16 +200,21 @@ starts never contact cinemas, and list responses are cached by the CDN.
     5. otherwise `file:` + `DEFAULT_DB_PATH`.
   - Add `refreshMode: 'scheduler' | 'cron'`: `'cron'` when `VERCEL` is set and `SOURCES_MODE` is `live`.
   - Delete `VERCEL_DB_PATH`.
-- [ ] T017 [US1] Change `apps/api/src/main.ts`.
+- [ ] T019 [US1] Create `apps/api/src/refresh/startup.ts` (after T018, which adds `Config['refreshMode']`).
+  - `export function startBackgroundRefresh(mode: Config['refreshMode'], adapters: readonly SourceAdapter[], options: SchedulerOptions): Scheduler | null`.
+  - In `'cron'` mode it logs `'Refresh runs from Vercel Cron; scheduler not started'` through `options.logger` and returns `null` without touching `refresh` or `cleanup`.
+  - Otherwise it returns `startScheduler(adapters, options)`.
+  - Add a _why_ comment: on Vercel every cold start would otherwise fetch from all cinemas (FR-007).
+- [ ] T020 [US1] Change `apps/api/src/main.ts`.
   - Open the database with `await openDb(config.db.url, config.db.authToken)`.
-  - Call `startScheduler` only when `config.refreshMode === 'scheduler'`. Otherwise log `'Refresh runs from Vercel Cron; scheduler not started'`, which satisfies US1 scenario 4 and FR-007.
-  - `shutdown` stops the scheduler only if one was started.
-- [ ] T018 [P] [US1] In `apps/api/src/routes/http.ts`, make `setListCaching` set `cache-control: public, max-age=300, s-maxage=300`. Add a *why* comment: the Vercel CDN caches only with `s-maxage` and strips it before the browser; self-hosted it has no effect.
-- [ ] T019 [US1] Remove the N+1 queries.
+  - Replace the direct `startScheduler(...)` call with `startBackgroundRefresh(config.refreshMode, enabledAdapters, {...})` from T019.
+  - `shutdown` calls `scheduler?.stop()`.
+- [ ] T021 [P] [US1] In `apps/api/src/routes/http.ts`, make `setListCaching` set `cache-control: public, max-age=300, s-maxage=300`. Add a _why_ comment: the Vercel CDN caches only with `s-maxage` and strips it before the browser; self-hosted it has no effect.
+- [ ] T022 [US1] Remove the N+1 queries.
   - `Queries.freshness` in `apps/api/src/db/queries.ts`: read all sources with one `await this.#repo.listSources()` and look them up in a `Map` by id.
   - `apps/api/src/routes/health.ts`: same, one `listSources()` per request.
-- [ ] T020 [US1] Add `"regions": ["fra1"]` at the top level of `vercel.json` ([research.md §6](./research.md#6-region-and-latency-sc-004)).
-- [ ] T021 [US1] Check locally.
+- [ ] T023 [US1] Add `"regions": ["fra1"]` at the top level of `vercel.json` ([research.md §6](./research.md#6-region-and-latency-sc-004)). Export the existing `SECURITY_HEADERS` constant from `apps/api/src/server.ts`, which T016 compares with `vercel.json`. T016 must now pass.
+- [ ] T024 [US1] Check locally.
   - `npm test -w @seansai/api && npm run typecheck && npm run lint` pass.
   - Run quickstart §2's non-cron rows under `vercel dev --local --listen 3333` with a temporary `.env` containing `SOURCES_MODE=fixtures`:
     - the movies API returns JSON;
@@ -190,23 +222,34 @@ starts never contact cinemas, and list responses are cached by the CDN.
     - the CSP header is present.
   - Delete `.env` afterwards.
   - If `vercel dev` rejects `regions`, remove it from `vercel.json` and record that the region is set in project settings instead.
-- [ ] T022 [US1] Provision on free plans (quickstart §4 steps 1–3, with the owner's go-ahead for each account action).
+- [ ] T025 [US1] Provision on free plans (quickstart §4 steps 1–3, with the owner's go-ahead for each account action).
   - Run `vercel link` and create the project on the **Hobby** team, with the function region `fra1`.
   - Run `vercel integration add turso` and choose the **Free** plan, in the EU region nearest Frankfurt.
-    - If it asks for a paid plan or a card, stop. Create the database at turso.tech instead, then `vercel env add TURSO_DATABASE_URL` and `vercel env add TURSO_AUTH_TOKEN` for Production and Preview.
+  - Create **two** databases on that free account:
+    - `seansai`, connected to **Production** only;
+    - `seansai-preview`, connected to **Preview** (and Development) only.
+
+    Each environment gets its own `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`, so a preview can never migrate or write production's data (U2). Turso Free allows up to 100 databases.
+  - If the integration asks for a paid plan or a card, stop. Create both databases at turso.tech instead, then `vercel env add TURSO_DATABASE_URL <environment>` and `vercel env add TURSO_AUTH_TOKEN <environment>`, with production's values for `production` and the preview database's for `preview`.
   - `vercel env add SEANSAI_CONTACT` (Production and Preview) with `https://github.com/zygispr/Seansai`.
-- [ ] T023 [US1] Deploy a preview by pushing `002-vercel-deploy`.
+- [ ] T026 [US1] Deploy a preview by pushing `002-vercel-deploy`.
   - The build succeeds.
-  - `GET <preview>/api/v1/health` returns `status: ok` with every source `stale`. This proves the migrations ran on Turso, including `PRAGMA user_version`.
+  - `GET <preview>/api/v1/health` returns `status: ok` with every source `stale`. This proves the migrations ran on the **preview** database, including `PRAGMA user_version`. Production's database stays untouched until T047.
   - If Deployment Protection blocks `curl`, use `vercel curl`.
-- [ ] T024 [US1] Fill Turso once from a laptop.
-  - Run `TURSO_DATABASE_URL=… TURSO_AUTH_TOKEN=… SEANSAI_CONTACT=https://github.com/zygispr/Seansai npm run dev -w @seansai/api`. This uses scheduler mode, which runs one polite startup refresh.
+- [ ] T027 [US1] Fill the **preview** database once from a laptop.
+  - Run `TURSO_DATABASE_URL=<preview db url> TURSO_AUTH_TOKEN=<preview token> SEANSAI_CONTACT=https://github.com/zygispr/Seansai npm run dev -w @seansai/api`. This uses scheduler mode, which runs one polite startup refresh.
   - Wait for `Source refreshed` for each source, then stop it.
   - Confirm `<preview>/api/v1/health` shows each source `healthy`.
-- [ ] T025 [US1] Validate on the preview from a phone.
+- [ ] T028 [US1] Validate on the preview from a phone.
   - Feature 001's journeys all work (SC-001).
   - The movie list appears in < 2 s, and in < 3 s after an hour idle (SC-004).
   - The second `curl -sI '<preview>/api/v1/movies?city=vilnius'` shows `x-vercel-cache: HIT`.
+  - Server p95 against remote Turso (Constitution VI):
+    - run `for i in $(seq 1 50); do curl -s -o /dev/null -w '%{time_starttransfer}\n' "<preview>/api/v1/movies?city=all&nocache=$i"; done | sort -n | sed -n 48p`;
+    - a unique query parameter skips the CDN, and the API ignores unknown parameters;
+    - the 48th of 50 sorted (≈ p95), measured from Lithuania, is < 0.3 s plus the network round trip shown by `curl -w '%{time_connect}'`;
+    - record the value in [research.md §5](./research.md#5-keeping-usage-free-sc-002-sc-005).
+  - SC-006 spot-check: after the preview has been idle for an hour, request `/api/v1/health` once. Within the hour (Hobby keeps logs that long), Runtime Logs for that cold start show `Refresh runs from Vercel Cron; scheduler not started` and no `Source refreshed` or `Source refresh failed` lines.
   - Then commit `feat: run on Vercel with the shared Turso database (002 US1)` and push.
 
 **Checkpoint**: The public site works on free plans with shared data. Refreshing still needs a
@@ -225,54 +268,82 @@ from that night, and no manual action (spec US2, SC-003, quickstart §5).
 
 ### Tests for User Story 2 ⚠️ (write first, confirm they fail)
 
-- [ ] T026 [P] [US2] In `apps/api/tests/unit/source-status.test.ts`, add: with `staleAfterMs = 27 * 60 * 60 * 1000`, a success 26 h before `now` is `'healthy'` and one exactly 27 h before is `'stale'`. With the default, 3 h still gives `'stale'`.
-- [ ] T027 [P] [US2] Add config tests to `apps/api/tests/unit/config.test.ts`.
-  - The Vercel/Turso case from T013 with `CRON_SECRET: 's'` gives `staleAfterMs` = `27 * 60 * 60 * 1000` and `cronSecret` = `'s'`.
+- [ ] T029 [P] [US2] In `apps/api/tests/unit/source-status.test.ts`, add: with `staleAfterMs = 27 * 60 * 60 * 1000`, a success 26 h before `now` is `'healthy'` and one exactly 27 h before is `'stale'`. With the default, 3 h still gives `'stale'`.
+- [ ] T030 [P] [US2] Add config tests to `apps/api/tests/unit/config.test.ts`.
+  - The Vercel/Turso case from T013 with `CRON_SECRET: '0123456789abcdef0123456789abcdef'` gives `staleAfterMs` = `27 * 60 * 60 * 1000` and `cronSecret` equal to that value.
+  - A weak secret is rejected, as data-model.md requires ("a random value of at least 32 hex characters"): `CRON_SECRET: 's'` and `CRON_SECRET: 'z'.repeat(40)` both throw `/CRON_SECRET/`.
   - The fixture defaults give `staleAfterMs` = `3 * 60 * 60 * 1000` and `cronSecret` = `null`.
-- [ ] T028 [P] [US2] Create `apps/api/tests/unit/daily.test.ts` with stub adapters: `a` resolves `{ status: 'success', … }`, `b` resolves `{ status: 'failed', error: 'x' }`, `c` throws.
+- [ ] T031 [P] [US2] Create `apps/api/tests/unit/daily.test.ts` with stub adapters: `a` resolves `{ status: 'success', … }`, `b` resolves `{ status: 'failed', error: 'x' }`, `c` throws.
   - `runDailyRefresh` resolves to `sources: { a: 'success', b: 'failed', c: 'failed' }`.
   - `cleanup` is called once, after all three refreshes settled (check call order).
   - The result's `cleanup` equals the stub's return `{ screenings: 4, movies: 1 }`.
   - The thrown error is logged with the source id.
-- [ ] T029 [P] [US2] Create `apps/api/tests/integration/cron.test.ts` building the server with `cron: { secret: 's3cret', run: vi.fn().mockResolvedValue(result) }`.
+- [ ] T032 [P] [US2] Create `apps/api/tests/integration/cron.test.ts` building the server with `cron: { secret: 's3cret', run: vi.fn().mockResolvedValue(result) }`.
   - Without the `authorization` header: 404 with body `{ error: { code: 'not_found', message: 'There is no such API route.' } }`, and `run` not called.
   - With `Bearer wrong`: 404, and `run` not called.
   - With `Bearer s3cret`: 200, the body equals `result`, and `cache-control` is `no-store`.
   - With the server built without `cron`: `GET /api/v1/cron/daily` with the right header returns 404 ([contracts/cron-endpoint.md](./contracts/cron-endpoint.md)).
-- [ ] T030 [P] [US2] In `apps/api/tests/integration/movies.test.ts`, add: with `staleAfterMs: 27 h` passed to `buildServer`, Forum (last success 4 h before `NOW` in the catalog) is **not** in `freshness.staleCinemas`. With the default it is, as before.
+- [ ] T033 [P] [US2] In `apps/api/tests/integration/movies.test.ts`, add: with `staleAfterMs: 27 h` passed to `buildServer`, Forum (last success 4 h before `NOW` in the catalog) is **not** in `freshness.staleCinemas`. With the default it is, as before.
+- [ ] T034 [P] [US2] In `apps/api/tests/unit/vercel-config.test.ts`, add:
+  - `crons` equals exactly `[{ path: '/api/v1/cron/daily', schedule: '0 22 * * *' }]`;
+  - every cron schedule's minute and hour fields are single numbers, so it runs at most once a day (the Hobby limit, FR-011);
+  - the cron path starts with `/api/`, so the top-level rewrite routes it to the `api` service.
+
+  If T043's fallback is used instead, assert that `vercel.json` has no `crons`, and that `.github/workflows/daily-refresh.yml` contains `cron: '0 22 * * *'` and the `/api/v1/cron/daily` URL.
 
 ### Implementation for User Story 2
 
-- [ ] T031 [US2] In `apps/api/src/refresh/status.ts`, add the parameter: `deriveSourceStatus(source, now, staleAfterMs: number = STALE_AFTER_MS)`. Update the doc comment's "3 hours" to "the stale threshold (3 h self-hosted, 27 h on Vercel)".
-- [ ] T032 [US2] Thread the threshold through.
-  - `apps/api/src/config.ts`: add `staleAfterMs` (27 h when `refreshMode === 'cron'`, else `STALE_AFTER_MS`) and `cronSecret` (`CRON_SECRET` or null).
+- [ ] T035 [US2] In `apps/api/src/refresh/status.ts`, add the parameter: `deriveSourceStatus(source, now, staleAfterMs: number = STALE_AFTER_MS)`. Update the doc comment's "3 hours" to "the stale threshold (3 h self-hosted, 27 h on Vercel)".
+- [ ] T036 [US2] Thread the threshold through.
+  - `apps/api/src/config.ts`: add `staleAfterMs` (27 h when `refreshMode === 'cron'`, else `STALE_AFTER_MS`) and `cronSecret` (`CRON_SECRET` or null). Validate `CRON_SECRET` in the env schema with `z.string().regex(/^[0-9a-f]{32,}$/i, 'must be at least 32 hex characters').optional()`.
   - `ServerOptions.staleAfterMs?: number` in `apps/api/src/server.ts`, passed to `Queries` (new `staleAfterMs` option in `apps/api/src/db/queries.ts`) and to `healthRoutes` (new option in `apps/api/src/routes/health.ts`). Both call `deriveSourceStatus(…, staleAfterMs)`.
   - `apps/api/src/main.ts` passes `staleAfterMs: config.staleAfterMs`.
-- [ ] T033 [P] [US2] Create `apps/api/src/refresh/daily.ts`.
+- [ ] T037 [P] [US2] Create `apps/api/src/refresh/daily.ts`.
   - `export type DailyRefreshResult = { sources: Record<string, RefreshOutcome['status']>; cleanup: { screenings: number; movies: number } }`.
   - `export async function runDailyRefresh(deps: { adapters: readonly SourceAdapter[]; refresh: (adapter: SourceAdapter, now: Date) => Promise<RefreshOutcome>; cleanup: (now: Date) => Promise<{ screenings: number; movies: number }>; clock: () => Date; logger: Logger }): Promise<DailyRefreshResult>`.
   - Run all refreshes with `Promise.allSettled`; a rejection becomes `'failed'` and is logged with `{ source, err }`. Then call `cleanup(clock())` and log one summary line.
-- [ ] T034 [P] [US2] Create `apps/api/src/routes/cron.ts`.
+- [ ] T038 [P] [US2] Create `apps/api/src/routes/cron.ts`.
   - `export const cronRoutes: FastifyPluginAsync<{ secret: string; run: () => Promise<DailyRefreshResult> }>`, registering `GET /cron/daily`.
   - Compare the SHA-256 digests of the `authorization` header and `Bearer ${secret}` with `crypto.timingSafeEqual`.
   - On a match: `cache-control: no-store`, return `await run()`.
   - Otherwise: `reply.status(404).send(errorBody('not_found', 'There is no such API route.'))`.
   - Never log the header.
-- [ ] T035 [US2] In `apps/api/src/server.ts`, add `ServerOptions.cron?: { secret: string; run: () => Promise<DailyRefreshResult> } | null`, registering `cronRoutes` inside the `/api/v1` prefix only when it is set.
-- [ ] T036 [US2] Wire `apps/api/src/main.ts`.
+- [ ] T039 [US2] In `apps/api/src/server.ts`, add `ServerOptions.cron?: { secret: string; run: () => Promise<DailyRefreshResult> } | null`, registering `cronRoutes` inside the `/api/v1` prefix only when it is set.
+- [ ] T040 [US2] Wire `apps/api/src/main.ts`.
   - Build the per-adapter `refresh` closure and an async `cleanup(now)` (returning `{ screenings, movies }`) once. Use them for both `startScheduler` and `runDailyRefresh`.
   - Pass `cron: config.cronSecret ? { secret: config.cronSecret, run: () => runDailyRefresh({ adapters: enabledAdapters, refresh, cleanup, clock, logger }) } : null` to `buildServer`.
-- [ ] T037 [US2] Add `"crons": [{ "path": "/api/v1/cron/daily", "schedule": "0 22 * * *" }]` at the top level of `vercel.json` ([contracts/hosting.md](./contracts/hosting.md)).
-- [ ] T038 [US2] Check locally.
+- [ ] T041 [US2] Add `"crons": [{ "path": "/api/v1/cron/daily", "schedule": "0 22 * * *" }]` at the top level of `vercel.json` ([contracts/hosting.md](./contracts/hosting.md)).
+- [ ] T042 [US2] Check locally.
   - `npm test -w @seansai/api && npm run typecheck && npm run lint` pass.
-  - Run quickstart §2's cron rows under `vercel dev --local --listen 3333` with a temporary `.env` (`SOURCES_MODE=fixtures`, `CRON_SECRET=local`): no header → 404, `Bearer wrong` → 404, `Bearer local` → 200 with every source listed.
+  - Run quickstart §2's cron rows under `vercel dev --local --listen 3333` with a temporary `.env` (`SOURCES_MODE=fixtures`, `CRON_SECRET=0123456789abcdef0123456789abcdef`): no header → 404, `Bearer wrong` → 404, `Bearer 0123456789abcdef0123456789abcdef` → 200 with every source listed.
   - Delete `.env`.
-- [ ] T039 [US2] Run `vercel env add CRON_SECRET production` with the output of `openssl rand -hex 32` (Production only, never committed). Push, and confirm the preview build accepts `crons`.
+- [ ] T043 [US2] Run `vercel env add CRON_SECRET production` with the output of `openssl rand -hex 32` (Production only, never committed). Push, and confirm the preview build accepts `crons`.
   - **If a deploy rejects `crons` in services mode**: remove the `crons` key from `vercel.json`. Instead create `.github/workflows/daily-refresh.yml`, which does `on: schedule: - cron: '0 22 * * *'` plus `workflow_dispatch`, and runs `curl --fail -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" https://<production>/api/v1/cron/daily`. Add the `CRON_SECRET` repository secret ([research.md §3](./research.md#3-refresh-scheduling-on-hobby)).
-- [ ] T040 [US2] Commit `feat(api): daily refresh by Vercel Cron, 27-hour staleness on Vercel (002 US2)`, merge to `main` (production), and check:
+- [ ] T044 [P] [US2] Update `README.md` (FR-016), before the review so the merged PR carries its own documentation (Definition of Done).
+  - Add a "Deploy to Vercel (free)" section covering:
+    - the two services, Hobby only, non-commercial use;
+    - Turso Free via `vercel integration add turso`, or turso.tech plus `vercel env add`, with separate production and preview databases;
+    - `CRON_SECRET` and `SEANSAI_CONTACT`;
+    - refresh once a day around 00:00–02:00 Vilnius, and the 27 h staleness on Vercel vs hourly and 3 h self-hosted;
+    - `/api/v1/health` as the lasting record, because Hobby logs last 1 hour;
+    - a link to [quickstart.md](./quickstart.md).
+  - Add `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` and `CRON_SECRET` to the variables table.
+  - Change the layout line "SQLite" to "SQLite (libSQL client; Turso on Vercel)".
+- [ ] T045 [P] [US2] Update `specs/001-cinema-showtimes/contracts/public-api.md` line 14 to state the list endpoints' `Cache-Control: public, max-age=300, s-maxage=300` and why, linking to [contracts/hosting.md](./contracts/hosting.md).
+- [ ] T046 [US2] Review before production (Constitution I, IV; development workflow step 5).
+  - Commit `feat(api): daily refresh by Vercel Cron, 27-hour staleness on Vercel (002 US2)` (including T044 and T045) and push.
+  - Run all quality gates (quickstart §1).
+  - Have a reviewer agent review the branch against the constitution, plus the author's self-review:
+    - no dead code or unused dependencies;
+    - _why_ comments on the batching, explicit deletes, entrypoint shim, `s-maxage` and startup mode;
+    - `git grep -n "libsql://\|CRON_SECRET="` finds only docs placeholders.
+  - Fix the findings.
+  - Open a PR from `002-vercel-deploy` to `main`.
+  - **Do not merge** until the review is resolved and CI is green.
+- [ ] T047 [US2] Once T046's PR is approved and CI is green, merge it to `main` (production) with the owner's go-ahead, and check:
   - Vercel's Cron Jobs tab lists `/api/v1/cron/daily`;
   - one manual `curl -H "Authorization: Bearer $CRON_SECRET" https://<production>/api/v1/cron/daily` returns 200 with every enabled source `success`, and its duration in Runtime Logs is < 300 s;
-  - then quickstart §5's check on two consecutive mornings (SC-003).
+  - then quickstart §5's check on two consecutive mornings. This is the release gate; SC-003's full 7 consecutive days are confirmed in T054.
 
 **Checkpoint**: The site keeps itself current every night with no manual action.
 
@@ -280,46 +351,42 @@ from that night, and no manual action (spec US2, SC-003, quickstart §5).
 
 ## Phase 5: User Story 3 — The maintainer runs it at zero cost (Priority: P3)
 
-**Goal**: Self-hosting still works, the documentation explains free deployment, the kill switch
-works on Vercel, and usage stays under half of every free allowance.
+**Goal**: Self-hosting still works without the old native toolchain, the kill switch works on
+Vercel, and usage stays under half of every free allowance. The documentation already shipped with
+US2 (T044).
 
 **Independent Test**:
+
 - Build and run the container with saved data; it works as before.
 - A refresh triggered with the secret returns a per-source summary; without the secret nothing
   happens.
 - After a week, the Vercel and Turso usage pages show every metric under 50% of the free allowance,
   with no charges (spec US3, quickstart §3, §6).
 
+### Branch for User Story 3
+
+- [ ] T048 [US3] US2's PR is already merged, so start a follow-up branch: `git switch main && git pull && git switch -c 002-vercel-deploy-followup`. All US3 and polish commits go here.
+
 ### Tests for User Story 3 ⚠️
 
-- [ ] T041 [P] [US3] In `apps/api/tests/integration/cron.test.ts`, add a kill-switch test:
+- [ ] T049 [P] [US3] In `apps/api/tests/integration/cron.test.ts`, add a kill-switch test:
   - build the server with a `cron.run` from `runDailyRefresh` over fixture adapters, with `disabledSources: ['forum']` in the refresh context;
   - an authorised call returns `sources.forum === 'disabled'`;
   - the Forum fixture client received no request.
 
 ### Implementation for User Story 3
 
-- [ ] T042 [P] [US3] In `Dockerfile`, remove the `python3 make g++` toolchain installation, which only `better-sqlite3` needed. Keep `DB_PATH=/data/seansai.sqlite`; config turns it into `file:/data/seansai.sqlite`.
-- [ ] T043 [P] [US3] Update `README.md` (FR-016).
-  - Add a "Deploy to Vercel (free)" section covering:
-    - the two services, Hobby only, non-commercial use;
-    - Turso Free via `vercel integration add turso`, or turso.tech plus `vercel env add`;
-    - `CRON_SECRET` and `SEANSAI_CONTACT`;
-    - refresh once a day around 00:00–02:00 Vilnius, and the 27 h staleness on Vercel vs hourly and 3 h self-hosted;
-    - `/api/v1/health` as the lasting record, because Hobby logs last 1 hour;
-    - a link to [quickstart.md](./quickstart.md).
-  - Add `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` and `CRON_SECRET` to the variables table.
-  - Change the layout line "SQLite" to "SQLite (libSQL client; Turso on Vercel)".
-- [ ] T044 [US3] Check the container (quickstart §3): `docker build -t seansai . && docker run --rm -p 3000:3000 -e SOURCES_MODE=fixtures seansai`.
+- [ ] T050 [P] [US3] In `Dockerfile`, remove the `python3 make g++` toolchain installation, which only `better-sqlite3` needed. Keep `DB_PATH=/data/seansai.sqlite`; config turns it into `file:/data/seansai.sqlite`.
+- [ ] T051 [US3] Check the container (quickstart §3): `docker build -t seansai . && docker run --rm -p 3000:3000 -e SOURCES_MODE=fixtures seansai`.
   - `curl -s localhost:3000/api/v1/health` shows `"status":"ok"`.
   - `curl -s localhost:3000/` returns `index.html`.
   - If Docker isn't available, record that this check was skipped in the PR description.
-- [ ] T045 [US3] Check the kill switch on production (quickstart §5).
+- [ ] T052 [US3] Check the kill switch on production (quickstart §5).
   - Set `DISABLED_SOURCES=forum` in Production and redeploy.
   - Trigger the cron by hand: the summary shows `forum: disabled`, and Forum's cinemas are gone from the site.
   - Remove the variable and redeploy.
-- [ ] T046 [US3] Commit `docs: self-hosting and free Vercel deployment (002 US3)`.
-- [ ] T047 [US3] After one week in production, check usage (quickstart §6, SC-002, SC-005).
+- [ ] T053 [US3] Commit `build: drop the native toolchain from the container (002 US3)` on the follow-up branch.
+- [ ] T054 [US3] After one week in production, check usage (quickstart §6, SC-002, SC-005), and confirm SC-003: on each of the 7 days, Vercel's Cron Jobs tab shows a successful run and `/api/v1/health` showed that night's `lastSuccessAt`.
   - Vercel Usage: invocations, Active CPU, Provisioned Memory, Fast Origin and Fast Data Transfer are each < 50% of the Hobby allowance, prorated.
   - Turso: rows read and written, and storage, are each < 50% of Free.
   - Both accounts have no charges and no payment method.
@@ -331,14 +398,12 @@ works on Vercel, and usage stays under half of every free allowance.
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [ ] T048 Run every quality gate (quickstart §1): `npm run lint && npm run format:check && npm run typecheck && npm test && npm run test:load && npm run build && npm run test:e2e`. All pass.
-- [ ] T049 [P] Update `specs/001-cinema-showtimes/contracts/public-api.md` line 14 to state the list endpoints' `Cache-Control: public, max-age=300, s-maxage=300` and why, linking to [contracts/hosting.md](./contracts/hosting.md).
-- [ ] T050 [P] Delete the superseded draft `docs/superpowers/plans/2026-10-31-vercel-turso.md`, which this tasks.md replaces. Drop its link from the Structure Decision in [plan.md](./plan.md).
-- [ ] T051 Self-review against the constitution:
-  - no dead code or unused dependencies (`better-sqlite3` gone from the lockfile);
-  - *why* comments on the batching, explicit deletes, entrypoint shim and `s-maxage`;
-  - no secrets in the repo (`git grep -n "libsql://\|CRON_SECRET="` finds only docs placeholders).
-  Then open a PR from `002-vercel-deploy` to `main` and confirm CI is green.
+- [ ] T055 Run every quality gate (quickstart §1): `npm run lint && npm run format:check && npm run typecheck && npm test && npm run test:load && npm run build && npm run test:e2e`. All pass.
+- [ ] T056 [P] Delete the superseded draft `docs/superpowers/plans/2026-10-31-vercel-turso.md`, which this tasks.md replaces. Drop its link from the Structure Decision in [plan.md](./plan.md).
+- [ ] T057 Review the US3 and polish changes the same way as T046.
+  - These are on `002-vercel-deploy-followup` (T048).
+  - Reviewer agent plus self-review against the constitution, and the secret `git grep`.
+  - Open a PR to `main`. Merge only once the review is resolved and CI is green.
 
 ---
 
@@ -350,24 +415,28 @@ works on Vercel, and usage stays under half of every free allowance.
 - **Foundational (Phase 2)**: depends on T001 and blocks every story. The build is red from T001
   until T011 is done, so Phase 2 lands as one commit (T012).
 - **US1 (Phase 3)**: after Phase 2. It is the MVP.
-- **US2 (Phase 4)**: after Phase 2 in code. Its deploy steps (T039–T040) need US1's provisioning
-  (T022) and production deploy.
-- **US3 (Phase 5)**: T041–T044 only need Phase 2. T045 and T047 need US2 in production.
+- **US2 (Phase 4)**: after Phase 2 in code. Its deploy steps (T043, T046, T047) need US1's provisioning
+  (T025); production is reached only through T046's reviewed PR.
+- **US3 (Phase 5)**: starts with T048 (follow-up branch from the merged `main`). T049–T051 need only
+  Phase 2 in code. T052 and T054 need US2 in production.
 - **Polish (Phase 6)**: after the stories you intend to ship.
 
 ### Key task dependencies
 
 - T004 → T005 → T006 (queries use `Repository`) → T007, T009, T010 → T011 → T012
-- T016 → T017; T013 must fail before T016. T018 and T019 are independent of T016.
-- T031 → T032. T033 and T034 → T035 → T036.
-- T022 → T023 → T024 → T025 → T039 → T040 → T045, T047
+- T013, T016 and T017 must fail before their implementation. T018 → T019 → T020. T023 makes T016
+  pass. T021 and T022 are independent of T018.
+- T035 → T036. T037 and T038 → T039 → T040. T041 makes T034 pass.
+- T025 → T026 → T027 → T028 → T043 → T044, T045 (docs) → T046 (review, PR, CI green) → T047 (merge)
+  → T048 (follow-up branch) → T052, T054
 
 ### User Story Dependencies
 
 - **US1**: needs only Phase 2.
-- **US2**: needs Phase 2. It reuses US1's `refreshMode` (T016–T017) and its provisioning to
+- **US2**: needs Phase 2. It reuses US1's `refreshMode` (T018–T020) and its provisioning to
   deploy, but its tests run alone.
-- **US3**: the container and docs need only Phase 2. The production checks need US2.
+- **US3**: the container and kill-switch test need only Phase 2. The documentation moved to US2
+  (T044, T045), so it ships with the production merge. The production checks need US2.
 
 ### Within Each User Story
 
@@ -379,10 +448,12 @@ works on Vercel, and usage stays under half of every free allowance.
 ### Parallel Opportunities
 
 - Phase 2: T002 and T003 (different test files). T008 and T009 once T005 and T006 exist.
-- US1: T013, T014 and T015 together; T018 alongside T016.
-- US2: T026, T027, T028, T029 and T030 together; T033 and T034 together.
-- US3: T041, T042 and T043 together.
-- Polish: T049 and T050.
+- US1: T013, T014, T016 and T017 together, then T015 (it shares `movies.test.ts` with T014); T021
+  alongside T018; T019 after T018.
+- US2: T029, T030, T031, T032, T033 and T034 together; T037 and T038 together; T044 and T045
+  together.
+- US3: T049 and T050 together, after T048.
+- Polish: T056 alongside T055.
 
 ---
 
@@ -390,13 +461,13 @@ works on Vercel, and usage stays under half of every free allowance.
 
 ```bash
 # Write all US2 tests together (they touch different files):
-Task: "T026 27 h threshold tests in apps/api/tests/unit/source-status.test.ts"
-Task: "T028 runDailyRefresh tests in apps/api/tests/unit/daily.test.ts"
-Task: "T029 cron route auth tests in apps/api/tests/integration/cron.test.ts"
+Task: "T029 27 h threshold tests in apps/api/tests/unit/source-status.test.ts"
+Task: "T031 runDailyRefresh tests in apps/api/tests/unit/daily.test.ts"
+Task: "T032 cron route auth tests in apps/api/tests/integration/cron.test.ts"
 
 # Then build the two new modules together:
-Task: "T033 runDailyRefresh in apps/api/src/refresh/daily.ts"
-Task: "T034 cronRoutes in apps/api/src/routes/cron.ts"
+Task: "T037 runDailyRefresh in apps/api/src/refresh/daily.ts"
+Task: "T038 cronRoutes in apps/api/src/routes/cron.ts"
 ```
 
 ---
@@ -407,15 +478,15 @@ Task: "T034 cronRoutes in apps/api/src/routes/cron.ts"
 
 1. Phase 1 and Phase 2: the async data layer, with the same behaviour.
 2. Phase 3: on Vercel with Turso, filled once from a laptop.
-3. **Stop and validate** on the preview (T025). The site is public and free, though refreshing
+3. **Stop and validate** on the preview (T028). The site is public and free, though refreshing
    is manual.
 
 ### Incremental Delivery
 
 1. US1: the public site (MVP).
 2. US2: nightly refresh in production, so no laptop runs are needed.
-3. US3: self-hosting, docs, kill switch and cost proof.
-4. Polish: gates, contract note, cleanup, PR.
+3. US3: container cleanup, kill switch and cost proof, on a follow-up branch.
+4. Polish: gates, draft-plan cleanup, follow-up PR.
 
 ---
 
@@ -423,6 +494,8 @@ Task: "T034 cronRoutes in apps/api/src/routes/cron.ts"
 
 - Account actions (`vercel link`, the Turso integration, `vercel env add`, merging to `main`) need
   the owner's go-ahead.
+- Nothing merges to `main` without a review (reviewer agent plus self-review) and green CI (T046,
+  T057). Production is deployed only by merging a reviewed PR.
 - Never commit `.env`, `TURSO_*` values or `CRON_SECRET`. `.env` and `.env.*` are already
   gitignored.
 - Commit at each phase checkpoint. Push after each story.

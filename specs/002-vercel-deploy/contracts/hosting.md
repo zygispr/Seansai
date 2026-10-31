@@ -38,13 +38,14 @@ change.
 
 | Variable             | Environments          | Set by                         | Purpose                                         |
 | -------------------- | --------------------- | ------------------------------ | ----------------------------------------------- |
-| `TURSO_DATABASE_URL` | Production, Preview   | Turso integration (or by hand) | shared data store (FR-003)                      |
-| `TURSO_AUTH_TOKEN`   | Production, Preview   | Turso integration (or by hand) | database credentials (FR-013)                   |
+| `TURSO_DATABASE_URL` | Production; Preview   | Turso integration (or by hand) | shared data store (FR-003): database `seansai` for Production, `seansai-preview` for Preview |
+| `TURSO_AUTH_TOKEN`   | Production; Preview   | Turso integration (or by hand) | database credentials (FR-013), one token per database |
 | `CRON_SECRET`        | Production            | maintainer, `openssl rand -hex 32` | protects the refresh trigger (FR-008)      |
 | `SEANSAI_CONTACT`    | Production, Preview   | maintainer                     | sent in the User-Agent to cinemas (001)         |
 | `DISABLED_SOURCES`   | Production (optional) | maintainer                     | kill switch (001)                               |
 
-- Previews share production's database (spec Assumptions).
+- Previews use their own database, `seansai-preview`, on the same Turso Free account (spec
+  Assumptions). A preview's migrations and writes can never reach production's database.
 - Previews never refresh: crons run only in production, and `CRON_SECRET` isn't set for Preview.
 - None of these values are committed (FR-013).
 

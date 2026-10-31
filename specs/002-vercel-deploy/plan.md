@@ -34,7 +34,9 @@ Seansai goes public on **Vercel's free Hobby plan**, with its data in **Turso's 
   ([research.md §1–§3](./research.md)).
 
 **Storage**:
-- Vercel: Turso (libSQL, SQLite-compatible), Free plan, EU region.
+- Vercel: Turso (libSQL, SQLite-compatible), Free plan, EU region. Two databases, `seansai` for
+  Production and `seansai-preview` for Preview, so a preview can never migrate or write
+  production's data.
 - Docker and local development: a SQLite file through the same client.
 - Tests: `:memory:`.
 - Schema unchanged ([data-model.md](./data-model.md)).
@@ -78,10 +80,10 @@ Seansai goes public on **Vercel's free Hobby plan**, with its data in **Turso's 
 
 | Principle | How this plan complies | Status |
 |-----------|------------------------|--------|
-| I. Code Quality | Lint, format and type checks run unchanged in CI. Cron failures are handled per source and recorded (FR-009). No swallowed errors: a thrown refresh becomes `failed` and is logged. `better-sqlite3` is removed with its types (no unused dependencies). | ✅ |
+| I. Code Quality | Lint, format and type checks run unchanged in CI. Cron failures are handled per source and recorded (FR-009). No swallowed errors: a thrown refresh becomes `failed` and is logged. `better-sqlite3` is removed with its types (no unused dependencies). Nothing reaches `main` (production) without a reviewer-agent review, self-review and green CI (tasks T046, T057). | ✅ |
 | II. Readability First | Data access stays in `db/` and the refresh logic in `refresh/`. New code is one route file and one `daily.ts`. Non-obvious constraints get *why* comments: the batching for Turso's 5 s transaction limit, explicit deletes because FKs are off, and the entrypoint shim. | ✅ |
 | III. Simplicity | Same SQL, schema and language. One client for all environments. No ORM, no Blob, no queue. Additions are justified in Complexity Tracking. | ✅ (see table) |
-| IV. Testing (NON-NEGOTIABLE) | New tests: config modes, the 27 h threshold, `storeRefresh` (all-or-nothing, review counts), explicit cascade deletes, migration re-open, daily refresh (failure isolation, cleanup order), cron route auth (404 cases), and `s-maxage` headers. Existing integration and end-to-end suites run against the async client. Remote-only behaviour is checked by hand (quickstart §4). | ✅ |
+| IV. Testing (NON-NEGOTIABLE) | New tests: config modes, the 27 h threshold, `storeRefresh` (all-or-nothing, review counts), explicit cascade deletes, migration re-open, daily refresh (failure isolation, cleanup order), cron route auth (404 cases), `s-maxage` headers, **`vercel.json` routing and headers** (rewrite order, SPA fallback, CSP equal to the API's, region, at-most-daily cron), and **startup mode** (cron mode never refreshes or contacts cinemas, FR-007/SC-006). Existing integration and end-to-end suites run against the async client. Only provider-side behaviour (Turso migrations, CDN hits, cron firing) is checked by hand (quickstart §4–§5). | ✅ |
 | V. Great UX | Nothing visible changes. The stale notice works as in 001, with a 27 h threshold on Vercel. Deep links work through the SPA fallback. Before the first refresh, the existing empty state shows. | ✅ |
 | VI. Performance | Budgets stated above. Function and database in the same region. One batch per source refresh. The `freshness` and `/health` N+1 is removed. CDN caching cuts origin load. The load test still gates p95 < 300 ms. | ✅ |
 | VII. Scalability | The API becomes stateless: data in a shared store and no in-process state on Vercel, so instances scale without coordination. Load and 10× analysis below. | ✅ |
@@ -141,8 +143,8 @@ apps/api/
 ├── package.json                     # @libsql/client in, better-sqlite3 + @types out
 └── src/
     ├── config.ts                    # db {url, authToken}, refreshMode, staleAfterMs, cronSecret
-    ├── main.ts                      # async openDb; scheduler only in 'scheduler' mode; cron wiring
-    ├── server.ts                    # ServerOptions.staleAfterMs, .cron
+    ├── main.ts                      # async openDb; startBackgroundRefresh; cron wiring
+    ├── server.ts                    # ServerOptions.staleAfterMs, .cron; exports SECURITY_HEADERS
     ├── db/
     │   ├── index.ts                 # openDb(url, authToken) → libSQL Client; batched migrations; splitStatements
     │   ├── repository.ts            # async; storeRefresh (one batch); explicit stale-movie deletes; no transaction()
@@ -151,7 +153,8 @@ apps/api/
     │   ├── refresh-source.ts        # compute in memory, then repo.storeRefresh
     │   ├── scheduler.ts             # async cleanup callback
     │   ├── status.ts                # deriveSourceStatus(…, staleAfterMs)
-    │   └── daily.ts                 # NEW runDailyRefresh: all sources in parallel, then cleanup
+    │   ├── daily.ts                 # NEW runDailyRefresh: all sources in parallel, then cleanup
+    │   └── startup.ts               # NEW startBackgroundRefresh: no scheduler in 'cron' mode (FR-007)
     └── routes/
         ├── http.ts                  # setListCaching adds s-maxage=300
         ├── health.ts                # async; one listSources(); staleAfterMs
@@ -159,7 +162,8 @@ apps/api/
         └── cron.ts                  # NEW GET /cron/daily, bearer secret, 404 otherwise
 apps/api/tests/
 ├── helpers/temp-db.ts, catalog.ts, large-catalog.ts   # async
-├── unit/config.test.ts, source-status.test.ts, daily.test.ts (NEW), scheduler.test.ts
+├── unit/config.test.ts, source-status.test.ts, scheduler.test.ts,
+│   daily.test.ts, startup.test.ts, vercel-config.test.ts (NEW)
 └── integration/repository.test.ts, cron.test.ts (NEW), server.test.ts (+ s-maxage), …  # async
 ```
 
@@ -176,4 +180,5 @@ matches this structure and feeds `/speckit-tasks`.
 | Cron route with a shared secret | Vercel Cron calls a URL; the maintainer needs on-demand refresh (FR-008) | A public unauthenticated trigger would let anyone make Seansai hammer cinema sites (FR-007) |
 | `storeRefresh` batch instead of a transaction callback | Turso interactive transactions time out after 5 s and cost a round trip per statement | Keeping `transaction(work)` would exceed the timeout on large sources and take minutes per refresh |
 | `apps/api/index.ts` entrypoint shim | `@vercel/fastify` ignores the configured entrypoint and would pick `src/server.ts` | Renaming `src/main.ts` would touch the Dockerfile, scripts and docs for a platform quirk |
+| Full refresh runs inside the cron route's HTTP request (up to minutes) | Hobby has no background workers or queues on the free plan; Vercel Cron can only call a URL. The request comes from the scheduler or the maintainer, never a visitor, so Constitution VII's "not inside a user request" holds. Sources are refreshed in parallel to stay well inside the 300 s limit (research §3) | A queue or background worker (Vercel Queues, Daemons) would add a paid or extra moving part for one job a day |
 | Environment-dependent stale threshold (27 h / 3 h) | Daily refresh would otherwise flag every cinema as outdated all day | One 27 h threshold everywhere would hide real failures for a day on self-hosted copies, which still refresh hourly |

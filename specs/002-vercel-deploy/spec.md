@@ -99,7 +99,8 @@ and run the self-hosted container with saved test data and confirm it works as b
 **Acceptance Scenarios**:
 
 1. **Given** the maintainer has the refresh secret, **When** they trigger a refresh, **Then** all
-   enabled cinemas are refreshed and they get a per-cinema summary of the outcome.
+   enabled cinemas are refreshed and they get a per-source summary of the outcome. A source is
+   one cinema operator's schedule feed and can cover several cinemas.
 2. **Given** someone without the secret, or with a wrong one, **When** they try to trigger a
    refresh, **Then** nothing happens and the response is the same as for an address that does
    not exist.
@@ -128,8 +129,10 @@ and run the self-hosted container with saved test data and confirm it works as b
   not picked up until the next night. This is an accepted, documented gap.
 - **Approaching a free-plan limit**: the providers warn by email. The site must never move to a
   paid tier automatically.
-- **Preview deployments**: they read the same data as production but never run the nightly
-  refresh, so previews cannot double the load on cinema websites.
+- **Preview deployments**: they use their own database, separate from production's, so a preview
+  (including one with a database change) can never alter production's data or its structure. They
+  never run the nightly refresh, so previews cannot double the load on cinema websites. The
+  maintainer fills a preview's database by hand when needed.
 
 ## Requirements *(mandatory)*
 
@@ -178,11 +181,11 @@ and run the self-hosted container with saved test data and confirm it works as b
 ### Key Entities
 
 - **Refresh run**: one collection of schedules from all enabled cinemas followed by the cleanup.
-  It has a start time, an outcome per cinema (updated, failed, or disabled) and the number of
+  It has a start time, an outcome per source (updated, failed, or disabled) and the number of
   screenings and movies removed. It is started by the nightly schedule or by the maintainer.
 - **Refresh secret**: a value known only to the hosting platform's scheduler and the maintainer.
   Holding it is the only way to start a refresh in the hosted deployment.
-- **Schedule data**: the movies, screenings and per-cinema refresh status defined in feature 001.
+- **Schedule data**: the movies, screenings and per-source refresh status defined in feature 001.
   Unchanged by this feature, except that it now lives in a shared hosted store.
 
 ## Success Criteria *(mandatory)*
@@ -200,8 +203,13 @@ and run the self-hosted container with saved test data and confirm it works as b
   or more appears within 3 seconds.
 - **SC-005**: At feature 001's expected load (about 1,000 visitors a day), monthly usage stays below
   50% of every free-plan allowance of the hosting and database providers.
-- **SC-006**: Over a week of normal traffic, 100% of requests to cinema websites happen during
-  refresh runs. None are caused by visitors.
+- **SC-006**: Visitors never cause requests to cinema websites. This is checked two ways:
+  - an automated check proves that a newly started hosted server makes 0 requests to cinemas and
+    starts no refresh, even after two hours with no refresh triggered;
+  - on the live site, the logs of a server started by a visitor after an hour of inactivity show 0
+    cinema requests.
+
+  (Logs on the free plan last only one hour, so a week of logs can't be reviewed.)
 - **SC-007**: 100% of refresh attempts without the correct secret change no data and contact no
   cinema.
 
@@ -220,8 +228,8 @@ and run the self-hosted container with saved test data and confirm it works as b
   to the hosted deployment.
 - The 27-hour threshold allows for the scheduled run starting anywhere in its hour, plus
   daylight-saving shifts. One missed nightly refresh is therefore flagged the next day.
-- Preview deployments share production's data store rather than getting their own, to stay within
-  free allowances and keep setup simple.
+- Preview deployments get their own database on the same free database account. The free plan
+  allows up to 100 databases, so the separation costs nothing.
 - The public address is the default one Vercel provides. A custom domain is out of scope.
 - The site's existing `/api/` data paths, response formats and web pages don't change. The web pages
   already call the data service at relative addresses.
