@@ -26,6 +26,14 @@ describe('loadConfig', () => {
     );
   });
 
+  test('on Vercel leaves the web app to its own service and keeps live data in /tmp', () => {
+    const env = { SEANSAI_CONTACT: 'hello@seansai.lt', NODE_ENV: 'production', VERCEL: '1' };
+    const config = loadConfig(env);
+    expect(config.serveWebApp).toBe(false);
+    expect(config.dbPath).toBe('/tmp/seansai.sqlite');
+    expect(loadConfig({ ...env, DB_PATH: '/data/x.sqlite' }).dbPath).toBe('/data/x.sqlite');
+  });
+
   test('requires SEANSAI_CONTACT in live mode', () => {
     expect(() => loadConfig({})).toThrow(/SEANSAI_CONTACT/);
     expect(loadConfig({ SEANSAI_CONTACT: 'hello@seansai.lt' }).contact).toBe('hello@seansai.lt');

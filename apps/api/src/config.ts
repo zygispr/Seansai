@@ -2,6 +2,8 @@ import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
 
 const DEFAULT_DB_PATH = fileURLToPath(new URL('../data/seansai.sqlite', import.meta.url));
+/** Vercel functions can write only under /tmp, and it lasts only as long as the instance. */
+const VERCEL_DB_PATH = '/tmp/seansai.sqlite';
 const LAST_SUCCESS_HOURS_PATTERN = /^FIXTURE_([A-Z0-9]+)_LAST_SUCCESS_HOURS$/;
 
 const sourceIdList = z
@@ -26,6 +28,8 @@ const EnvSchema = z
     SEANSAI_CONTACT: z.union([z.email(), z.url({ protocol: /^https$/ })]).optional(),
     DISABLED_SOURCES: sourceIdList,
     NODE_ENV: z.string().optional(),
+    /** Set by Vercel, where the web app is its own service (vercel.json). */
+    VERCEL: z.string().optional(),
   })
   .refine((env) => env.SOURCES_MODE === 'fixtures' || env.SEANSAI_CONTACT !== undefined, {
     path: ['SEANSAI_CONTACT'],
@@ -47,7 +51,7 @@ export type Config = {
   contact: string | null;
   /** Kill switch (research.md §1b): these sources are never refreshed. */
   disabledSources: string[];
-  /** Production serves the built web app; in development Vite serves it. */
+  /** Production serves the built web app; in development Vite serves it, on Vercel its service. */
   serveWebApp: boolean;
 };
 
@@ -74,16 +78,18 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     throw new Error(`Invalid configuration: ${problems}`);
   }
   const values = parsed.data;
+  const onVercel = values.VERCEL !== undefined;
+  const liveDbPath = onVercel ? VERCEL_DB_PATH : DEFAULT_DB_PATH;
   return {
     port: values.PORT,
     host: values.HOST,
-    dbPath: values.DB_PATH ?? (values.SOURCES_MODE === 'fixtures' ? ':memory:' : DEFAULT_DB_PATH),
+    dbPath: values.DB_PATH ?? (values.SOURCES_MODE === 'fixtures' ? ':memory:' : liveDbPath),
     sourcesMode: values.SOURCES_MODE,
     fixtureNow: values.FIXTURE_NOW ? new Date(values.FIXTURE_NOW) : null,
     fixtureFail: values.FIXTURE_FAIL,
     fixtureLastSuccessHours: parseLastSuccessHours(env),
     contact: values.SEANSAI_CONTACT ?? null,
     disabledSources: values.DISABLED_SOURCES,
-    serveWebApp: values.NODE_ENV === 'production',
+    serveWebApp: values.NODE_ENV === 'production' && !onVercel,
   };
 }
