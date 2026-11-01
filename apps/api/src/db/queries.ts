@@ -52,12 +52,15 @@ const IN_CINEMAS = 'cinema_id IN (SELECT value FROM json_each(@cinemaIds))';
 
 const SQL = {
   movies: `
-    SELECT movies.*,
-           SUM(screenings.local_date = @today) AS screenings_today,
-           MIN(screenings.local_date) AS first_date
-    FROM screenings JOIN movies ON movies.id = screenings.movie_id
-    WHERE screenings.${IN_CINEMAS} AND screenings.starts_at > @now
-    GROUP BY movies.id`,
+    SELECT movies.*, listed.screenings_today, listed.first_date
+    FROM (
+      -- Grouped before the join, so each movie is looked up once and not once per screening.
+      SELECT movie_id, SUM(local_date = @today) AS screenings_today, MIN(local_date) AS first_date
+      FROM screenings
+      WHERE ${IN_CINEMAS} AND starts_at > @now
+      GROUP BY movie_id
+    ) AS listed
+    JOIN movies ON movies.id = listed.movie_id`,
   movie: 'SELECT * FROM movies WHERE id = ?',
   screeningDates: `
     SELECT DISTINCT local_date FROM screenings
