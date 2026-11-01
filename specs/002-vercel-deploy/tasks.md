@@ -222,7 +222,7 @@ starts never contact cinemas, and list responses are cached by the CDN.
     - the CSP header is present.
   - Delete `.env` afterwards.
   - If `vercel dev` rejects `regions`, remove it from `vercel.json` and record that the region is set in project settings instead.
-- [ ] T025 [US1] Provision on free plans (quickstart §4 steps 1–3, with the owner's go-ahead for each account action).
+- [X] T025 [US1] Provision on free plans (quickstart §4 steps 1–3, with the owner's go-ahead for each account action).
   - Run `vercel link` and create the project on the **Hobby** team, with the function region `fra1`.
   - Run `vercel integration add turso` and choose the **Free** plan, in the EU region nearest Frankfurt.
   - Create **two** databases on that free account:
