@@ -8,6 +8,7 @@ type HealthRouteOptions = {
   repo: Repository;
   now: () => Date;
   sourceIds: readonly string[];
+  staleAfterMs: number;
 };
 
 /** Liveness plus per-source status, for monitoring (not used by the UI). */
@@ -24,7 +25,7 @@ export const healthRoutes: FastifyPluginAsync<HealthRouteOptions> = (app, option
         const source = sources.get(id);
         return {
           id,
-          status: deriveSourceStatus(source, now),
+          status: deriveSourceStatus(source, now, options.staleAfterMs),
           lastSuccessAt: source?.lastSuccessAt ? formatInstant(source.lastSuccessAt) : null,
         };
       }),

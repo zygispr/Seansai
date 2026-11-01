@@ -58,13 +58,36 @@ docker build -t seansai .
 docker run -p 3000:3000 -v seansai-data:/data -e SEANSAI_CONTACT=https://github.com/zygispr/Seansai seansai
 ```
 
-| Variable           | Meaning                                                              |
-| ------------------ | -------------------------------------------------------------------- |
-| `SEANSAI_CONTACT`  | Email or project URL sent in the User-Agent. Required for live data. |
-| `DISABLED_SOURCES` | Comma-separated source ids never fetched (the kill switch).          |
-| `DB_PATH`          | SQLite file. `/data/seansai.sqlite` in the container.                |
-| `PORT`, `HOST`     | Where the server listens (`3000`, `0.0.0.0` in the container).       |
-| `SOURCES_MODE`     | `live` (default) or `fixtures` for the saved test data.              |
+| Variable                                 | Meaning                                                                             |
+| ---------------------------------------- | ----------------------------------------------------------------------------------- |
+| `SEANSAI_CONTACT`                        | Email or project URL sent in the User-Agent. Required for live data.                |
+| `DISABLED_SOURCES`                       | Comma-separated source ids never fetched (the kill switch).                         |
+| `DB_PATH`                                | SQLite file. `/data/seansai.sqlite` in the container.                               |
+| `PORT`, `HOST`                           | Where the server listens (`3000`, `0.0.0.0` in the container).                      |
+| `SOURCES_MODE`                           | `live` (default) or `fixtures` for the saved test data.                             |
+| `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` | Turso database instead of a file. Required on Vercel.                               |
+| `CRON_SECRET`                            | Enables the daily refresh route (`/api/v1/cron/daily`). At least 32 hex characters. |
+
+## Deploy to Vercel (free)
+
+Seansai can run on Vercel's **Hobby** plan with its data in **Turso's Free** plan, at no cost.
+Hobby is for non-commercial use only. The step-by-step guide, with the checks for each step, is
+in [specs/002-vercel-deploy/quickstart.md](specs/002-vercel-deploy/quickstart.md).
+
+- **Two services** in one project ([vercel.json](vercel.json)): the web app is served as static
+  files by Vercel's CDN, and the API runs as one function in Frankfurt (`fra1`) for `/api/*`.
+- **Database**: run `vercel integration add tursocloud` and choose the free `starter` plan, or
+  create the databases at [turso.tech](https://turso.tech) and add `TURSO_DATABASE_URL` and
+  `TURSO_AUTH_TOKEN` with `vercel env add`. Use **two databases**, one for Production and one
+  for Preview, so a preview can never change production's data.
+- **Variables**: set `SEANSAI_CONTACT` for Production and Preview, and `CRON_SECRET`
+  (`openssl rand -hex 32`) for Production only.
+- **Refreshing**: Hobby runs scheduled jobs at most once a day, so a Vercel Cron Job calls the
+  refresh route between 00:00 and 02:00 Vilnius time. Visits never contact a cinema. A cinema is
+  flagged as possibly outdated after **27 hours** on Vercel, instead of the 3 hours that apply to
+  self-hosted copies, which still refresh hourly.
+- **Monitoring**: Hobby keeps runtime logs for only an hour, so `GET /api/v1/health` (each
+  source's status and last successful refresh) is the lasting record of how refreshes went.
 
 ## Quality gates
 
@@ -87,7 +110,7 @@ next 7 days (manual; `-- --fixtures` checks the saved data instead).
 
 ```text
 packages/shared/   API contract schemas (zod), used by the API and the web app
-apps/api/          Node.js + Fastify API, SQLite, hourly refresh, source adapters
+apps/api/          Node.js + Fastify API, SQLite (libSQL client; Turso on Vercel), refresh, source adapters
 apps/web/          React + Vite web app (atomic design, SCSS Modules)
 specs/             Feature spec, plan, research, contracts, tasks
 ```

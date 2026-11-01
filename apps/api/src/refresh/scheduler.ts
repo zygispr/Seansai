@@ -13,7 +13,7 @@ export type SchedulerOptions = {
   /** Refreshes one source; expected to record its own failures. */
   refresh: (adapter: SourceAdapter, now: Date) => Promise<unknown>;
   /** Removes past screenings and stale movies. */
-  cleanup: (now: Date) => Promise<void>;
+  cleanup: (now: Date) => Promise<unknown>;
   random?: () => number;
 };
 

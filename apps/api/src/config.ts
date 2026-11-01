@@ -1,7 +1,13 @@
 import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
+import { STALE_AFTER_MS } from './refresh/status.ts';
 
 const DEFAULT_DB_PATH = fileURLToPath(new URL('../data/seansai.sqlite', import.meta.url));
+/**
+ * Two daily cron runs can be up to about 25 h apart (the hour they may start in, run time,
+ * daylight saving); 27 h leaves margin and still flags one missed night (research §4).
+ */
+const CRON_STALE_AFTER_MS = 27 * 60 * 60 * 1000;
 const LAST_SUCCESS_HOURS_PATTERN = /^FIXTURE_([A-Z0-9]+)_LAST_SUCCESS_HOURS$/;
 
 const sourceIdList = z
@@ -22,6 +28,11 @@ const EnvSchema = z
     /** Turso (libSQL) database; on Vercel the only place data outlives a function instance. */
     TURSO_DATABASE_URL: z.string().min(1).optional(),
     TURSO_AUTH_TOKEN: z.string().min(1).optional(),
+    /** Vercel Cron sends it as a bearer token; it protects the refresh route (FR-008). */
+    CRON_SECRET: z
+      .string()
+      .regex(/^[0-9a-f]{32,}$/i, 'must be at least 32 hex characters')
+      .optional(),
     SOURCES_MODE: z.enum(['live', 'fixtures']).default('live'),
     FIXTURE_NOW: z.iso.datetime({ offset: true }).optional(),
     FIXTURE_FAIL: sourceIdList,
@@ -48,6 +59,10 @@ export type Config = {
    * Job refreshes the data. `scheduler` everywhere else: the server refreshes hourly itself.
    */
   refreshMode: 'scheduler' | 'cron';
+  /** Age after which a source's data is flagged as possibly outdated (FR-014, FR-015). */
+  staleAfterMs: number;
+  /** Bearer secret of the daily refresh route; null leaves the route unregistered. */
+  cronSecret: string | null;
   /** Fixed clock for fixture mode; null means the capture instant or the real clock. */
   fixtureNow: Date | null;
   /** Sources whose fixture client fails every request (resilience testing). */
@@ -85,12 +100,15 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   }
   const values = parsed.data;
   const onVercel = values.VERCEL !== undefined;
+  const refreshMode = onVercel && values.SOURCES_MODE === 'live' ? 'cron' : 'scheduler';
   return {
     port: values.PORT,
     host: values.HOST,
     db: chooseDb(values, onVercel),
     sourcesMode: values.SOURCES_MODE,
-    refreshMode: onVercel && values.SOURCES_MODE === 'live' ? 'cron' : 'scheduler',
+    refreshMode,
+    staleAfterMs: refreshMode === 'cron' ? CRON_STALE_AFTER_MS : STALE_AFTER_MS,
+    cronSecret: values.CRON_SECRET ?? null,
     fixtureNow: values.FIXTURE_NOW ? new Date(values.FIXTURE_NOW) : null,
     fixtureFail: values.FIXTURE_FAIL,
     fixtureLastSuccessHours: parseLastSuccessHours(env),

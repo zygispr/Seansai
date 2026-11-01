@@ -100,3 +100,12 @@ test('reads every source in one query, however many cinemas are listed', async (
   expect(getSource).not.toHaveBeenCalled();
   expect(listSources).toHaveBeenCalledTimes(1);
 });
+
+test('on Vercel, data refreshed 4 hours ago is not flagged as stale (27-hour threshold)', async () => {
+  const vercel = await startCatalogServer(undefined, { staleAfterMs: 27 * 60 * 60 * 1000 });
+
+  const response = await vercel.app.inject('/api/v1/movies?city=vilnius');
+
+  expect(MoviesResponseSchema.parse(response.json()).freshness.staleCinemas).toEqual([]);
+  await vercel.close();
+});

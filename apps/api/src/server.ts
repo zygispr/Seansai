@@ -10,6 +10,9 @@ import { Repository } from './db/repository.ts';
 import { createLogger, type Logger } from './lib/logger.ts';
 import { cinemaRegistry } from './registry/cinemas.ts';
 import { citiesRoutes } from './routes/cities.ts';
+import type { DailyRefreshResult } from './refresh/daily.ts';
+import { STALE_AFTER_MS } from './refresh/status.ts';
+import { cronRoutes } from './routes/cron.ts';
 import { healthRoutes } from './routes/health.ts';
 import { ApiError, errorBody } from './routes/http.ts';
 import { moviesRoutes } from './routes/movies.ts';
@@ -24,6 +27,10 @@ export type ServerOptions = {
   sourceIds?: readonly string[];
   /** Built web app to serve (production); null when Vite serves it (development). */
   webDistDir?: string | null;
+  /** Age after which a source's data is flagged as stale; defaults to STALE_AFTER_MS. */
+  staleAfterMs?: number;
+  /** The daily refresh route, registered only when a secret is configured (FR-008). */
+  cron?: { secret: string; run: () => Promise<DailyRefreshResult> } | null;
 };
 
 const API_PREFIX = '/api/v1';
@@ -55,7 +62,13 @@ export function buildServer(options: ServerOptions): FastifyInstance {
   const sourceIds =
     options.sourceIds ??
     sourceConfigs.filter((source) => source.enabled).map((source) => source.id);
-  const queries = new Queries({ db: options.db, registry: cinemaRegistry, sourceIds });
+  const staleAfterMs = options.staleAfterMs ?? STALE_AFTER_MS;
+  const queries = new Queries({
+    db: options.db,
+    registry: cinemaRegistry,
+    sourceIds,
+    staleAfterMs,
+  });
 
   // The logger's own serializers keep request logs free of personal data (lib/logger.ts).
   const loggerInstance: FastifyBaseLogger = options.logger ?? createLogger();
@@ -117,10 +130,11 @@ export function buildServer(options: ServerOptions): FastifyInstance {
 
   void app.register(
     async (api) => {
-      await api.register(healthRoutes, { repo, now: options.now, sourceIds });
+      await api.register(healthRoutes, { repo, now: options.now, sourceIds, staleAfterMs });
       await api.register(citiesRoutes, { queries });
       await api.register(moviesRoutes, { queries, now: options.now });
       await api.register(screeningsRoutes, { queries, now: options.now });
+      if (options.cron) await api.register(cronRoutes, options.cron);
     },
     { prefix: API_PREFIX },
   );

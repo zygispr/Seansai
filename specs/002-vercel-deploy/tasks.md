@@ -268,23 +268,23 @@ from that night, and no manual action (spec US2, SC-003, quickstart §5).
 
 ### Tests for User Story 2 ⚠️ (write first, confirm they fail)
 
-- [ ] T029 [P] [US2] In `apps/api/tests/unit/source-status.test.ts`, add: with `staleAfterMs = 27 * 60 * 60 * 1000`, a success 26 h before `now` is `'healthy'` and one exactly 27 h before is `'stale'`. With the default, 3 h still gives `'stale'`.
-- [ ] T030 [P] [US2] Add config tests to `apps/api/tests/unit/config.test.ts`.
+- [X] T029 [P] [US2] In `apps/api/tests/unit/source-status.test.ts`, add: with `staleAfterMs = 27 * 60 * 60 * 1000`, a success 26 h before `now` is `'healthy'` and one exactly 27 h before is `'stale'`. With the default, 3 h still gives `'stale'`.
+- [X] T030 [P] [US2] Add config tests to `apps/api/tests/unit/config.test.ts`.
   - The Vercel/Turso case from T013 with `CRON_SECRET: '0123456789abcdef0123456789abcdef'` gives `staleAfterMs` = `27 * 60 * 60 * 1000` and `cronSecret` equal to that value.
   - A weak secret is rejected, as data-model.md requires ("a random value of at least 32 hex characters"): `CRON_SECRET: 's'` and `CRON_SECRET: 'z'.repeat(40)` both throw `/CRON_SECRET/`.
   - The fixture defaults give `staleAfterMs` = `3 * 60 * 60 * 1000` and `cronSecret` = `null`.
-- [ ] T031 [P] [US2] Create `apps/api/tests/unit/daily.test.ts` with stub adapters: `a` resolves `{ status: 'success', … }`, `b` resolves `{ status: 'failed', error: 'x' }`, `c` throws.
+- [X] T031 [P] [US2] Create `apps/api/tests/unit/daily.test.ts` with stub adapters: `a` resolves `{ status: 'success', … }`, `b` resolves `{ status: 'failed', error: 'x' }`, `c` throws.
   - `runDailyRefresh` resolves to `sources: { a: 'success', b: 'failed', c: 'failed' }`.
   - `cleanup` is called once, after all three refreshes settled (check call order).
   - The result's `cleanup` equals the stub's return `{ screenings: 4, movies: 1 }`.
   - The thrown error is logged with the source id.
-- [ ] T032 [P] [US2] Create `apps/api/tests/integration/cron.test.ts` building the server with `cron: { secret: 's3cret', run: vi.fn().mockResolvedValue(result) }`.
+- [X] T032 [P] [US2] Create `apps/api/tests/integration/cron.test.ts` building the server with `cron: { secret: 's3cret', run: vi.fn().mockResolvedValue(result) }`.
   - Without the `authorization` header: 404 with body `{ error: { code: 'not_found', message: 'There is no such API route.' } }`, and `run` not called.
   - With `Bearer wrong`: 404, and `run` not called.
   - With `Bearer s3cret`: 200, the body equals `result`, and `cache-control` is `no-store`.
   - With the server built without `cron`: `GET /api/v1/cron/daily` with the right header returns 404 ([contracts/cron-endpoint.md](./contracts/cron-endpoint.md)).
-- [ ] T033 [P] [US2] In `apps/api/tests/integration/movies.test.ts`, add: with `staleAfterMs: 27 h` passed to `buildServer`, Forum (last success 4 h before `NOW` in the catalog) is **not** in `freshness.staleCinemas`. With the default it is, as before.
-- [ ] T034 [P] [US2] In `apps/api/tests/unit/vercel-config.test.ts`, add:
+- [X] T033 [P] [US2] In `apps/api/tests/integration/movies.test.ts`, add: with `staleAfterMs: 27 h` passed to `buildServer`, Forum (last success 4 h before `NOW` in the catalog) is **not** in `freshness.staleCinemas`. With the default it is, as before.
+- [X] T034 [P] [US2] In `apps/api/tests/unit/vercel-config.test.ts`, add:
   - `crons` equals exactly `[{ path: '/api/v1/cron/daily', schedule: '0 22 * * *' }]`;
   - every cron schedule's minute and hour fields are single numbers, so it runs at most once a day (the Hobby limit, FR-011);
   - the cron path starts with `/api/`, so the top-level rewrite routes it to the `api` service.
@@ -293,33 +293,33 @@ from that night, and no manual action (spec US2, SC-003, quickstart §5).
 
 ### Implementation for User Story 2
 
-- [ ] T035 [US2] In `apps/api/src/refresh/status.ts`, add the parameter: `deriveSourceStatus(source, now, staleAfterMs: number = STALE_AFTER_MS)`. Update the doc comment's "3 hours" to "the stale threshold (3 h self-hosted, 27 h on Vercel)".
-- [ ] T036 [US2] Thread the threshold through.
+- [X] T035 [US2] In `apps/api/src/refresh/status.ts`, add the parameter: `deriveSourceStatus(source, now, staleAfterMs: number = STALE_AFTER_MS)`. Update the doc comment's "3 hours" to "the stale threshold (3 h self-hosted, 27 h on Vercel)".
+- [X] T036 [US2] Thread the threshold through.
   - `apps/api/src/config.ts`: add `staleAfterMs` (27 h when `refreshMode === 'cron'`, else `STALE_AFTER_MS`) and `cronSecret` (`CRON_SECRET` or null). Validate `CRON_SECRET` in the env schema with `z.string().regex(/^[0-9a-f]{32,}$/i, 'must be at least 32 hex characters').optional()`.
   - `ServerOptions.staleAfterMs?: number` in `apps/api/src/server.ts`, passed to `Queries` (new `staleAfterMs` option in `apps/api/src/db/queries.ts`) and to `healthRoutes` (new option in `apps/api/src/routes/health.ts`). Both call `deriveSourceStatus(…, staleAfterMs)`.
   - `apps/api/src/main.ts` passes `staleAfterMs: config.staleAfterMs`.
-- [ ] T037 [P] [US2] Create `apps/api/src/refresh/daily.ts`.
+- [X] T037 [P] [US2] Create `apps/api/src/refresh/daily.ts`.
   - `export type DailyRefreshResult = { sources: Record<string, RefreshOutcome['status']>; cleanup: { screenings: number; movies: number } }`.
   - `export async function runDailyRefresh(deps: { adapters: readonly SourceAdapter[]; refresh: (adapter: SourceAdapter, now: Date) => Promise<RefreshOutcome>; cleanup: (now: Date) => Promise<{ screenings: number; movies: number }>; clock: () => Date; logger: Logger }): Promise<DailyRefreshResult>`.
   - Run all refreshes with `Promise.allSettled`; a rejection becomes `'failed'` and is logged with `{ source, err }`. Then call `cleanup(clock())` and log one summary line.
-- [ ] T038 [P] [US2] Create `apps/api/src/routes/cron.ts`.
+- [X] T038 [P] [US2] Create `apps/api/src/routes/cron.ts`.
   - `export const cronRoutes: FastifyPluginAsync<{ secret: string; run: () => Promise<DailyRefreshResult> }>`, registering `GET /cron/daily`.
   - Compare the SHA-256 digests of the `authorization` header and `Bearer ${secret}` with `crypto.timingSafeEqual`.
   - On a match: `cache-control: no-store`, return `await run()`.
   - Otherwise: `reply.status(404).send(errorBody('not_found', 'There is no such API route.'))`.
   - Never log the header.
-- [ ] T039 [US2] In `apps/api/src/server.ts`, add `ServerOptions.cron?: { secret: string; run: () => Promise<DailyRefreshResult> } | null`, registering `cronRoutes` inside the `/api/v1` prefix only when it is set.
-- [ ] T040 [US2] Wire `apps/api/src/main.ts`.
+- [X] T039 [US2] In `apps/api/src/server.ts`, add `ServerOptions.cron?: { secret: string; run: () => Promise<DailyRefreshResult> } | null`, registering `cronRoutes` inside the `/api/v1` prefix only when it is set.
+- [X] T040 [US2] Wire `apps/api/src/main.ts`.
   - Build the per-adapter `refresh` closure and an async `cleanup(now)` (returning `{ screenings, movies }`) once. Use them for both `startScheduler` and `runDailyRefresh`.
   - Pass `cron: config.cronSecret ? { secret: config.cronSecret, run: () => runDailyRefresh({ adapters: enabledAdapters, refresh, cleanup, clock, logger }) } : null` to `buildServer`.
-- [ ] T041 [US2] Add `"crons": [{ "path": "/api/v1/cron/daily", "schedule": "0 22 * * *" }]` at the top level of `vercel.json` ([contracts/hosting.md](./contracts/hosting.md)).
-- [ ] T042 [US2] Check locally.
+- [X] T041 [US2] Add `"crons": [{ "path": "/api/v1/cron/daily", "schedule": "0 22 * * *" }]` at the top level of `vercel.json` ([contracts/hosting.md](./contracts/hosting.md)).
+- [X] T042 [US2] Check locally.
   - `npm test -w @seansai/api && npm run typecheck && npm run lint` pass.
   - Run quickstart §2's cron rows under `vercel dev --local --listen 3333` with a temporary `.env` (`SOURCES_MODE=fixtures`, `CRON_SECRET=0123456789abcdef0123456789abcdef`): no header → 404, `Bearer wrong` → 404, `Bearer 0123456789abcdef0123456789abcdef` → 200 with every source listed.
   - Delete `.env`.
 - [ ] T043 [US2] Run `vercel env add CRON_SECRET production` with the output of `openssl rand -hex 32` (Production only, never committed). Push, and confirm the preview build accepts `crons`.
   - **If a deploy rejects `crons` in services mode**: remove the `crons` key from `vercel.json`. Instead create `.github/workflows/daily-refresh.yml`, which does `on: schedule: - cron: '0 22 * * *'` plus `workflow_dispatch`, and runs `curl --fail -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" https://<production>/api/v1/cron/daily`. Add the `CRON_SECRET` repository secret ([research.md §3](./research.md#3-refresh-scheduling-on-hobby)).
-- [ ] T044 [P] [US2] Update `README.md` (FR-016), before the review so the merged PR carries its own documentation (Definition of Done).
+- [X] T044 [P] [US2] Update `README.md` (FR-016), before the review so the merged PR carries its own documentation (Definition of Done).
   - Add a "Deploy to Vercel (free)" section covering:
     - the two services, Hobby only, non-commercial use;
     - Turso Free via `vercel integration add turso`, or turso.tech plus `vercel env add`, with separate production and preview databases;
@@ -329,7 +329,7 @@ from that night, and no manual action (spec US2, SC-003, quickstart §5).
     - a link to [quickstart.md](./quickstart.md).
   - Add `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` and `CRON_SECRET` to the variables table.
   - Change the layout line "SQLite" to "SQLite (libSQL client; Turso on Vercel)".
-- [ ] T045 [P] [US2] Update `specs/001-cinema-showtimes/contracts/public-api.md` line 14 to state the list endpoints' `Cache-Control: public, max-age=300, s-maxage=300` and why, linking to [contracts/hosting.md](./contracts/hosting.md).
+- [X] T045 [P] [US2] Update `specs/001-cinema-showtimes/contracts/public-api.md` line 14 to state the list endpoints' `Cache-Control: public, max-age=300, s-maxage=300` and why, linking to [contracts/hosting.md](./contracts/hosting.md).
 - [ ] T046 [US2] Review before production (Constitution I, IV; development workflow step 5).
   - Commit `feat(api): daily refresh by Vercel Cron, 27-hour staleness on Vercel (002 US2)` (including T044 and T045) and push.
   - Run all quality gates (quickstart §1).

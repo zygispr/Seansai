@@ -43,6 +43,8 @@ type QueriesOptions = {
   registry: CinemaRegistry;
   /** Sources whose cinemas are shown; a disabled source's cinemas disappear entirely. */
   sourceIds: readonly string[];
+  /** Age after which a cinema's data is flagged as stale. */
+  staleAfterMs: number;
 };
 
 const collator = new Intl.Collator('lt');
@@ -77,11 +79,13 @@ export class Queries {
   readonly #db: Db;
   readonly #repo: Repository;
   readonly #cinemas: readonly Cinema[];
+  readonly #staleAfterMs: number;
 
-  constructor({ db, registry, sourceIds }: QueriesOptions) {
+  constructor({ db, registry, sourceIds, staleAfterMs }: QueriesOptions) {
     this.#db = db;
     this.#repo = new Repository(db);
     this.#cinemas = registry.all().filter((cinema) => sourceIds.includes(cinema.sourceId));
+    this.#staleAfterMs = staleAfterMs;
   }
 
   /** Cinemas in a city, or in every city for `all`. */
@@ -207,7 +211,7 @@ export class Queries {
 
   /**
    * How current the data for these cinemas is: the oldest successful refresh among their
-   * sources, and the cinemas without one for 3 hours or more (FR-014, FR-015).
+   * sources, and the cinemas without one within the stale threshold (FR-014, FR-015).
    */
   async freshness(cinemas: readonly Cinema[], now: Date): Promise<Freshness> {
     // One query for every source, however many cinemas are listed.
@@ -221,7 +225,10 @@ export class Queries {
     return {
       updatedAt: formatInstant(oldest),
       staleCinemas: cinemas
-        .filter((cinema) => deriveSourceStatus(sources.get(cinema.sourceId), now) === 'stale')
+        .filter(
+          (cinema) =>
+            deriveSourceStatus(sources.get(cinema.sourceId), now, this.#staleAfterMs) === 'stale',
+        )
         .map((cinema) => {
           const lastSuccessAt = sources.get(cinema.sourceId)?.lastSuccessAt;
           return {

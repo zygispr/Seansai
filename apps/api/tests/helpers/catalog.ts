@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import { Repository, type ScreeningRecord } from '../../src/db/repository.ts';
 import { localDateOf } from '../../src/lib/time.ts';
 import { cinemaRegistry } from '../../src/registry/cinemas.ts';
-import { buildServer } from '../../src/server.ts';
+import { buildServer, type ServerOptions } from '../../src/server.ts';
 import { createTempDb, movieRecord, screeningRecord } from './temp-db.ts';
 import { createTestLogger } from './test-logger.ts';
 
@@ -105,6 +105,7 @@ export async function seedCatalog(repo: Repository): Promise<void> {
 /** A server over a seeded temporary database; call `close` after each test. */
 export async function startCatalogServer(
   sourceIds: readonly string[] = ['apollo', 'forum', 'skalvija'],
+  options: Pick<ServerOptions, 'staleAfterMs'> = {},
 ): Promise<{ app: FastifyInstance; close: () => Promise<void> }> {
   const temp = await createTempDb();
   await seedCatalog(new Repository(temp.db));
@@ -113,6 +114,7 @@ export async function startCatalogServer(
     now: () => NOW,
     logger: createTestLogger().logger,
     sourceIds,
+    ...options,
   });
   return {
     app,

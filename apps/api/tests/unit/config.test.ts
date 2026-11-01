@@ -9,6 +9,8 @@ describe('loadConfig', () => {
       db: { url: ':memory:', authToken: null },
       sourcesMode: 'fixtures',
       refreshMode: 'scheduler',
+      staleAfterMs: 3 * 60 * 60 * 1000,
+      cronSecret: null,
       fixtureNow: null,
       fixtureFail: [],
       fixtureLastSuccessHours: {},
@@ -40,6 +42,27 @@ describe('loadConfig', () => {
     expect(config.db).toEqual({ url: 'libsql://seansai-x.turso.io', authToken: 't' });
     expect(config.refreshMode).toBe('cron');
     expect(config.serveWebApp).toBe(false);
+  });
+
+  test('on Vercel flags data as stale after 27 hours and protects the refresh with CRON_SECRET', () => {
+    const secret = '0123456789abcdef0123456789abcdef';
+    const config = loadConfig({
+      SEANSAI_CONTACT: 'hello@seansai.lt',
+      VERCEL: '1',
+      TURSO_DATABASE_URL: 'libsql://seansai-x.turso.io',
+      TURSO_AUTH_TOKEN: 't',
+      CRON_SECRET: secret,
+    });
+    expect(config.staleAfterMs).toBe(27 * 60 * 60 * 1000);
+    expect(config.cronSecret).toBe(secret);
+  });
+
+  test('rejects a weak CRON_SECRET', () => {
+    for (const weak of ['s', 'z'.repeat(40)]) {
+      expect(() => loadConfig({ SOURCES_MODE: 'fixtures', CRON_SECRET: weak })).toThrow(
+        /CRON_SECRET/,
+      );
+    }
   });
 
   test('requires TURSO_DATABASE_URL on Vercel in live mode', () => {
