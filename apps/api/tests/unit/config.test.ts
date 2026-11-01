@@ -65,6 +65,15 @@ describe('loadConfig', () => {
     }
   });
 
+  test('never writes fixture data into a real database, even if Turso is configured', () => {
+    const config = loadConfig({
+      SOURCES_MODE: 'fixtures',
+      TURSO_DATABASE_URL: 'libsql://seansai-x.turso.io',
+      TURSO_AUTH_TOKEN: 't',
+    });
+    expect(config.db).toEqual({ url: ':memory:', authToken: null });
+  });
+
   test('requires TURSO_DATABASE_URL on Vercel in live mode', () => {
     expect(() => loadConfig({ SEANSAI_CONTACT: 'hello@seansai.lt', VERCEL: '1' })).toThrow(
       /TURSO_DATABASE_URL is required on Vercel/,

@@ -224,7 +224,7 @@ starts never contact cinemas, and list responses are cached by the CDN.
   - If `vercel dev` rejects `regions`, remove it from `vercel.json` and record that the region is set in project settings instead.
 - [X] T025 [US1] Provision on free plans (quickstart §4 steps 1–3, with the owner's go-ahead for each account action).
   - Run `vercel link` and create the project on the **Hobby** team, with the function region `fra1`.
-  - Run `vercel integration add turso` and choose the **Free** plan, in the EU region nearest Frankfurt.
+  - Run `vercel integration add tursocloud` and choose the free `starter` plan, in the EU region nearest Frankfurt (`dub1`).
   - Create **two** databases on that free account:
     - `seansai`, connected to **Production** only;
     - `seansai-preview`, connected to **Preview** (and Development) only.
@@ -234,7 +234,7 @@ starts never contact cinemas, and list responses are cached by the CDN.
   - `vercel env add SEANSAI_CONTACT` (Production and Preview) with `https://github.com/zygispr/Seansai`.
 - [X] T026 [US1] Deploy a preview by pushing `002-vercel-deploy`.
   - The build succeeds.
-  - `GET <preview>/api/v1/health` returns `status: ok` with every source `stale`. This proves the migrations ran on the **preview** database, including `PRAGMA user_version`. Production's database stays untouched until T047.
+  - `GET <preview>/api/v1/health` returns `status: ok` with every source `stale`. This proves the migrations ran on the **preview** database (recorded in `schema_migrations`, because Turso rejects writing `PRAGMA user_version`; [research.md §2](./research.md#2-shared-data-store)). Production's database stays untouched until T047.
   - If Deployment Protection blocks `curl`, use `vercel curl`.
 - [X] T027 [US1] Fill the **preview** database once from a laptop.
   - Run `TURSO_DATABASE_URL=<preview db url> TURSO_AUTH_TOKEN=<preview token> SEANSAI_CONTACT=https://github.com/zygispr/Seansai npm run dev -w @seansai/api`. This uses scheduler mode, which runs one polite startup refresh.

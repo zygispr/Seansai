@@ -3,7 +3,13 @@ import { Repository, type ScreeningRecord } from '../../src/db/repository.ts';
 import { localDateOf } from '../../src/lib/time.ts';
 import { cinemaRegistry } from '../../src/registry/cinemas.ts';
 import { buildServer, type ServerOptions } from '../../src/server.ts';
-import { createTempDb, movieRecord, screeningRecord } from './temp-db.ts';
+import {
+  createTempDb,
+  movieRecord,
+  screeningRecord,
+  seedMovies,
+  seedScreenings,
+} from './temp-db.ts';
 import { createTestLogger } from './test-logger.ts';
 
 /** 12:00 on Friday 30 October 2026 in Vilnius. */
@@ -70,7 +76,10 @@ export async function seedCatalog(repo: Repository): Promise<void> {
       matchKey: 'prasidejes',
     }),
   };
-  for (const movie of Object.values(movies)) await repo.upsertMovie(movie);
+  await seedMovies(
+    repo,
+    Object.values(movies).map((movie) => ({ movie })),
+  );
 
   const screenings = [
     ...['11:00', '12:00', '13:00', '14:00', '15:00'].map((time) =>
@@ -91,7 +100,8 @@ export async function seedCatalog(repo: Repository): Promise<void> {
     at(movies.started.id, 'apollo-akropolis', '2026-10-30T08:00:00Z'), // already started
   ];
   for (const sourceId of ['apollo', 'forum', 'skalvija']) {
-    await repo.replaceSourceScreenings(
+    await seedScreenings(
+      repo,
       sourceId,
       new Date(0),
       screenings.filter((screening) => screening.sourceId === sourceId),

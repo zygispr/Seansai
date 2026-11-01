@@ -89,18 +89,17 @@ export async function refreshSource(
       logger.debug({ source, reason: item.reason, raw: item.raw }, 'Adapter skipped an item');
     }
 
-    const { movies, records, reviews } = matchScreenings(
-      source,
-      known,
-      await repo.listMovieIdentities(),
-      ctx,
-    );
-    const { newReviews } = await repo.storeRefresh({
-      sourceId: source,
-      now,
-      movies,
-      screenings: records,
-      reviews,
+    // One source at a time from reading the movies to storing them: otherwise two sources listing
+    // a new film at once would each miss the other's and create it twice, for good. Fetching above
+    // stays parallel.
+    const { newReviews } = await repo.exclusive(async () => {
+      const { movies, records, reviews } = matchScreenings(
+        source,
+        known,
+        await repo.listMovieIdentities(),
+        ctx,
+      );
+      return repo.storeRefresh({ sourceId: source, now, movies, screenings: records, reviews });
     });
 
     const outcome = {

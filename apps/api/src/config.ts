@@ -119,7 +119,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
 }
 
 function chooseDb(values: z.infer<typeof EnvSchema>, onVercel: boolean): Config['db'] {
-  if (values.TURSO_DATABASE_URL !== undefined) {
+  // Fixture data must never reach a real database, even if `vercel dev` supplies TURSO_*.
+  if (values.SOURCES_MODE === 'live' && values.TURSO_DATABASE_URL !== undefined) {
     return { url: values.TURSO_DATABASE_URL, authToken: values.TURSO_AUTH_TOKEN ?? null };
   }
   if (values.DB_PATH !== undefined) return { url: `file:${values.DB_PATH}`, authToken: null };

@@ -91,13 +91,11 @@ test('reports freshness: the oldest update and the cinemas whose data is stale',
 });
 
 test('reads every source in one query, however many cinemas are listed', async () => {
-  const getSource = vi.spyOn(Repository.prototype, 'getSource');
   const listSources = vi.spyOn(Repository.prototype, 'listSources');
 
   const response = await server.app.inject('/api/v1/movies?city=all');
 
   expect(response.statusCode).toBe(200);
-  expect(getSource).not.toHaveBeenCalled();
   expect(listSources).toHaveBeenCalledTimes(1);
 });
 

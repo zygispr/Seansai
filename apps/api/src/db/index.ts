@@ -87,7 +87,10 @@ async function schemaVersion(db: Db): Promise<number> {
   );
 }
 
-/** Splits a migration into statements: whole-line `--` comments and empty statements dropped. */
+/**
+ * Splits a migration into statements: whole-line `--` comments and empty statements dropped. It
+ * splits on every `;`, so migrations must not have one inside a string or an inline comment.
+ */
 export function splitStatements(sql: string): string[] {
   return sql
     .split('\n')

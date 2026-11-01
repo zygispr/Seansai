@@ -48,6 +48,12 @@ measurements come from the developer's live database on the same day.
     trip. So a source refresh is collected in memory and written with **one
     `batch(statements, 'write')`**. A batch runs in one implicit transaction and is rolled back
     entirely if any statement fails, which satisfies FR-010.
+  - **Without a transaction around them, reading the movies and storing a refresh can interleave.**
+    Two sources listing a new film at once would each create it, and the duplicates would last.
+    `refreshSource` therefore runs read-match-store one source at a time within a process
+    (`Repository.exclusive`), while fetching stays parallel. A manual run overlapping the cron run
+    on another function instance isn't covered. That is rare, and any duplicates it creates are
+    removed with the film, 30 days after its last screening.
   - **Foreign-key enforcement is off by default** in Turso, and a per-connection
     `PRAGMA foreign_keys` doesn't survive across remote requests. So the code must not rely on
     `ON DELETE CASCADE`. `deleteStaleMovies` deletes the dependent `movie_keys` and
@@ -58,8 +64,8 @@ measurements come from the developer's live database on the same day.
     migration. Databases migrated before that table existed still report their version through
     `user_version`, so self-hosted copies are not migrated twice.
 - **Ways to get a free database** (FR-011):
-  1. `vercel integration add turso` (Vercel Marketplace, "Vercel Native"), choosing the Free
-     plan. It sets `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` on the project.
+  1. `vercel integration add tursocloud` (Vercel Marketplace, "Vercel Native"), choosing the free
+     `starter` plan. It sets `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` on the project.
   2. If (1) asks for a paid plan or a card on a Hobby team, sign up at turso.tech instead (free,
      no card) and add the two variables with `vercel env add`.
 
@@ -169,10 +175,11 @@ calls.
 - **Decision**:
   - `"regions": ["fra1"]` (Frankfurt) at the top level of `vercel.json`. Hobby allows a single
     region, and the default `iad1` is in the US.
-  - The Turso database goes in the EU region closest to Frankfurt (AWS eu-central-1 if offered).
-- **Rationale**: visitors are in Lithuania. Keeping the function and the database in the same
-  region keeps each query to a few milliseconds. A cold start adds Node start-up, one migration
-  check and the queries, which stays well under 3 s.
+  - The Turso database goes in the EU region closest to Frankfurt. The integration offers no
+    Frankfurt region, so it is `dub1` (Dublin).
+- **Rationale**: visitors are in Lithuania. Function and database in neighbouring EU regions keep
+  each query short (measured server p95 136 ms, §5). A cold start adds Node start-up, one migration
+  check and the queries.
 - **Risk**: `regions` validity in services mode is unconfirmed. It isn't in the list of keys
   services mode forbids at the top level. **Fallback**: set the region in the project settings
   (Settings → Functions → Function Regions).

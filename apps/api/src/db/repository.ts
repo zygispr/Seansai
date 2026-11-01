@@ -129,7 +129,6 @@ const SQL = {
       age_rating       = COALESCE(age_rating, excluded.age_rating),
       genres           = CASE WHEN genres = '[]' THEN excluded.genres ELSE genres END,
       poster_url       = COALESCE(poster_url, excluded.poster_url)`,
-  getMovie: 'SELECT * FROM movies WHERE id = ?',
   movieIdentities: `
     SELECT movies.id, match_key, year, duration_minutes,
            (SELECT json_group_array(key) FROM movie_keys WHERE movie_id = movies.id) AS keys
@@ -162,7 +161,6 @@ const SQL = {
     VALUES (@id, @at, @at, NULL)
     ON CONFLICT (id) DO UPDATE SET last_attempt_at = @at, last_success_at = @at,
                                    last_error = NULL`,
-  getSource: 'SELECT * FROM sources WHERE id = ?',
   listSources: 'SELECT * FROM sources ORDER BY id',
   deletePastScreenings: 'DELETE FROM screenings WHERE local_date < ?',
   deleteStaleMovieKeys: `
@@ -275,20 +273,22 @@ function successStatement(sourceId: string, at: Date): InStatement {
  */
 export class Repository {
   readonly #db: Db;
+  /** Settles when the latest `exclusive` work has; never rejects. */
+  #exclusiveTail: Promise<unknown> = Promise.resolve();
 
   constructor(db: Db) {
     this.#db = db;
   }
 
-  /** Creates or fills in the movie, and records the titles it is known by (its own match key included). */
-  async upsertMovie(movie: MovieRecord, keys: readonly string[] = []): Promise<void> {
-    await this.#db.batch(movieStatements(movie, keys), 'write');
-  }
-
-  async getMovie(id: string): Promise<MovieRecord | undefined> {
-    const { rows } = await this.#db.execute({ sql: SQL.getMovie, args: [id] });
-    const row = rows[0] as unknown as MovieRow | undefined;
-    return row ? toMovieRecord(row) : undefined;
+  /**
+   * Runs `work` after all earlier `exclusive` work on this repository has settled. Only this
+   * process is covered: another server instance can still interleave with it.
+   */
+  exclusive<T>(work: () => Promise<T>): Promise<T> {
+    const result = this.#exclusiveTail.then(work);
+    // The caller gets `result` and its error; the queue only needs to move on.
+    this.#exclusiveTail = result.catch(() => undefined);
+    return result;
   }
 
   async listMovieIdentities(): Promise<MovieIdentity[]> {
@@ -304,19 +304,6 @@ export class Repository {
       durationMinutes: row.duration_minutes,
       keys: JSON.parse(row.keys) as string[],
     }));
-  }
-
-  /**
-   * Replaces the source's screenings that start at or after `from` with `screenings`, all or
-   * nothing, so screenings the cinema cancelled disappear. Screenings that already started are
-   * kept until the daily cleanup.
-   */
-  async replaceSourceScreenings(
-    sourceId: string,
-    from: Date,
-    screenings: ScreeningRecord[],
-  ): Promise<void> {
-    await this.#db.batch(screeningStatements(sourceId, from, screenings), 'write');
   }
 
   /**
@@ -354,12 +341,6 @@ export class Repository {
     await this.#db.execute(successStatement(sourceId, at));
   }
 
-  async getSource(id: string): Promise<SourceRecord | undefined> {
-    const { rows } = await this.#db.execute({ sql: SQL.getSource, args: [id] });
-    const row = rows[0] as unknown as SourceRow | undefined;
-    return row ? toSourceRecord(row) : undefined;
-  }
-
   async listSources(): Promise<SourceRecord[]> {
     const { rows } = await this.#db.execute(SQL.listSources);
     return (rows as unknown as SourceRow[]).map(toSourceRecord);
@@ -387,11 +368,5 @@ export class Repository {
       'write',
     );
     return results[2]?.rowsAffected ?? 0;
-  }
-
-  /** Logs an uncertain match for the maintainer; returns false if the pair was already logged. */
-  async insertMatchReview(review: MatchReviewRecord): Promise<boolean> {
-    const result = await this.#db.execute(matchReviewStatement(review));
-    return result.rowsAffected > 0;
   }
 }

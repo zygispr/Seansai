@@ -5,7 +5,7 @@ import { cinemaRegistry } from '../../src/registry/cinemas.ts';
 import { refreshSource, type RefreshContext } from '../../src/refresh/refresh-source.ts';
 import { FixtureHttpClient } from '../../src/sources/fixture-http.ts';
 import type { AdapterResult, SourceAdapter, SourceScreening } from '../../src/sources/types.ts';
-import { createTempDb } from '../helpers/temp-db.ts';
+import { createTempDb, findSource } from '../helpers/temp-db.ts';
 import { createTestLogger } from '../helpers/test-logger.ts';
 
 const NOW = new Date('2026-10-30T10:00:00Z');
@@ -106,7 +106,7 @@ describe('refreshSource', () => {
         local_date: '2026-10-31',
       },
     ]);
-    expect(await repo.getSource('apollo')).toMatchObject({ lastSuccessAt: NOW, lastError: null });
+    expect(await findSource(repo, 'apollo')).toMatchObject({ lastSuccessAt: NOW, lastError: null });
     expect(log.lines()).toContainEqual(
       expect.objectContaining({ source: 'apollo', stored: 2, skipped: 1, newReviews: 0 }),
     );
@@ -150,7 +150,7 @@ describe('refreshSource', () => {
 
     expect(outcome).toMatchObject({ status: 'failed' });
     expect(await storedScreenings()).toEqual([expect.objectContaining({ id: 'apollo:1' })]);
-    expect(await repo.getSource('apollo')).toMatchObject({
+    expect(await findSource(repo, 'apollo')).toMatchObject({
       lastAttemptAt: LATER,
       lastSuccessAt: NOW,
       lastError: expect.stringContaining('ticketUrl') as unknown,
@@ -167,7 +167,7 @@ describe('refreshSource', () => {
 
     expect(outcome).toEqual({ status: 'failed', error: 'Blocked by www.apollokinas.lt: HTTP 403' });
     expect(await storedScreenings()).toHaveLength(1);
-    expect(await repo.getSource('apollo')).toMatchObject({
+    expect(await findSource(repo, 'apollo')).toMatchObject({
       lastSuccessAt: NOW,
       lastError: 'Blocked by www.apollokinas.lt: HTTP 403',
     });
@@ -213,6 +213,29 @@ describe('refreshSource', () => {
 
     expect(outcome).toEqual({ status: 'disabled' });
     expect(adapter.fetchScreeningsMock).not.toHaveBeenCalled();
-    expect(await repo.getSource('apollo')).toBeUndefined();
+    expect(await findSource(repo, 'apollo')).toBeUndefined();
+  });
+
+  test('sources refreshed at the same time still share one movie', async () => {
+    const apollo = stubAdapter({
+      screenings: [screening({ title: 'Kasėjas', originalTitle: null, englishTitle: 'Digger' })],
+      skipped: [],
+    });
+    const forum: SourceAdapter = {
+      id: 'forum',
+      fetchScreenings: () =>
+        Promise.resolve({
+          screenings: [
+            screening({ cinemaId: 'forum-vingis', title: 'Kasėjas', originalTitle: null }),
+          ],
+          skipped: [],
+        }),
+    };
+
+    await Promise.all([refreshSource(apollo, context()), refreshSource(forum, context())]);
+
+    const movies = (await db.execute('SELECT id FROM movies')).rows;
+    expect(movies).toHaveLength(1);
+    expect(await storedScreenings()).toHaveLength(2);
   });
 });

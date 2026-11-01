@@ -56,7 +56,7 @@ New and changed fields on the API's `Config`:
 
 | Field         | Type                                         | Derived from                                                                                         |
 | ------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `db`          | `{ url: string; authToken: string \| null }` | `TURSO_DATABASE_URL`/`TURSO_AUTH_TOKEN`, else `file:${DB_PATH}`, else `:memory:` in fixture mode, else the default file. **Error** on Vercel in live mode without `TURSO_DATABASE_URL`. Replaces `dbPath`. |
+| `db`          | `{ url: string; authToken: string \| null }` | `TURSO_DATABASE_URL`/`TURSO_AUTH_TOKEN` (live mode only, so fixture data never reaches a real database), else `file:${DB_PATH}`, else `:memory:` in fixture mode, else the default file. **Error** on Vercel in live mode without `TURSO_DATABASE_URL`. Replaces `dbPath`. |
 | `refreshMode` | `'scheduler' \| 'cron'`                      | `'cron'` when `VERCEL` is set and `SOURCES_MODE=live`, otherwise `'scheduler'`                       |
 | `staleAfterMs`| `number`                                     | 27 h in `cron` mode, 3 h otherwise                                                                   |
 | `cronSecret`  | `string \| null`                             | `CRON_SECRET`; when null, the cron route isn't registered                                            |

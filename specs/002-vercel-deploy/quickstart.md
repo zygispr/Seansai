@@ -57,7 +57,7 @@ curl -s localhost:3000/ | head -c 100     # the web app's index.html
 
 1. Run `vercel link` and create the project on the **Hobby** team.
 2. Set up the database:
-   - Run `vercel integration add turso` and choose **Free**.
+   - Run `vercel integration add tursocloud` and choose the free `starter` plan.
    - Create two databases: `seansai` connected to Production, and `seansai-preview` connected to
      Preview.
    - If that asks for a paid plan or a card, stop. Create both databases at turso.tech in the EU

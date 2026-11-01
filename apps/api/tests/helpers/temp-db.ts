@@ -2,7 +2,12 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { openDb, type Db } from '../../src/db/index.ts';
-import type { MovieRecord, ScreeningRecord } from '../../src/db/repository.ts';
+import type {
+  MovieRecord,
+  Repository,
+  ScreeningRecord,
+  SourceRecord,
+} from '../../src/db/repository.ts';
 
 /** A migrated SQLite database in a fresh temporary file; `cleanup` closes and deletes it. */
 export async function createTempDb(): Promise<{ db: Db; path: string; cleanup: () => void }> {
@@ -17,6 +22,35 @@ export async function createTempDb(): Promise<{ db: Db; path: string; cleanup: (
       rmSync(dir, { recursive: true, force: true });
     },
   };
+}
+
+/** Writes movies through `storeRefresh`, the production write path, as a source named `seed`. */
+export async function seedMovies(
+  repo: Repository,
+  movies: ReadonlyArray<{ movie: MovieRecord; keys?: readonly string[] }>,
+  reviews: Parameters<Repository['storeRefresh']>[0]['reviews'] = [],
+): Promise<void> {
+  await repo.storeRefresh({
+    sourceId: 'seed',
+    now: new Date(0),
+    movies: movies.map(({ movie, keys = [] }) => ({ movie, keys })),
+    screenings: [],
+    reviews,
+  });
+}
+
+/** Replaces the source's screenings from `from` on; also records a success at `from`. */
+export async function seedScreenings(
+  repo: Repository,
+  sourceId: string,
+  from: Date,
+  screenings: ScreeningRecord[],
+): Promise<void> {
+  await repo.storeRefresh({ sourceId, now: from, movies: [], screenings, reviews: [] });
+}
+
+export async function findSource(repo: Repository, id: string): Promise<SourceRecord | undefined> {
+  return (await repo.listSources()).find((source) => source.id === id);
 }
 
 export function movieRecord(overrides: Partial<MovieRecord> = {}): MovieRecord {

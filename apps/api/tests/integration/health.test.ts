@@ -65,11 +65,9 @@ test('reports each source status with its last success time in Vilnius time', as
 });
 
 test('reads every source in one query', async () => {
-  const getSource = vi.spyOn(Repository.prototype, 'getSource');
   const listSources = vi.spyOn(Repository.prototype, 'listSources');
 
   await app.inject('/api/v1/health');
 
-  expect(getSource).not.toHaveBeenCalled();
   expect(listSources).toHaveBeenCalledTimes(1);
 });
