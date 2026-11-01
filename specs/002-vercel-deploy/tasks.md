@@ -378,7 +378,7 @@ US2 (T044).
 ### Implementation for User Story 3
 
 - [ ] T050 [P] [US3] In `Dockerfile`, remove the `python3 make g++` toolchain installation, which only `better-sqlite3` needed. Keep `DB_PATH=/data/seansai.sqlite`; config turns it into `file:/data/seansai.sqlite`.
-- [ ] T051 [US3] Check the container (quickstart §3): `docker build -t seansai . && docker run --rm -p 3000:3000 -e SOURCES_MODE=fixtures seansai`.
+- [ ] T051 [US3] Check the container (quickstart §3; CI's `container` job also does this on every push): `docker build -t seansai .`, then run it with `SOURCES_MODE=fixtures` and the saved fixtures mounted, as quickstart §3 shows.
   - `curl -s localhost:3000/api/v1/health` shows `"status":"ok"`.
   - `curl -s localhost:3000/` returns `index.html`.
   - If Docker isn't available, record that this check was skipped in the PR description.

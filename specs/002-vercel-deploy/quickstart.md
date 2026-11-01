@@ -46,7 +46,8 @@ Delete `.env` when done.
 
 ```bash
 docker build -t seansai .
-docker run --rm -p 3000:3000 -e SOURCES_MODE=fixtures seansai
+docker run --rm -p 3000:3000 -e SOURCES_MODE=fixtures \
+  -v "$PWD/apps/api/tests/fixtures:/app/apps/api/tests/fixtures:ro" seansai
 curl -s localhost:3000/api/v1/health      # "status":"ok", sources healthy
 curl -s localhost:3000/ | head -c 100     # the web app's index.html
 ```
