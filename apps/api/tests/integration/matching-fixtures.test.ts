@@ -17,22 +17,26 @@ import { createTempDb } from '../helpers/temp-db.ts';
 import { createTestLogger } from '../helpers/test-logger.ts';
 
 /**
- * The same movie must not appear twice (FR-005, SC-004): every source's saved data is refreshed
- * into one database, in both orders, and films that several cinemas show become one movie each.
+ * The database with a delay before each call, as a remote one has, so sources can overlap. A batch
+ * takes longer than a read, or a store outside the lock would still land before the next read.
  */
-/** The database with a delay before each call, as a remote one has, so sources can overlap. */
 function withLatency(db: Db): Db {
   const delayed =
-    <Args extends unknown[], Result>(call: (...args: Args) => Promise<Result>) =>
+    <Args extends unknown[], Result>(ms: number, call: (...args: Args) => Promise<Result>) =>
     async (...args: Args): Promise<Result> => {
-      await new Promise((resolve) => setTimeout(resolve, 20));
+      await new Promise((resolve) => setTimeout(resolve, ms));
       return call(...args);
     };
   return Object.assign(Object.create(db) as Db, {
-    execute: delayed((stmt: InStatement) => db.execute(stmt)),
-    batch: delayed(db.batch.bind(db)),
+    execute: delayed(20, (stmt: InStatement) => db.execute(stmt)),
+    batch: delayed(60, db.batch.bind(db)),
   });
 }
+
+/**
+ * The same movie must not appear twice (FR-005, SC-004): every source's saved data is refreshed
+ * into one database, in three orders, and films that several cinemas show become one movie each.
+ */
 
 async function refreshAll(
   order: 'forward' | 'reverse' | 'parallel',

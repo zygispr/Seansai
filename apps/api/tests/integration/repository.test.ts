@@ -322,6 +322,58 @@ describe('storeRefresh: running time', () => {
 
     expect(await duration()).toBe(93);
   });
+
+  test('recounts a film that another cinema stopped listing', async () => {
+    await seedScreenings(repo, 'apollo', NOW, times('apollo', 91, 91, 91));
+    await seedScreenings(repo, 'forum', NOW, times('forum', 108));
+    expect(await duration()).toBe(91);
+
+    await seedScreenings(repo, 'apollo', NOW, []);
+
+    expect(await duration()).toBe(108);
+  });
+
+  test('updates the time of a screening that has started and is listed again', async () => {
+    const started = screeningRecord({ startsAt: new Date(NOW.getTime() - 60_000) });
+    await seedScreenings(repo, 'apollo', NOW, [started]);
+    await seedScreenings(repo, 'apollo', NOW, [{ ...started, durationMinutes: 95 }]);
+
+    expect((await db.execute('SELECT duration_minutes AS d FROM screenings')).rows).toEqual([
+      { d: 95 },
+    ]);
+  });
+
+  test('matching sees every running time listed for a film, whatever it shows', async () => {
+    await seedScreenings(repo, 'apollo', NOW, times('apollo', 120, 105, 105, null));
+
+    const [digger] = await repo.listMovieIdentities();
+
+    expect(digger?.durationMinutes).toBe(105);
+    expect(digger?.listedDurations.toSorted()).toEqual([105, 120]);
+  });
+});
+
+describe('exclusive', () => {
+  test('failed work rejects only for its caller, and the work queued behind it still runs', async () => {
+    const failing = repo.exclusive(() => Promise.reject(new Error('store failed')));
+    const next = repo.exclusive(() => Promise.resolve('stored'));
+
+    await expect(failing).rejects.toThrow('store failed');
+    await expect(next).resolves.toBe('stored');
+  });
+
+  test('runs one piece of work at a time, in the order asked', async () => {
+    const events: string[] = [];
+    const work = (name: string, ms: number) => async () => {
+      events.push(`${name} start`);
+      await new Promise((resolve) => setTimeout(resolve, ms));
+      events.push(`${name} end`);
+    };
+
+    await Promise.all([repo.exclusive(work('slow', 20)), repo.exclusive(work('fast', 0))]);
+
+    expect(events).toEqual(['slow start', 'slow end', 'fast start', 'fast end']);
+  });
 });
 
 describe('storeRefresh: movies', () => {

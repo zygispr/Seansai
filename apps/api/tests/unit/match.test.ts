@@ -17,8 +17,11 @@ function listing(overrides: Partial<Listing> = {}): Listing {
 }
 
 /** Existing movies list every title they are known by. */
-function movie(identity: Omit<MovieIdentity, 'keys'> & { keys?: string[] }): MovieIdentity {
-  return { keys: [identity.matchKey], ...identity };
+function movie(
+  identity: Omit<MovieIdentity, 'keys' | 'listedDurations'> &
+    Partial<Pick<MovieIdentity, 'keys' | 'listedDurations'>>,
+): MovieIdentity {
+  return { keys: [identity.matchKey], listedDurations: [], ...identity };
 }
 
 const digger = movie({ id: 'digger-2026', matchKey: 'digger', year: 2026, durationMinutes: 101 });
@@ -63,6 +66,19 @@ describe('resolveMovie', () => {
 
     expect(result.movie.id).toBe('digger-2026');
     expect(result.reviews).toEqual([]);
+  });
+
+  test('a missing year is judged against every running time listed for the film', () => {
+    // The film shows 105, its most common time; this listing is 17 minutes from that, 2 from 120.
+    const film = movie({ ...digger, durationMinutes: 105, listedDurations: [105, 120] });
+
+    const close = resolveMovie(listing({ year: null, durationMinutes: 122 }), [film], []);
+    expect(close.movie.id).toBe('digger-2026');
+    expect(close.reviews).toEqual([]);
+
+    const far = resolveMovie(listing({ year: null, durationMinutes: 136 }), [film], []);
+    expect(far.movie.id).toBe('digger');
+    expect(far.reviews).toHaveLength(1);
   });
 
   test('keeps listings separate when one year is missing and durations differ by more than 15 minutes', () => {
@@ -253,6 +269,7 @@ describe('resolveMovie', () => {
         year: 2026,
         durationMinutes: 91,
         keys: ['cat in the hat', 'katinas su skrybele'],
+        listedDurations: [91],
       };
       const sundayShowing = listing({
         title: 'Katinas su skrybėle | Sekmadienis su vaikais',

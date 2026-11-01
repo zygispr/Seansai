@@ -22,6 +22,8 @@ export type MovieRecord = {
 export type MovieIdentity = Pick<MovieRecord, 'id' | 'matchKey' | 'year' | 'durationMinutes'> & {
   /** Every normalised title the movie is known by. */
   keys: string[];
+  /** Every running time its screenings list. */
+  listedDurations: number[];
 };
 
 export type ScreeningRecord = {
@@ -141,7 +143,9 @@ const SQL = {
       poster_url       = COALESCE(poster_url, excluded.poster_url)`,
   movieIdentities: `
     SELECT movies.id, match_key, year, duration_minutes,
-           (SELECT json_group_array(key) FROM movie_keys WHERE movie_id = movies.id) AS keys
+           (SELECT json_group_array(key) FROM movie_keys WHERE movie_id = movies.id) AS keys,
+           (SELECT json_group_array(DISTINCT duration_minutes) FROM screenings
+            WHERE movie_id = movies.id AND duration_minutes IS NOT NULL) AS listed_durations
     FROM movies ORDER BY movies.id`,
   addMovieKey: 'INSERT INTO movie_keys (movie_id, key) VALUES (?, ?) ON CONFLICT DO NOTHING',
   deleteFutureScreenings: 'DELETE FROM screenings WHERE source_id = ? AND starts_at >= ?',
@@ -165,7 +169,8 @@ const SQL = {
     WHERE id = @movieId AND (last_screening_at IS NULL OR last_screening_at < @startsAt)`,
   settleDurations: `
     UPDATE movies SET duration_minutes = ${MOST_COMMON_DURATION}
-    WHERE id IN (SELECT value FROM json_each(?)) AND ${MOST_COMMON_DURATION} IS NOT NULL`,
+    WHERE ${MOST_COMMON_DURATION} IS NOT NULL
+      AND duration_minutes IS NOT ${MOST_COMMON_DURATION}`,
   recordAttempt: `
     INSERT INTO sources (id, last_attempt_at, last_error) VALUES (@id, @at, @error)
     ON CONFLICT (id) DO UPDATE SET last_attempt_at = @at, last_error = @error`,
@@ -216,9 +221,9 @@ function movieStatements(movie: MovieRecord, keys: readonly string[]): InStateme
 
 /**
  * Deletes the source's screenings that start at or after `from`, upserts `screenings`, raises each
- * movie's latest screening start, and sets each movie's running time to the most common one. The
- * source refreshed last in a run recounts with every cinema's new data, so the result does not
- * depend on which cinema came first.
+ * movie's latest screening start, and sets every movie's running time to the most common one: also
+ * the movies this source stopped listing. The source refreshed last in a run recounts with every
+ * cinema's new data, so the result does not depend on which cinema came first.
  */
 function screeningStatements(
   sourceId: string,
@@ -260,7 +265,7 @@ function screeningStatements(
       sql: SQL.raiseLastScreening,
       args: { startsAt, movieId },
     })),
-    { sql: SQL.settleDurations, args: [JSON.stringify([...latestStartByMovie.keys()])] },
+    SQL.settleDurations,
   ];
 }
 
@@ -312,7 +317,10 @@ export class Repository {
     const { rows } = await this.#db.execute(SQL.movieIdentities);
     return (
       rows as unknown as Array<
-        Pick<MovieRow, 'id' | 'match_key' | 'year' | 'duration_minutes'> & { keys: string }
+        Pick<MovieRow, 'id' | 'match_key' | 'year' | 'duration_minutes'> & {
+          keys: string;
+          listed_durations: string;
+        }
       >
     ).map((row) => ({
       id: row.id,
@@ -320,6 +328,7 @@ export class Repository {
       year: row.year,
       durationMinutes: row.duration_minutes,
       keys: JSON.parse(row.keys) as string[],
+      listedDurations: JSON.parse(row.listed_durations) as number[],
     }));
   }
 

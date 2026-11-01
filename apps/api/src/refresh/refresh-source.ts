@@ -135,10 +135,19 @@ function matchScreenings(
     const resolution = resolveMovie(screening, identities, aliases);
     const { movie, keys } = resolution;
     movies.push({ movie, keys });
-    // Later listings in this refresh can match on the titles just learned.
+    // Later listings in this refresh can match on the titles and running times just learned.
+    const listed = screening.durationMinutes === null ? [] : [screening.durationMinutes];
     const known = identities.find((existing) => existing.id === movie.id);
-    if (known) known.keys = [...new Set([...known.keys, ...keys])];
-    else identities.push({ ...movie, keys: [...new Set([movie.matchKey, ...keys])] });
+    if (known) {
+      known.keys = [...new Set([...known.keys, ...keys])];
+      known.listedDurations.push(...listed);
+    } else {
+      identities.push({
+        ...movie,
+        keys: [...new Set([movie.matchKey, ...keys])],
+        listedDurations: listed,
+      });
+    }
     reviews.push(...resolution.reviews);
     return {
       id: `${source}:${screening.sourceScreeningId}`,

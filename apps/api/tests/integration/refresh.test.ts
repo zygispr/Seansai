@@ -240,6 +240,33 @@ describe('refreshSource', () => {
     expect(await storedScreenings()).toHaveLength(2);
   });
 
+  test('a film stays one movie when its most common running time moves away from a listing', async () => {
+    const source = (id: SourceAdapter['id'], screenings: SourceScreening[]): SourceAdapter => ({
+      id,
+      fetchScreenings: () => Promise.resolve({ screenings, skipped: [] }),
+    });
+    const noYear = { title: 'Kasėjas', originalTitle: null, year: null };
+    const sources = [
+      source('apollo', [screening({ durationMinutes: 120 })]),
+      source('forum', [screening({ cinemaId: 'forum-vingis', ...noYear, durationMinutes: 122 })]),
+      source(
+        'vue',
+        ['1', '2', '3'].map((sourceScreeningId) =>
+          screening({ sourceScreeningId, cinemaId: 'vue-vilnius', durationMinutes: 105 }),
+        ),
+      ),
+    ];
+
+    for (const day of [NOW, LATER]) {
+      for (const adapter of sources) await refreshSource(adapter, context({ now: day }));
+    }
+
+    expect((await db.execute('SELECT id, duration_minutes FROM movies')).rows).toEqual([
+      { id: 'digger-2026', duration_minutes: 105 },
+    ]);
+    expect((await db.execute('SELECT 1 FROM match_reviews')).rows).toEqual([]);
+  });
+
   test('a merged film shows the most common running time, even if a rare one came first', async () => {
     const sundayShowing: SourceAdapter = {
       id: 'forum',

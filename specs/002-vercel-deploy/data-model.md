@@ -14,6 +14,8 @@ of the first deploy and the review:
   disagree, and a movie's `duration_minutes` used to be whichever listing was stored first. It is
   now the most common value across the movie's screenings, the shorter one on a tie, so it no longer
   depends on refresh order. Screenings without a time don't count; a movie with none keeps its value.
+  A listing with no year is matched against every time listed for the film, not this value, because
+  this value moves and a listing that fell out of range would split off.
 
 ## Where the data lives
 
@@ -33,7 +35,7 @@ of the first deploy and the review:
     is one transaction:
     - movie upserts and their match keys;
     - deleting the source's screenings from now on, then the screening upserts;
-    - `last_screening_at` raises and the most common running time of each listed movie;
+    - `last_screening_at` raises and every movie's most common running time;
     - new match reviews;
     - the source's success record.
   - A failed batch leaves the source's previous data untouched.
