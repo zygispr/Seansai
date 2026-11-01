@@ -96,7 +96,10 @@ export class PoliteHttpClient implements HttpClient {
     if (!reply.ok) {
       throw new SourceRequestError(url, `HTTP ${String(reply.status)}`, { status: reply.status });
     }
-    if (reply.contentType.includes('html') && CAPTCHA_MARKERS.some((m) => m.test(reply.body))) {
+    if (
+      reply.contentType.includes('html') &&
+      CAPTCHA_MARKERS.some((marker) => marker.test(reply.body))
+    ) {
       throw new SourceBlockedError(url, 'CAPTCHA or challenge page');
     }
     return reply.body;

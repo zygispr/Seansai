@@ -13,7 +13,13 @@ import { createTestLogger } from '../helpers/test-logger.ts';
  * `status: 'hang'` simulates a server that never answers, and `'stall'` one that sends its headers
  * and then stops sending the body.
  */
-type Route = { status?: number | 'hang' | 'stall'; body?: string; contentType?: string };
+type Route = {
+  status?: number | 'hang' | 'stall';
+  /** The status a stalling server sends before it stops. */
+  stalledStatus?: number;
+  body?: string;
+  contentType?: string;
+};
 type Call = { url: string; at: number; headers: Headers };
 
 const ALLOW_ALL: Route = { body: 'User-agent: *\nAllow: /\n' };
@@ -43,7 +49,7 @@ function createClient(
           });
         },
       });
-      return Promise.resolve(new Response(body));
+      return Promise.resolve(new Response(body, { status: route.stalledStatus ?? 200 }));
     }
     return Promise.resolve(
       new Response(route.body ?? '', {
@@ -200,6 +206,17 @@ describe('PoliteHttpClient', () => {
 
     await expect(request).rejects.toThrow(SourceRequestError);
     await expect(request).rejects.toThrow(/timed out after 15000 ms/);
+  });
+
+  test('reports a block at once, without waiting for a stalled body', async () => {
+    const { client } = createClient({
+      'https://cinema.lt/robots.txt': ALLOW_ALL,
+      'https://cinema.lt/blocked': { status: 'stall', stalledStatus: 403 },
+    });
+
+    await expect(settle(client.getText('https://cinema.lt/blocked'))).rejects.toThrow(
+      SourceBlockedError,
+    );
   });
 
   test('refuses a URL disallowed by robots.txt', async () => {
