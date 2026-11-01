@@ -50,20 +50,16 @@ function movieIdOf(matchKey: string, year: number | null): string {
 
 /**
  * For two listings that share a title (research.md §5): known production years must be equal;
- * when a year is missing, the listing's duration must be within 15 minutes of one the film is
- * listed with. The film's shown running time alone won't do: it moves with the most common one,
- * and a listing that fell out of range would split off for good. Nothing known to contradict the
- * shared title (e.g. Romuva publishes only titles) counts as a match, because the same movie
+ * when a year is missing, known durations must be within 15 minutes. Nothing known to contradict
+ * the shared title (e.g. Romuva publishes only titles) counts as a match, because the same movie
  * appearing twice is the more common mistake.
  */
 function isConfidentMatch(listing: Listing, candidate: MovieIdentity): boolean {
   if (listing.year !== null && candidate.year !== null) return listing.year === candidate.year;
-  const { durationMinutes } = listing;
-  const known = [candidate.durationMinutes, ...candidate.listedDurations].filter(
-    (minutes) => minutes !== null,
+  if (listing.durationMinutes === null || candidate.durationMinutes === null) return true;
+  return (
+    Math.abs(listing.durationMinutes - candidate.durationMinutes) <= DURATION_TOLERANCE_MINUTES
   );
-  if (durationMinutes === null || known.length === 0) return true;
-  return known.some((minutes) => Math.abs(durationMinutes - minutes) <= DURATION_TOLERANCE_MINUTES);
 }
 
 function conflictReason(listing: Listing, candidate: MovieIdentity): string {

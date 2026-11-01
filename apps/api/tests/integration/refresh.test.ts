@@ -35,6 +35,10 @@ function screening(overrides: Partial<SourceScreening> = {}): SourceScreening {
   };
 }
 
+function listingsFrom(id: SourceAdapter['id'], screenings: SourceScreening[]): SourceAdapter {
+  return { id, fetchScreenings: () => Promise.resolve({ screenings, skipped: [] }) };
+}
+
 function stubAdapter(result: AdapterResult | (() => Promise<AdapterResult>)) {
   const fetchScreenings = vi.fn(
     typeof result === 'function' ? result : () => Promise.resolve(result),
@@ -241,15 +245,13 @@ describe('refreshSource', () => {
   });
 
   test('a film stays one movie when its most common running time moves away from a listing', async () => {
-    const source = (id: SourceAdapter['id'], screenings: SourceScreening[]): SourceAdapter => ({
-      id,
-      fetchScreenings: () => Promise.resolve({ screenings, skipped: [] }),
-    });
     const noYear = { title: 'Kasėjas', originalTitle: null, year: null };
     const sources = [
-      source('apollo', [screening({ durationMinutes: 120 })]),
-      source('forum', [screening({ cinemaId: 'forum-vingis', ...noYear, durationMinutes: 122 })]),
-      source(
+      listingsFrom('apollo', [screening({ durationMinutes: 120 })]),
+      listingsFrom('forum', [
+        screening({ cinemaId: 'forum-vingis', ...noYear, durationMinutes: 122 }),
+      ]),
+      listingsFrom(
         'vue',
         ['1', '2', '3'].map((sourceScreeningId) =>
           screening({ sourceScreeningId, cinemaId: 'vue-vilnius', durationMinutes: 105 }),
@@ -265,6 +267,42 @@ describe('refreshSource', () => {
       { id: 'digger-2026', duration_minutes: 105 },
     ]);
     expect((await db.execute('SELECT 1 FROM match_reviews')).rows).toEqual([]);
+  });
+
+  test("a listing does not join a film through another listing's running time", async () => {
+    const kopa = { title: 'Kopa', originalTitle: null, year: null };
+    const sources = [
+      listingsFrom(
+        'apollo',
+        ['1', '2'].map((sourceScreeningId) =>
+          screening({
+            sourceScreeningId,
+            title: 'Kopa',
+            originalTitle: 'Dune',
+            year: 2021,
+            durationMinutes: 155,
+          }),
+        ),
+      ),
+      // 12 minutes from the film: the same film.
+      listingsFrom('vue', [screening({ cinemaId: 'vue-vilnius', ...kopa, durationMinutes: 143 })]),
+      // 18 minutes from the film, though 6 from the listing above: another film (FR-005).
+      listingsFrom('forum', [
+        screening({ cinemaId: 'forum-vingis', ...kopa, durationMinutes: 137 }),
+      ]),
+    ];
+
+    for (const day of [NOW, LATER]) {
+      for (const adapter of sources) await refreshSource(adapter, context({ now: day }));
+    }
+
+    expect((await db.execute('SELECT id FROM movies ORDER BY id')).rows).toEqual([
+      { id: 'dune-2021' },
+      { id: 'kopa' },
+    ]);
+    expect((await db.execute('SELECT movie_id_b FROM match_reviews')).rows).toEqual([
+      { movie_id_b: 'kopa' },
+    ]);
   });
 
   test('a merged film shows the most common running time, even if a rare one came first', async () => {

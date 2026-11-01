@@ -59,7 +59,7 @@ describe('splitStatements', () => {
 
 describe('openDb', () => {
   test('records the migrations in a table, never in PRAGMA user_version (Turso rejects it)', async () => {
-    expect(await schemaVersion(db)).toBe(3);
+    expect(await schemaVersion(db)).toBe(4);
     expect(await userVersion(db)).toBe(0);
   });
 
@@ -67,7 +67,7 @@ describe('openDb', () => {
     db.close();
     db = await openDb(`file:${path}`);
 
-    expect(await schemaVersion(db)).toBe(3);
+    expect(await schemaVersion(db)).toBe(4);
   });
 
   test('a database migrated before the table existed is not migrated again', async () => {
@@ -90,11 +90,33 @@ describe('openDb', () => {
         .rows[0]?.count,
     ).toBe(1);
     // Only the migrations it lacks run.
-    expect(await schemaVersion(reopened)).toBe(3);
+    expect(await schemaVersion(reopened)).toBe(4);
     expect(
       (await reopened.execute('PRAGMA table_info(screenings)')).rows.map((row) => row.name),
     ).toContain('duration_minutes');
     reopened.close();
+  });
+
+  test('an upgraded database keeps matching against the time each movie already has', async () => {
+    const legacyPath = `${path}.upgrade`;
+    const legacy = createClient({ url: `file:${legacyPath}` });
+    await legacy.executeMultiple(
+      readFileSync(new URL('../../src/db/schema.sql', import.meta.url), 'utf8') +
+        readFileSync(
+          new URL('../../src/db/migration-002-movie-keys.sql', import.meta.url),
+          'utf8',
+        ) +
+        `INSERT INTO movies (id, title, match_key, duration_minutes)
+         VALUES ('old-film', 'Senas', 'senas', 104);
+         PRAGMA user_version = 2;`,
+    );
+    legacy.close();
+
+    const reopened = await openDb(`file:${legacyPath}`);
+    const [oldFilm] = await new Repository(reopened).listMovieIdentities();
+    reopened.close();
+
+    expect(oldFilm?.durationMinutes).toBe(104);
   });
 
   test('two servers starting at once on a new database both migrate it safely', async () => {
@@ -102,7 +124,7 @@ describe('openDb', () => {
 
     const [first, second] = await Promise.all([openDb(url), openDb(url)]);
 
-    expect(await schemaVersion(first)).toBe(3);
+    expect(await schemaVersion(first)).toBe(4);
     expect(
       (await first.execute("SELECT COUNT(*) AS count FROM sqlite_master WHERE name = 'movies'"))
         .rows[0]?.count,
@@ -343,13 +365,26 @@ describe('storeRefresh: running time', () => {
     ]);
   });
 
-  test('matching sees every running time listed for a film, whatever it shows', async () => {
-    await seedScreenings(repo, 'apollo', NOW, times('apollo', 120, 105, 105, null));
+  test('matching keeps the first listed time, whatever the movie shows', async () => {
+    await seedScreenings(repo, 'apollo', NOW, times('apollo', 91, 91));
+    expect(await duration()).toBe(91);
 
     const [digger] = await repo.listMovieIdentities();
 
-    expect(digger?.durationMinutes).toBe(105);
-    expect(digger?.listedDurations.toSorted()).toEqual([105, 120]);
+    expect(digger?.durationMinutes).toBe(101);
+  });
+
+  test('matching takes the first time known when the first listing had none', async () => {
+    const listed = (durationMinutes: number | null) => [
+      { movie: movieRecord({ id: 'new-film', matchKey: 'new film', durationMinutes }) },
+    ];
+    await seedMovies(repo, listed(null));
+    await seedMovies(repo, listed(120));
+    await seedMovies(repo, listed(130));
+
+    const identities = await repo.listMovieIdentities();
+
+    expect(identities.find(({ id }) => id === 'new-film')?.durationMinutes).toBe(120);
   });
 });
 

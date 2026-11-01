@@ -33,11 +33,6 @@ function withLatency(db: Db): Db {
   });
 }
 
-/**
- * The same movie must not appear twice (FR-005, SC-004): every source's saved data is refreshed
- * into one database, in three orders, and films that several cinemas show become one movie each.
- */
-
 async function refreshAll(
   order: 'forward' | 'reverse' | 'parallel',
 ): Promise<{ db: Db; cleanup: () => void }> {
@@ -81,6 +76,10 @@ async function moviesKnownAs(db: Db, title: string) {
   return rows as unknown as Array<{ id: string; englishTitle: string | null }>;
 }
 
+/**
+ * The same movie must not appear twice (FR-005, SC-004): every source's saved data is refreshed
+ * into one database, in three orders, and films that several cinemas show become one movie each.
+ */
 describe.each(['forward', 'reverse', 'parallel'] as const)(
   'all fixtures, refreshed %s',
   (order) => {

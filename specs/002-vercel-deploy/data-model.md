@@ -14,8 +14,10 @@ of the first deploy and the review:
   disagree, and a movie's `duration_minutes` used to be whichever listing was stored first. It is
   now the most common value across the movie's screenings, the shorter one on a tie, so it no longer
   depends on refresh order. Screenings without a time don't count; a movie with none keeps its value.
-  A listing with no year is matched against every time listed for the film, not this value, because
-  this value moves and a listing that fell out of range would split off.
+- `movies.match_duration_minutes` (migration 4) keeps the first running time known. Matching compares
+  with it instead of the shown value, because that one moves and a listing that fell out of range
+  would split off. It is fixed so that a film cannot widen what it absorbs: a wrong merge is worse
+  than a duplicate (FR-005).
 
 ## Where the data lives
 

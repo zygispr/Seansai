@@ -18,12 +18,13 @@ export type MovieRecord = {
   posterUrl: string | null;
 };
 
-/** What movie matching needs to know about existing movies. */
+/**
+ * What movie matching needs to know about existing movies. `durationMinutes` is the first running
+ * time known, not the one shown: that one moves, and a listing could fall out of range of it.
+ */
 export type MovieIdentity = Pick<MovieRecord, 'id' | 'matchKey' | 'year' | 'durationMinutes'> & {
   /** Every normalised title the movie is known by. */
   keys: string[];
-  /** Every running time its screenings list. */
-  listedDurations: number[];
 };
 
 export type ScreeningRecord = {
@@ -130,22 +131,21 @@ const MOST_COMMON_DURATION = `(
 const SQL = {
   upsertMovie: `
     INSERT INTO movies (id, title, original_title, english_title, match_key, year,
-                        duration_minutes, age_rating, genres, poster_url)
+                        duration_minutes, match_duration_minutes, age_rating, genres, poster_url)
     VALUES (@id, @title, @originalTitle, @englishTitle, @matchKey, @year,
-            @durationMinutes, @ageRating, @genres, @posterUrl)
+            @durationMinutes, @durationMinutes, @ageRating, @genres, @posterUrl)
     ON CONFLICT (id) DO UPDATE SET
       -- The title stays as the first source published it; gaps are filled from later ones.
       original_title   = COALESCE(original_title, excluded.original_title),
       english_title    = COALESCE(english_title, excluded.english_title),
       duration_minutes = COALESCE(duration_minutes, excluded.duration_minutes),
+      match_duration_minutes = COALESCE(match_duration_minutes, excluded.match_duration_minutes),
       age_rating       = COALESCE(age_rating, excluded.age_rating),
       genres           = CASE WHEN genres = '[]' THEN excluded.genres ELSE genres END,
       poster_url       = COALESCE(poster_url, excluded.poster_url)`,
   movieIdentities: `
-    SELECT movies.id, match_key, year, duration_minutes,
-           (SELECT json_group_array(key) FROM movie_keys WHERE movie_id = movies.id) AS keys,
-           (SELECT json_group_array(DISTINCT duration_minutes) FROM screenings
-            WHERE movie_id = movies.id AND duration_minutes IS NOT NULL) AS listed_durations
+    SELECT movies.id, match_key, year, match_duration_minutes AS duration_minutes,
+           (SELECT json_group_array(key) FROM movie_keys WHERE movie_id = movies.id) AS keys
     FROM movies ORDER BY movies.id`,
   addMovieKey: 'INSERT INTO movie_keys (movie_id, key) VALUES (?, ?) ON CONFLICT DO NOTHING',
   deleteFutureScreenings: 'DELETE FROM screenings WHERE source_id = ? AND starts_at >= ?',
@@ -317,10 +317,7 @@ export class Repository {
     const { rows } = await this.#db.execute(SQL.movieIdentities);
     return (
       rows as unknown as Array<
-        Pick<MovieRow, 'id' | 'match_key' | 'year' | 'duration_minutes'> & {
-          keys: string;
-          listed_durations: string;
-        }
+        Pick<MovieRow, 'id' | 'match_key' | 'year' | 'duration_minutes'> & { keys: string }
       >
     ).map((row) => ({
       id: row.id,
@@ -328,7 +325,6 @@ export class Repository {
       year: row.year,
       durationMinutes: row.duration_minutes,
       keys: JSON.parse(row.keys) as string[],
-      listedDurations: JSON.parse(row.listed_durations) as number[],
     }));
   }
 
