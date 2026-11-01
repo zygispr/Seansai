@@ -240,7 +240,7 @@ starts never contact cinemas, and list responses are cached by the CDN.
   - Run `TURSO_DATABASE_URL=<preview db url> TURSO_AUTH_TOKEN=<preview token> SEANSAI_CONTACT=https://github.com/zygispr/Seansai npm run dev -w @seansai/api`. This uses scheduler mode, which runs one polite startup refresh.
   - Wait for `Source refreshed` for each source, then stop it.
   - Confirm `<preview>/api/v1/health` shows each source `healthy`.
-- [ ] T028 [US1] Validate on the preview from a phone.
+- [X] T028 [US1] Validate on the preview from a phone. Idle figures and how each was taken: [research.md §5](./research.md#5-keeping-usage-free-sc-002-sc-005).
   - Feature 001's journeys all work (SC-001).
   - The movie list appears in < 2 s, and in < 3 s after an hour idle (SC-004).
   - The second `curl -sI '<preview>/api/v1/movies?city=vilnius'` shows `x-vercel-cache: HIT`.
@@ -317,7 +317,7 @@ from that night, and no manual action (spec US2, SC-003, quickstart §5).
   - `npm test -w @seansai/api && npm run typecheck && npm run lint` pass.
   - Run quickstart §2's cron rows under `vercel dev --local --listen 3333` with a temporary `.env` (`SOURCES_MODE=fixtures`, `CRON_SECRET=0123456789abcdef0123456789abcdef`): no header → 404, `Bearer wrong` → 404, `Bearer 0123456789abcdef0123456789abcdef` → 200 with every source listed.
   - Delete `.env`.
-- [ ] T043 [US2] Run `vercel env add CRON_SECRET production` with the output of `openssl rand -hex 32` (Production only, never committed). Push, and confirm the preview build accepts `crons`.
+- [X] T043 [US2] Run `vercel env add CRON_SECRET production` with the output of `openssl rand -hex 32` (Production only, never committed). Push, and confirm the preview build accepts `crons`.
   - **If a deploy rejects `crons` in services mode**: remove the `crons` key from `vercel.json`. Instead create `.github/workflows/daily-refresh.yml`, which does `on: schedule: - cron: '0 22 * * *'` plus `workflow_dispatch`, and runs `curl --fail -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" https://<production>/api/v1/cron/daily`. Add the `CRON_SECRET` repository secret ([research.md §3](./research.md#3-refresh-scheduling-on-hobby)).
 - [X] T044 [P] [US2] Update `README.md` (FR-016), before the review so the merged PR carries its own documentation (Definition of Done).
   - Add a "Deploy to Vercel (free)" section covering:

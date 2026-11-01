@@ -169,6 +169,18 @@ calls.
     48th of 50 0.34 s, with a 0.03 s connect time; the rest is TLS and the edge.
   - A repeated request is served by the CDN (`x-vercel-cache: HIT`); the browser receives
     `public, max-age=300`.
+- **Measured after idling** (2026-11-01, one sample of each):
+  - After 61 minutes with no requests to the deployment or the database: the first uncached list
+    request took 2.35 s to first byte from a laptop in Lithuania, of which 122 ms on the server. The
+    next two took 0.32 s and 0.20 s. Almost all of a cold start is therefore start-up, not the query.
+    This is the API call alone; the phone also loads the page first.
+  - Phone, cold start after 24 minutes idle: the owner saw the list in under 3 s (not timed).
+  - One cold start after about 36 minutes idle took 1,948 ms on the server, on the previous
+    deployment. The cause is unknown and the 61-minute run did not repeat it. Together with the
+    start-up above it would exceed 3 s, so SC-004's idle case has little margin. Re-check on
+    production.
+  - Every cold start logged `Refresh runs from Vercel Cron; scheduler not started`, and none
+    refreshed a source (SC-006).
 
 ## 6. Region and latency (SC-004)
 
