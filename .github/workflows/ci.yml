@@ -33,3 +33,48 @@ jobs:
           name: playwright-report
           path: apps/web/playwright-report/
           if-no-files-found: ignore
+
+  # Self-hosting must keep working (002 FR-015). The saved fixtures are mounted, not in the image,
+  # so the refresh writes real data and CI never contacts a cinema.
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - run: docker build -t seansai .
+
+      - name: Serves data and the web app, and keeps the data on its volume
+        run: |
+          start() {
+            docker run --detach --name seansai --publish 3000:3000 \
+              --volume seansai-data:/data \
+              --volume "$PWD/apps/api/tests/fixtures:/app/apps/api/tests/fixtures:ro" \
+              --env SOURCES_MODE=fixtures "$@" seansai
+          }
+          get() {
+            curl --silent --show-error --fail --max-time 10 "http://localhost:3000$1"
+          }
+          check() {
+            for attempt in $(seq 1 30); do
+              get '/api/v1/movies?city=all' 2>/dev/null | grep --quiet '"movies":\[{' && break
+              if [ "$attempt" = 30 ]; then echo 'The movie list stayed empty'; exit 1; fi
+              sleep 2
+            done
+            get /api/v1/health | grep --quiet '"status":"ok"'
+            get /lt/vilnius | grep --quiet 'id="root"'
+            script=$(get / | grep --only-matching '/assets/[^"]*\.js' | head -n 1)
+            [ -n "$script" ]
+            get "$script" > /dev/null
+          }
+          start
+          check
+          docker rm --force seansai
+          # Every source fails now, so movies can only come from the database on the volume.
+          failing=$(ls apps/api/tests/fixtures | grep --invert-match README | paste -sd,)
+          [ -n "$failing" ]
+          start --env "FIXTURE_FAIL=$failing"
+          check
+
+      - if: failure()
+        run: docker logs seansai

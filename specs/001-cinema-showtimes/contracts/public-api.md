@@ -11,7 +11,10 @@ imported by both the API and the web app.
 - **City filter**: `city` = a city id (e.g. `vilnius`) or `all`. Required on list endpoints.
 - **Language**: `lang` = `lt` (default) or `en`; affects only server-provided labels (city names).
   Movie titles are returned as published (FR-017).
-- **Caching**: list responses send `Cache-Control: public, max-age=300` and an `ETag`.
+- **Caching**: list responses send `Cache-Control: public, max-age=300, s-maxage=300` and an
+  `ETag`. `s-maxage` lets Vercel's CDN cache them for 5 minutes and is removed before the
+  browser; self-hosted it has no effect
+  ([002 hosting contract](../../002-vercel-deploy/contracts/hosting.md#api-response-caching-change-to-feature-001s-public-api)).
 - **Errors**: non-2xx responses use
 
   ```json

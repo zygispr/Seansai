@@ -1,7 +1,8 @@
 import { constants as zlib } from 'node:zlib';
 import fastifyCompress from '@fastify/compress';
 import fastifyEtag from '@fastify/etag';
-import fastifyStatic from '@fastify/static';
+// Types only (reply.sendFile); the plugin itself is imported on demand in buildServer.
+import type {} from '@fastify/static';
 import Fastify, { type FastifyBaseLogger, type FastifyInstance } from 'fastify';
 import type { Db } from './db/index.ts';
 import { Queries } from './db/queries.ts';
@@ -9,6 +10,9 @@ import { Repository } from './db/repository.ts';
 import { createLogger, type Logger } from './lib/logger.ts';
 import { cinemaRegistry } from './registry/cinemas.ts';
 import { citiesRoutes } from './routes/cities.ts';
+import type { DailyRefreshResult } from './refresh/daily.ts';
+import { STALE_AFTER_MS } from './refresh/status.ts';
+import { cronRoutes } from './routes/cron.ts';
 import { healthRoutes } from './routes/health.ts';
 import { ApiError, errorBody } from './routes/http.ts';
 import { moviesRoutes } from './routes/movies.ts';
@@ -23,15 +27,20 @@ export type ServerOptions = {
   sourceIds?: readonly string[];
   /** Built web app to serve (production); null when Vite serves it (development). */
   webDistDir?: string | null;
+  /** Age after which a source's data is flagged as stale; defaults to STALE_AFTER_MS. */
+  staleAfterMs?: number;
+  /** The daily refresh route, registered only when a secret is configured (FR-008). */
+  cron?: { secret: string; run: () => Promise<DailyRefreshResult> } | null;
 };
 
 const API_PREFIX = '/api/v1';
 
 /**
  * Sent with every response. The web app loads only its own scripts and styles (no inline code);
- * posters come from the cinemas' websites over HTTPS.
+ * posters come from the cinemas' websites over HTTPS. On Vercel the web service sends a copy
+ * from vercel.json; tests/unit/vercel-config.test.ts keeps the two equal.
  */
-const SECURITY_HEADERS = {
+export const SECURITY_HEADERS = {
   'content-security-policy': [
     "default-src 'self'",
     "script-src 'self'",
@@ -53,7 +62,13 @@ export function buildServer(options: ServerOptions): FastifyInstance {
   const sourceIds =
     options.sourceIds ??
     sourceConfigs.filter((source) => source.enabled).map((source) => source.id);
-  const queries = new Queries({ db: options.db, registry: cinemaRegistry, sourceIds });
+  const staleAfterMs = options.staleAfterMs ?? STALE_AFTER_MS;
+  const queries = new Queries({
+    db: options.db,
+    registry: cinemaRegistry,
+    sourceIds,
+    staleAfterMs,
+  });
 
   // The logger's own serializers keep request logs free of personal data (lib/logger.ts).
   const loggerInstance: FastifyBaseLogger = options.logger ?? createLogger();
@@ -96,7 +111,9 @@ export function buildServer(options: ServerOptions): FastifyInstance {
   });
 
   if (webDistDir !== null) {
-    void app.register(fastifyStatic, {
+    // Loaded only when serving the web app (self-hosted): @fastify/static require()s an ES module,
+    // which Vercel's function loader cannot do, and on Vercel the web app is its own service.
+    void app.register(import('@fastify/static'), {
       root: webDistDir,
       // Serves the .br or .gz copy written by the web build when the browser accepts it.
       preCompressed: true,
@@ -113,10 +130,11 @@ export function buildServer(options: ServerOptions): FastifyInstance {
 
   void app.register(
     async (api) => {
-      await api.register(healthRoutes, { repo, now: options.now, sourceIds });
+      await api.register(healthRoutes, { repo, now: options.now, sourceIds, staleAfterMs });
       await api.register(citiesRoutes, { queries });
       await api.register(moviesRoutes, { queries, now: options.now });
       await api.register(screeningsRoutes, { queries, now: options.now });
+      if (options.cron) await api.register(cronRoutes, options.cron);
     },
     { prefix: API_PREFIX },
   );

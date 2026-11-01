@@ -58,7 +58,7 @@ A film or event grouping listings of the same title from all cinemas (FR-005).
 | `matchKey` | string | the normalised title the movie is named after: English, else original, else Lithuanian (research §5) |
 | `keys` | string[] | every normalised title the movie is known by (table `movie_keys`); listings match on any of them |
 | `year` | integer \| null | production year |
-| `durationMinutes` | integer \| null | |
+| `durationMinutes` | integer \| null | the most common across its screenings, the shorter on a tie |
 | `ageRating` | string \| null | e.g. "N13" |
 | `genres` | string[] | optional |
 | `posterUrl` | URL \| null | null → placeholder image (FR-003) |
@@ -77,6 +77,7 @@ One showing of a movie at a cinema.
 | `cinemaId` | → Cinema | required |
 | `startsAt` | instant (UTC) | required |
 | `localDate` | date | calendar date of `startsAt` in Europe/Vilnius (edge case: after midnight) |
+| `durationMinutes` | integer \| null | as this cinema lists it; the movie shows the most common one |
 | `hall` | string \| null | e.g. "6 salė" |
 | `format` | enum \| null | `2D` · `3D` · `IMAX` · `4DX` · `ScreenX` · `other` |
 | `spokenLanguage` | ISO 639-1 \| null | e.g. `en` |

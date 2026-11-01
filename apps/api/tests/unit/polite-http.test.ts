@@ -9,8 +9,17 @@ import {
 import { PoliteHttpClient } from '../../src/lib/polite-http.ts';
 import { createTestLogger } from '../helpers/test-logger.ts';
 
-/** `status: 'hang'` simulates a server that never answers. */
-type Route = { status?: number | 'hang'; body?: string; contentType?: string };
+/**
+ * `status: 'hang'` simulates a server that never answers, and `'stall'` one that sends its headers
+ * and then stops sending the body.
+ */
+type Route = {
+  status?: number | 'hang' | 'stall';
+  /** The status a stalling server sends before it stops. */
+  stalledStatus?: number;
+  body?: string;
+  contentType?: string;
+};
 type Call = { url: string; at: number; headers: Headers };
 
 const ALLOW_ALL: Route = { body: 'User-agent: *\nAllow: /\n' };
@@ -30,6 +39,17 @@ function createClient(
           reject(new DOMException('The operation was aborted.', 'AbortError'));
         });
       });
+    }
+    if (route.status === 'stall') {
+      const body = new ReadableStream<Uint8Array>({
+        start(stream) {
+          stream.enqueue(new TextEncoder().encode('<html>'));
+          init?.signal?.addEventListener('abort', () => {
+            stream.error(new DOMException('The operation was aborted.', 'AbortError'));
+          });
+        },
+      });
+      return Promise.resolve(new Response(body, { status: route.stalledStatus ?? 200 }));
     }
     return Promise.resolve(
       new Response(route.body ?? '', {
@@ -174,6 +194,29 @@ describe('PoliteHttpClient', () => {
 
     await expect(request).rejects.toThrow(SourceRequestError);
     await expect(request).rejects.toThrow(/timed out after 15000 ms/);
+  });
+
+  test('times out a server that stalls after sending its headers', async () => {
+    const { client } = createClient({
+      'https://cinema.lt/robots.txt': ALLOW_ALL,
+      'https://cinema.lt/stalls': { status: 'stall' },
+    });
+
+    const request = settle(client.getText('https://cinema.lt/stalls'));
+
+    await expect(request).rejects.toThrow(SourceRequestError);
+    await expect(request).rejects.toThrow(/timed out after 15000 ms/);
+  });
+
+  test('reports a block at once, without waiting for a stalled body', async () => {
+    const { client } = createClient({
+      'https://cinema.lt/robots.txt': ALLOW_ALL,
+      'https://cinema.lt/blocked': { status: 'stall', stalledStatus: 403 },
+    });
+
+    await expect(settle(client.getText('https://cinema.lt/blocked'))).rejects.toThrow(
+      SourceBlockedError,
+    );
   });
 
   test('refuses a URL disallowed by robots.txt', async () => {

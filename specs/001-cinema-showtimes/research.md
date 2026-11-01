@@ -110,7 +110,8 @@ Conditions, so the decision stays low-risk and reversible:
   fetched once a day. Titles carry programme labels and version notes ("SCA'26: Išganymas",
   "Pamatyk kine: Kiti (2001)", "Užmirštoji sala (dubliuotas)"), which the adapter drops; the
   Scanorama label in other cinemas' titles ("SCA26:", "SCA:", "Rozė | Scanorama") is ignored when
-  matching. Years such as "1753" occur and are treated as unknown.
+  matching, and the Sunday family series ("Šeimų sekmadienis: Rozė", "Rozė | Sekmadienis su vaikais")
+  is dropped from the title shown and matched on. Years such as "1753" occur and are treated as unknown.
 - **Apollo/Pasaka (MCS)**: `dttmShowStart` is local time without offset; `dttmShowStartUTC` is
   UTC → use the UTC field. `dtAccounting` is the cinema's business day and can differ from the
   calendar date after midnight → the spec's rule (calendar date of start, Europe/Vilnius) wins.

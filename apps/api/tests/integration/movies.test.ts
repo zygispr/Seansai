@@ -1,14 +1,16 @@
 import { ErrorResponseSchema, MoviesResponseSchema } from '@seansai/shared';
-import { afterEach, beforeEach, expect, test } from 'vitest';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
+import { Repository } from '../../src/db/repository.ts';
 import { startCatalogServer } from '../helpers/catalog.ts';
 
-let server: ReturnType<typeof startCatalogServer>;
+let server: Awaited<ReturnType<typeof startCatalogServer>>;
 
-beforeEach(() => {
-  server = startCatalogServer();
+beforeEach(async () => {
+  server = await startCatalogServer();
 });
 
 afterEach(async () => {
+  vi.restoreAllMocks();
   await server.close();
 });
 
@@ -84,6 +86,24 @@ test('reports freshness: the oldest update and the cinemas whose data is stale',
       },
     ],
   });
-  expect(response.headers['cache-control']).toBe('public, max-age=300');
+  expect(response.headers['cache-control']).toBe('public, max-age=300, s-maxage=300');
   expect(response.headers.etag).toEqual(expect.any(String));
+});
+
+test('reads every source in one query, however many cinemas are listed', async () => {
+  const listSources = vi.spyOn(Repository.prototype, 'listSources');
+
+  const response = await server.app.inject('/api/v1/movies?city=all');
+
+  expect(response.statusCode).toBe(200);
+  expect(listSources).toHaveBeenCalledTimes(1);
+});
+
+test('on Vercel, data refreshed 4 hours ago is not flagged as stale (27-hour threshold)', async () => {
+  const vercel = await startCatalogServer(undefined, { staleAfterMs: 27 * 60 * 60 * 1000 });
+
+  const response = await vercel.app.inject('/api/v1/movies?city=vilnius');
+
+  expect(MoviesResponseSchema.parse(response.json()).freshness.staleCinemas).toEqual([]);
+  await vercel.close();
 });

@@ -6,10 +6,10 @@ import {
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { startCatalogServer, TODAY } from '../helpers/catalog.ts';
 
-let server: ReturnType<typeof startCatalogServer>;
+let server: Awaited<ReturnType<typeof startCatalogServer>>;
 
-beforeEach(() => {
-  server = startCatalogServer();
+beforeEach(async () => {
+  server = await startCatalogServer();
 });
 
 afterEach(async () => {
@@ -90,6 +90,7 @@ describe('GET /movies/{id}/screenings', () => {
     const body = ScreeningsResponseSchema.parse(response.json());
     expect(body.date).toBe(TODAY);
     expect(body.screenings).toHaveLength(3);
+    expect(response.headers['cache-control']).toBe('public, max-age=300, s-maxage=300');
   });
 
   test('a future date returns that day’s full list', async () => {

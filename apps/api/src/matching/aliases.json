@@ -10,5 +10,11 @@
     "movieIdA": "zejtune-2025",
     "movieIdB": "zejtune-2026",
     "resolution": "merge"
+  },
+  {
+    "matchKey": "cat in the hat",
+    "movieIdA": "cat-in-the-hat-2026",
+    "movieIdB": "cat-in-the-hat",
+    "resolution": "merge"
   }
 ]

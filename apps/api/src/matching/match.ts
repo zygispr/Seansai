@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { z } from 'zod';
 import type { MatchReviewRecord, MovieIdentity, MovieRecord } from '../db/repository.ts';
-import { matchKeyOf, titleKeysOf } from './normalize.ts';
+import { matchKeyOf, titleKeysOf, withoutSeriesLabel } from './normalize.ts';
 
 /** The movie details one source listing carries. */
 export type Listing = {
@@ -95,9 +95,9 @@ export function resolveMovie(
   const ownId = movieIdOf(matchKey, listing.year);
   const fromListing: MovieRecord = {
     id: ownId,
-    title: listing.title,
-    originalTitle: listing.originalTitle,
-    englishTitle: listing.englishTitle,
+    title: withoutSeriesLabel(listing.title),
+    originalTitle: listing.originalTitle && withoutSeriesLabel(listing.originalTitle),
+    englishTitle: listing.englishTitle && withoutSeriesLabel(listing.englishTitle),
     matchKey,
     year: listing.year,
     durationMinutes: listing.durationMinutes,

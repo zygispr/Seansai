@@ -1,6 +1,6 @@
 import { HealthResponseSchema } from '@seansai/shared';
 import type { FastifyInstance } from 'fastify';
-import { afterEach, beforeEach, expect, test } from 'vitest';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { Repository } from '../../src/db/repository.ts';
 import { buildServer } from '../../src/server.ts';
 import { createTempDb } from '../helpers/temp-db.ts';
@@ -13,8 +13,8 @@ let app: FastifyInstance;
 let repo: Repository;
 let cleanup: () => void;
 
-beforeEach(() => {
-  const temp = createTempDb();
+beforeEach(async () => {
+  const temp = await createTempDb();
   cleanup = temp.cleanup;
   repo = new Repository(temp.db);
   app = buildServer({
@@ -26,6 +26,7 @@ beforeEach(() => {
 });
 
 afterEach(async () => {
+  vi.restoreAllMocks();
   await app.close();
   cleanup();
 });
@@ -45,10 +46,10 @@ test('reports every configured source as stale before its first refresh', async 
 });
 
 test('reports each source status with its last success time in Vilnius time', async () => {
-  repo.recordSourceSuccess('apollo', hoursAgo(1));
-  repo.recordSourceSuccess('forum', hoursAgo(2));
-  repo.recordSourceAttempt('forum', hoursAgo(0), 'HTTP 500');
-  repo.recordSourceSuccess('vue', hoursAgo(4));
+  await repo.recordSourceSuccess('apollo', hoursAgo(1));
+  await repo.recordSourceSuccess('forum', hoursAgo(2));
+  await repo.recordSourceAttempt('forum', hoursAgo(0), 'HTTP 500');
+  await repo.recordSourceSuccess('vue', hoursAgo(4));
 
   const response = await app.inject('/api/v1/health');
 
@@ -61,4 +62,12 @@ test('reports each source status with its last success time in Vilnius time', as
     ],
   });
   expect(response.headers['cache-control']).toBe('no-store');
+});
+
+test('reads every source in one query', async () => {
+  const listSources = vi.spyOn(Repository.prototype, 'listSources');
+
+  await app.inject('/api/v1/health');
+
+  expect(listSources).toHaveBeenCalledTimes(1);
 });

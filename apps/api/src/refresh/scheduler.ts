@@ -13,7 +13,7 @@ export type SchedulerOptions = {
   /** Refreshes one source; expected to record its own failures. */
   refresh: (adapter: SourceAdapter, now: Date) => Promise<unknown>;
   /** Removes past screenings and stale movies. */
-  cleanup: (now: Date) => void;
+  cleanup: (now: Date) => Promise<unknown>;
   random?: () => number;
 };
 
@@ -25,8 +25,8 @@ export type Scheduler = {
 
 /**
  * Refreshes every source at startup, then each one every 60 minutes ± 5 minutes, independently,
- * so one slow or failing source never delays another (research.md §4). Cleans up daily at 04:00
- * Vilnius time. In fixture mode only the startup refresh runs.
+ * so a slow source delays others only in storing, and a failing one not at all (research.md §4).
+ * Cleans up daily at 04:00 Vilnius time. In fixture mode only the startup refresh runs.
  */
 export function startScheduler(
   adapters: readonly SourceAdapter[],
@@ -68,17 +68,17 @@ export function startScheduler(
     return next.getTime() - now.getTime();
   };
 
-  const runCleanup = (): void => {
+  const runCleanup = async (): Promise<void> => {
     try {
-      cleanup(clock());
+      await cleanup(clock());
     } catch (error) {
       logger.error({ err: error }, 'Daily cleanup failed');
     }
-    schedule(msUntilNextCleanup(), runCleanup);
+    schedule(msUntilNextCleanup(), () => void runCleanup());
   };
 
   const startupRun = Promise.all(adapters.map(runRefresh)).then(() => undefined);
-  if (mode === 'live') schedule(msUntilNextCleanup(), runCleanup);
+  if (mode === 'live') schedule(msUntilNextCleanup(), () => void runCleanup());
 
   return {
     startupRun,

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import type { MovieIdentity } from '../../src/db/repository.ts';
-import { resolveMovie, type Alias, type Listing } from '../../src/matching/match.ts';
+import { loadAliases, resolveMovie, type Alias, type Listing } from '../../src/matching/match.ts';
 
 function listing(overrides: Partial<Listing> = {}): Listing {
   return {
@@ -63,6 +63,27 @@ describe('resolveMovie', () => {
 
     expect(result.movie.id).toBe('digger-2026');
     expect(result.reviews).toEqual([]);
+  });
+
+  test('a Sunday series listing joins the film, and a new one is stored without the label', () => {
+    const series = listing({
+      title: 'Šeimų sekmadienis: Kasėjas (dubliuotas)',
+      originalTitle: 'Šeimų sekmadienis: Digger (2026)',
+    });
+
+    expect(resolveMovie(series, [digger], []).movie.id).toBe('digger-2026');
+    expect(resolveMovie(series, [], []).movie).toMatchObject({
+      id: 'digger-2026',
+      title: 'Kasėjas (dubliuotas)',
+      originalTitle: 'Digger (2026)',
+    });
+    expect(
+      resolveMovie(listing({ title: 'Kasėjas | Sekmadienis su vaikais' }), [], []).movie.title,
+    ).toBe('Kasėjas');
+    expect(
+      resolveMovie(listing({ englishTitle: 'Šeimų sekmadienis: Digger' }), [], []).movie
+        .englishTitle,
+    ).toBe('Digger');
   });
 
   test('keeps listings separate when one year is missing and durations differ by more than 15 minutes', () => {
@@ -246,6 +267,28 @@ describe('resolveMovie', () => {
   });
 
   describe('alias file', () => {
+    test("the real file merges Garsas's Sunday showing of The Cat in the Hat into the film", () => {
+      const film = {
+        id: 'cat-in-the-hat-2026',
+        matchKey: 'cat in the hat',
+        year: 2026,
+        durationMinutes: 91,
+        keys: ['cat in the hat', 'katinas su skrybele'],
+      };
+      const sundayShowing = listing({
+        title: 'Katinas su skrybėle | Sekmadienis su vaikais',
+        originalTitle: 'The Cat in the Hat',
+        englishTitle: null,
+        year: null,
+        durationMinutes: 108,
+      });
+
+      const result = resolveMovie(sundayShowing, [film], loadAliases());
+
+      expect(result.movie.id).toBe('cat-in-the-hat-2026');
+      expect(result.reviews).toEqual([]);
+    });
+
     const dune1984 = movie({
       id: 'dune-1984',
       matchKey: 'dune',

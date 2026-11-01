@@ -40,9 +40,13 @@ export function parseQuery<T>(
   throw new ApiError(400, code, `${param}: ${issue?.message ?? 'invalid value'}`);
 }
 
-/** List responses may be cached for 5 minutes; ETags let clients revalidate cheaply. */
+/**
+ * List responses may be cached for 5 minutes; ETags let clients revalidate cheaply. Vercel's CDN
+ * caches only responses with `s-maxage` (and strips it before the browser), so most visitors never
+ * reach the function or the database; self-hosted, `s-maxage` has no effect.
+ */
 export function setListCaching(reply: FastifyReply): void {
-  reply.header('cache-control', 'public, max-age=300');
+  reply.header('cache-control', 'public, max-age=300, s-maxage=300');
 }
 
 /** `city`: a city with at least one shown cinema, or `all` (required on list endpoints). */

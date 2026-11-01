@@ -80,8 +80,20 @@ function withoutLeadingArticle(key: string): string {
 const PROGRAMME_AFTER_BAR = /\s+\|\s+.*$/;
 const SCANORAMA_LABEL = /^(?:sca|scanorama)(?: ?\d{2})? (?=\S)/;
 
+/**
+ * The Sunday family series around a title: Pasaka's "Šeimų sekmadienis: Rozė" and Garsas's
+ * "Rozė | Sekmadienis su vaikais". It says when a film runs, not which film it is.
+ */
+const SUNDAY_SERIES_LABEL = /^šeimų sekmadienis:\s*|\s+\|\s+sekmadienis su vaikais\s*$/giu;
+
+/** The title to show and match on; a title that is only the label stays as it is. */
+export function withoutSeriesLabel(title: string): string {
+  const stripped = title.replace(SUNDAY_SERIES_LABEL, '');
+  return stripped.length > 0 ? stripped : title;
+}
+
 function keyOf(title: string): string {
-  const withoutProgramme = title.replace(PROGRAMME_AFTER_BAR, '');
+  const withoutProgramme = withoutSeriesLabel(title).replace(PROGRAMME_AFTER_BAR, '');
   const key = normalizeTitle(withoutProgramme.length > 0 ? withoutProgramme : title);
   return withoutLeadingArticle(key.replace(SCANORAMA_LABEL, ''));
 }

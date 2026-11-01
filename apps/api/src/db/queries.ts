@@ -1,5 +1,4 @@
 import type { Freshness, Lang, ScreeningFormat } from '@seansai/shared';
-import type { Statement } from 'better-sqlite3';
 import { addDays, formatInstant } from '../lib/time.ts';
 import { deriveSourceStatus } from '../refresh/status.ts';
 import type { Cinema, CinemaRegistry } from '../registry/cinemas.ts';
@@ -10,7 +9,7 @@ import { Repository, toMovieRecord, type MovieRecord, type MovieRow } from './re
 /**
  * Read queries behind the public API. Every query is bounded by a set of cinemas (one city, or
  * all of them) and filters out screenings that already started (FR-007). Cinema ids are passed
- * as a JSON array so each statement is prepared once.
+ * as a JSON array so each statement's SQL is the same whatever the cinemas.
  */
 
 export type MovieListing = { movie: MovieRecord; screeningsToday: number; firstDate: string };
@@ -44,46 +43,52 @@ type QueriesOptions = {
   registry: CinemaRegistry;
   /** Sources whose cinemas are shown; a disabled source's cinemas disappear entirely. */
   sourceIds: readonly string[];
+  /** Age after which a cinema's data is flagged as stale. */
+  staleAfterMs: number;
 };
 
 const collator = new Intl.Collator('lt');
 const IN_CINEMAS = 'cinema_id IN (SELECT value FROM json_each(@cinemaIds))';
 
+const SQL = {
+  movies: `
+    SELECT movies.*, listed.screenings_today, listed.first_date
+    FROM (
+      -- Grouped before the join, so each movie is looked up once and not once per screening.
+      SELECT movie_id, SUM(local_date = @today) AS screenings_today, MIN(local_date) AS first_date
+      FROM screenings
+      WHERE ${IN_CINEMAS} AND starts_at > @now
+      GROUP BY movie_id
+    ) AS listed
+    JOIN movies ON movies.id = listed.movie_id`,
+  movie: 'SELECT * FROM movies WHERE id = ?',
+  screeningDates: `
+    SELECT DISTINCT local_date FROM screenings
+    WHERE movie_id = @movieId AND ${IN_CINEMAS} AND starts_at > @now
+    ORDER BY local_date`,
+  lastDate: 'SELECT MAX(local_date) AS last_date FROM screenings',
+  screenings: `
+    SELECT id, cinema_id, starts_at, hall, format, spoken_language, subtitle_language,
+           is_dubbed, ticket_url
+    FROM screenings
+    WHERE movie_id = @movieId AND local_date = @date AND ${IN_CINEMAS} AND starts_at > @now
+    ORDER BY starts_at`,
+  nextDate: `
+    SELECT MIN(local_date) AS next_date FROM screenings
+    WHERE movie_id = @movieId AND local_date > @date AND ${IN_CINEMAS} AND starts_at > @now`,
+} as const;
+
 export class Queries {
+  readonly #db: Db;
   readonly #repo: Repository;
   readonly #cinemas: readonly Cinema[];
-  readonly #statements: Record<
-    'movies' | 'movie' | 'screeningDates' | 'lastDate' | 'screenings' | 'nextDate',
-    Statement
-  >;
+  readonly #staleAfterMs: number;
 
-  constructor({ db, registry, sourceIds }: QueriesOptions) {
+  constructor({ db, registry, sourceIds, staleAfterMs }: QueriesOptions) {
+    this.#db = db;
     this.#repo = new Repository(db);
     this.#cinemas = registry.all().filter((cinema) => sourceIds.includes(cinema.sourceId));
-    this.#statements = {
-      movies: db.prepare(`
-        SELECT movies.*,
-               SUM(screenings.local_date = @today) AS screenings_today,
-               MIN(screenings.local_date) AS first_date
-        FROM screenings JOIN movies ON movies.id = screenings.movie_id
-        WHERE screenings.${IN_CINEMAS} AND screenings.starts_at > @now
-        GROUP BY movies.id`),
-      movie: db.prepare('SELECT * FROM movies WHERE id = ?'),
-      screeningDates: db.prepare(`
-        SELECT DISTINCT local_date FROM screenings
-        WHERE movie_id = @movieId AND ${IN_CINEMAS} AND starts_at > @now
-        ORDER BY local_date`),
-      lastDate: db.prepare('SELECT MAX(local_date) AS last_date FROM screenings'),
-      screenings: db.prepare(`
-        SELECT id, cinema_id, starts_at, hall, format, spoken_language, subtitle_language,
-               is_dubbed, ticket_url
-        FROM screenings
-        WHERE movie_id = @movieId AND local_date = @date AND ${IN_CINEMAS} AND starts_at > @now
-        ORDER BY starts_at`),
-      nextDate: db.prepare(`
-        SELECT MIN(local_date) AS next_date FROM screenings
-        WHERE movie_id = @movieId AND local_date > @date AND ${IN_CINEMAS} AND starts_at > @now`),
-    };
+    this.#staleAfterMs = staleAfterMs;
   }
 
   /** Cinemas in a city, or in every city for `all`. */
@@ -106,12 +111,12 @@ export class Queries {
    * The "currently showing" list (FR-003): movies with screenings left today first, most
    * screenings first and ties by title; then movies starting later, by first date and title.
    */
-  listMovies(cinemas: readonly Cinema[], today: string, now: Date): MovieListing[] {
-    const rows = this.#statements.movies.all({
-      ...this.#bounds(cinemas, now),
-      today,
-    }) as Array<MovieRow & { screenings_today: number; first_date: string }>;
-    return rows
+  async listMovies(cinemas: readonly Cinema[], today: string, now: Date): Promise<MovieListing[]> {
+    const { rows } = await this.#db.execute({
+      sql: SQL.movies,
+      args: { ...this.#bounds(cinemas, now), today },
+    });
+    return (rows as unknown as Array<MovieRow & { screenings_today: number; first_date: string }>)
       .map((row) => ({
         movie: toMovieRecord(row),
         screeningsToday: row.screenings_today,
@@ -129,23 +134,26 @@ export class Queries {
       });
   }
 
-  getMovie(id: string): MovieRecord | undefined {
-    const row = this.#statements.movie.get(id) as MovieRow | undefined;
+  async getMovie(id: string): Promise<MovieRecord | undefined> {
+    const { rows } = await this.#db.execute({ sql: SQL.movie, args: [id] });
+    const row = rows[0] as unknown as MovieRow | undefined;
     return row ? toMovieRecord(row) : undefined;
   }
 
   /** Dates on which the movie still has screenings in these cinemas. */
-  screeningDates(movieId: string, cinemas: readonly Cinema[], now: Date): string[] {
-    const rows = this.#statements.screeningDates.all({
-      ...this.#bounds(cinemas, now),
-      movieId,
-    }) as Array<{ local_date: string }>;
-    return rows.map((row) => row.local_date);
+  async screeningDates(movieId: string, cinemas: readonly Cinema[], now: Date): Promise<string[]> {
+    const { rows } = await this.#db.execute({
+      sql: SQL.screeningDates,
+      args: { ...this.#bounds(cinemas, now), movieId },
+    });
+    return (rows as unknown as Array<{ local_date: string }>).map((row) => row.local_date);
   }
 
   /** Today up to the furthest date any cinema has published (FR-010). */
-  availableDates(today: string): string[] {
-    const { last_date: lastDate } = this.#statements.lastDate.get() as { last_date: string | null };
+  async availableDates(today: string): Promise<string[]> {
+    const { rows } = await this.#db.execute(SQL.lastDate);
+    const lastDate =
+      (rows[0] as unknown as { last_date: string | null } | undefined)?.last_date ?? null;
     const dates = [today];
     while (lastDate !== null && (dates.at(-1) ?? today) < lastDate) {
       dates.push(addDays(dates.at(-1) ?? today, 1));
@@ -154,19 +162,18 @@ export class Queries {
   }
 
   /** The movie's screenings on `date` as one timeline: by start time, ties by cinema name. */
-  listScreenings(
+  async listScreenings(
     movieId: string,
     cinemas: readonly Cinema[],
     date: string,
     now: Date,
-  ): ScreeningListing[] {
+  ): Promise<ScreeningListing[]> {
     const byId = new Map(cinemas.map((cinema) => [cinema.id, cinema]));
-    const rows = this.#statements.screenings.all({
-      ...this.#bounds(cinemas, now),
-      movieId,
-      date,
-    }) as ScreeningRow[];
-    return rows
+    const { rows } = await this.#db.execute({
+      sql: SQL.screenings,
+      args: { ...this.#bounds(cinemas, now), movieId, date },
+    });
+    return (rows as unknown as ScreeningRow[])
       .flatMap((row) => {
         const cinema = byId.get(row.cinema_id);
         if (!cinema) return [];
@@ -192,37 +199,39 @@ export class Queries {
   }
 
   /** The first date after `date` with screenings of the movie (US1 scenario 6). */
-  nextDateWithScreenings(
+  async nextDateWithScreenings(
     movieId: string,
     cinemas: readonly Cinema[],
     date: string,
     now: Date,
-  ): string | null {
-    const row = this.#statements.nextDate.get({ ...this.#bounds(cinemas, now), movieId, date }) as {
-      next_date: string | null;
-    };
-    return row.next_date;
+  ): Promise<string | null> {
+    const { rows } = await this.#db.execute({
+      sql: SQL.nextDate,
+      args: { ...this.#bounds(cinemas, now), movieId, date },
+    });
+    return (rows[0] as unknown as { next_date: string | null } | undefined)?.next_date ?? null;
   }
 
   /**
    * How current the data for these cinemas is: the oldest successful refresh among their
-   * sources, and the cinemas without one for 3 hours or more (FR-014, FR-015).
+   * sources, and the cinemas without one within the stale threshold (FR-014, FR-015).
    */
-  freshness(cinemas: readonly Cinema[], now: Date): Freshness {
+  async freshness(cinemas: readonly Cinema[], now: Date): Promise<Freshness> {
+    // One query for every source, however many cinemas are listed.
     const sources = new Map(
-      [...new Set(cinemas.map((cinema) => cinema.sourceId))].map((id) => [
-        id,
-        this.#repo.getSource(id),
-      ]),
+      (await this.#repo.listSources()).map((source) => [source.id, source] as const),
     );
-    const successes = [...sources.values()]
-      .map((source) => source?.lastSuccessAt?.getTime())
+    const successes = [...new Set(cinemas.map((cinema) => cinema.sourceId))]
+      .map((id) => sources.get(id)?.lastSuccessAt?.getTime())
       .filter((time) => time !== undefined);
     const oldest = successes.length > 0 ? new Date(Math.min(...successes)) : now;
     return {
       updatedAt: formatInstant(oldest),
       staleCinemas: cinemas
-        .filter((cinema) => deriveSourceStatus(sources.get(cinema.sourceId), now) === 'stale')
+        .filter(
+          (cinema) =>
+            deriveSourceStatus(sources.get(cinema.sourceId), now, this.#staleAfterMs) === 'stale',
+        )
         .map((cinema) => {
           const lastSuccessAt = sources.get(cinema.sourceId)?.lastSuccessAt;
           return {

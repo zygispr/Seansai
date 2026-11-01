@@ -101,5 +101,7 @@ test('changing city on a movie page updates a linked city and drops the cinema f
   await waitFor(() => {
     expect(app.location()).toBe('/en/movie/digger-2026?city=all&format=3D');
   });
-  expect(screen.getByRole('button', { name: 'Change city: All of Lithuania' })).toBeInTheDocument();
+  expect(
+    await screen.findByRole('button', { name: 'Change city: All of Lithuania' }),
+  ).toBeInTheDocument();
 });

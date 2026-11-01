@@ -17,8 +17,8 @@ let app: FastifyInstance;
 let cleanup: () => void;
 let log: ReturnType<typeof createTestLogger>;
 
-function startServer(webDistDir: string | null = null): FastifyInstance {
-  const temp = createTempDb();
+async function startServer(webDistDir: string | null = null): Promise<FastifyInstance> {
+  const temp = await createTempDb();
   cleanup = temp.cleanup;
   log = createTestLogger();
   const server = buildServer({ db: temp.db, now: () => NOW, logger: log.logger, webDistDir });
@@ -41,8 +41,8 @@ afterEach(async () => {
 });
 
 describe('buildServer', () => {
-  beforeEach(() => {
-    app = startServer();
+  beforeEach(async () => {
+    app = await startServer();
   });
 
   test('rejects invalid query parameters with 400 and an ErrorResponse', async () => {
@@ -98,7 +98,7 @@ describe('buildServer', () => {
   test('list responses are cacheable for 5 minutes and carry an ETag', async () => {
     const first = await app.inject('/api/v1/test/list');
 
-    expect(first.headers['cache-control']).toBe('public, max-age=300');
+    expect(first.headers['cache-control']).toBe('public, max-age=300, s-maxage=300');
     const etag = first.headers.etag;
     expect(etag).toEqual(expect.any(String));
 
@@ -113,12 +113,12 @@ describe('buildServer', () => {
 describe('serving the web app', () => {
   let webDistDir: string;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     webDistDir = mkdtempSync(join(tmpdir(), 'seansai-web-'));
     mkdirSync(join(webDistDir, 'assets'));
     writeFileSync(join(webDistDir, 'index.html'), '<!doctype html><title>Seansai</title>');
     writeFileSync(join(webDistDir, 'assets', 'index-abc123.js'), 'console.log(1)');
-    app = startServer(webDistDir);
+    app = await startServer(webDistDir);
   });
 
   afterEach(() => {
