@@ -98,7 +98,7 @@ npm run lint            # ESLint, zero errors
 npm run format:check    # Prettier
 npm run typecheck       # TypeScript in every workspace
 npm test                # unit, component, adapter-contract and API integration tests
-npm run test:load       # 100 concurrent users for 20 s: p95 < 300 ms, no errors
+npm run test:load       # a steady 200 requests/s for 20 s: p95 < 300 ms, no errors
 npm run build           # production build; fails if the initial JS exceeds 150 kB gzipped
 npm run test:e2e        # Playwright user stories, accessibility (axe), resilience, load time
 ```

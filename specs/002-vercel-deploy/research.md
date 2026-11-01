@@ -187,7 +187,10 @@ calls.
 - **Timing tests on CI** (2026-11-01, owner decision): GitHub's machines vary by about 1.7× in
   throughput. `performance.spec.ts` allows 2.5 s on CI and 2 s elsewhere, because its throttling
   comes on top of the machine's own speed. The target stays 2 s (SC-002): CI catches real slowdowns,
-  and the real site is checked on production (T047).
+  and the real site is checked on production (T047). The load test sends a steady 200 requests/s
+  (owner decision), each timed from when it was due, so a server falling behind shows as latency.
+  Sending as fast as answered measured the machine, with p95 from 169 to 371 ms on identical code.
+  It uses its own paced sender because autocannon's rate setting fires each second's requests at once.
 
 ## 6. Region and latency (SC-004)
 
