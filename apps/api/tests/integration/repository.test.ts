@@ -1,4 +1,6 @@
 import type { ScreeningFormat } from '@seansai/shared';
+import { readFileSync } from 'node:fs';
+import { createClient } from '@libsql/client';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { openDb, splitStatements, type Db } from '../../src/db/index.ts';
 import { Repository, type SourceRefresh } from '../../src/db/repository.ts';
@@ -31,6 +33,12 @@ const screeningIds = () => ids('SELECT id FROM screenings ORDER BY id');
 const count = async (table: string): Promise<number> =>
   Number((await db.execute(`SELECT COUNT(*) AS count FROM ${table}`)).rows[0]?.count);
 
+const schemaVersion = async (database: Db): Promise<number> =>
+  Number(
+    (await database.execute('SELECT MAX(version) AS version FROM schema_migrations')).rows[0]
+      ?.version,
+  );
+
 const userVersion = async (database: Db): Promise<number> =>
   Number((await database.execute('PRAGMA user_version')).rows[0]?.user_version);
 
@@ -43,11 +51,38 @@ describe('splitStatements', () => {
 });
 
 describe('openDb', () => {
+  test('records the migrations in a table, never in PRAGMA user_version (Turso rejects it)', async () => {
+    expect(await schemaVersion(db)).toBe(2);
+    expect(await userVersion(db)).toBe(0);
+  });
+
   test('reopening a database file does not run the migrations again', async () => {
     db.close();
     db = await openDb(`file:${path}`);
 
-    expect(await userVersion(db)).toBe(2);
+    expect(await schemaVersion(db)).toBe(2);
+  });
+
+  test('a database migrated before the table existed is not migrated again', async () => {
+    const legacyPath = `${path}.legacy`;
+    const legacy = createClient({ url: `file:${legacyPath}` });
+    await legacy.executeMultiple(
+      readFileSync(new URL('../../src/db/schema.sql', import.meta.url), 'utf8') +
+        readFileSync(
+          new URL('../../src/db/migration-002-movie-keys.sql', import.meta.url),
+          'utf8',
+        ) +
+        'PRAGMA user_version = 2;',
+    );
+    legacy.close();
+
+    const reopened = await openDb(`file:${legacyPath}`);
+
+    expect(
+      (await reopened.execute("SELECT COUNT(*) AS count FROM sqlite_master WHERE name = 'movies'"))
+        .rows[0]?.count,
+    ).toBe(1);
+    reopened.close();
   });
 
   test('two servers starting at once on a new database both migrate it safely', async () => {
@@ -55,7 +90,7 @@ describe('openDb', () => {
 
     const [first, second] = await Promise.all([openDb(url), openDb(url)]);
 
-    expect(await userVersion(first)).toBe(2);
+    expect(await schemaVersion(first)).toBe(2);
     expect(
       (await first.execute("SELECT COUNT(*) AS count FROM sqlite_master WHERE name = 'movies'"))
         .rows[0]?.count,

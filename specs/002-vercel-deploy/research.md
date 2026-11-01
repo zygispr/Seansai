@@ -52,8 +52,11 @@ measurements come from the developer's live database on the same day.
     `PRAGMA foreign_keys` doesn't survive across remote requests. So the code must not rely on
     `ON DELETE CASCADE`. `deleteStaleMovies` deletes the dependent `movie_keys` and
     `match_reviews` rows itself, in the same batch.
-  - `PRAGMA user_version` (read and write) is documented as supported, so the migration
-    mechanism stays. This is confirmed on the first preview deploy (quickstart §4).
+  - **Turso rejects writing `PRAGMA user_version`** ("SQL not allowed statement"), though it
+    can be read. The first preview deploy (2026-11-01) showed this. Applied migrations are
+    therefore recorded in a `schema_migrations` table, written in the same batch as the
+    migration. Databases migrated before that table existed still report their version through
+    `user_version`, so self-hosted copies are not migrated twice.
 - **Ways to get a free database** (FR-011):
   1. `vercel integration add turso` (Vercel Marketplace, "Vercel Native"), choosing the Free
      plan. It sets `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` on the project.

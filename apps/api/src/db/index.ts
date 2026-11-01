@@ -12,7 +12,7 @@ import { createClient, type Client } from '@libsql/client';
 export type Db = Client;
 
 /**
- * Migrations in order; the database's `user_version` records how many have run. Append new
+ * Migrations in order; the `schema_migrations` table records which have run. Append new
  * migrations, never edit one that has shipped.
  */
 const migrations: readonly string[] = [
@@ -44,30 +44,47 @@ export async function openDb(url: string, authToken: string | null = null): Prom
 }
 
 /**
- * Applies each pending migration and its `user_version` in one batch, so it runs completely or
- * not at all.
+ * Applies each pending migration together with its `schema_migrations` row in one batch, so it
+ * runs completely or not at all. Turso rejects writing `PRAGMA user_version`, so the version is
+ * kept in a table; databases migrated before the table existed still report theirs through
+ * `user_version`, which can be read everywhere.
  */
 async function migrate(db: Db): Promise<void> {
-  const applied = await userVersion(db);
+  await db.execute(
+    'CREATE TABLE IF NOT EXISTS schema_migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL) STRICT',
+  );
+  const applied = await schemaVersion(db);
   for (const [index, sql] of migrations.slice(applied).entries()) {
     const version = applied + index + 1;
     try {
       await db.batch(
-        [...splitStatements(sql), `PRAGMA user_version = ${String(version)}`],
+        [
+          ...splitStatements(sql),
+          {
+            sql: 'INSERT INTO schema_migrations (version, applied_at) VALUES (?, ?)',
+            args: [version, new Date().toISOString()],
+          },
+        ],
         'write',
       );
     } catch (error) {
       // Two new Vercel function instances can start against the same database at once; if the
       // other one applied this migration first, ours fails on the existing tables.
-      if ((await userVersion(db)) >= version) continue;
+      if ((await schemaVersion(db)) >= version) continue;
       throw error;
     }
   }
 }
 
-async function userVersion(db: Db): Promise<number> {
-  const { rows } = await db.execute('PRAGMA user_version');
-  return Number(rows[0]?.user_version ?? 0);
+async function schemaVersion(db: Db): Promise<number> {
+  const [recorded, legacy] = await db.batch(
+    ['SELECT MAX(version) AS version FROM schema_migrations', 'PRAGMA user_version'],
+    'read',
+  );
+  return Math.max(
+    Number(recorded?.rows[0]?.version ?? 0),
+    Number(legacy?.rows[0]?.user_version ?? 0),
+  );
 }
 
 /** Splits a migration into statements: whole-line `--` comments and empty statements dropped. */
