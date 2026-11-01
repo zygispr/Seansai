@@ -154,6 +154,15 @@ calls.
   Providers email warnings near their limits.
 - **Commercial use**: Hobby is for non-commercial personal use only, and Seansai qualifies. Ads,
   affiliate links or payments would require a paid plan.
+- **Measured on the first preview** (2026-11-01; function in `fra1`, Turso Free in `dub1`, the
+  nearest EU region the integration offers; 50 uncached `GET /api/v1/movies?city=all`, 11 sources
+  of live data):
+  - Server time (Fastify `responseTime` in Runtime Logs): p50 63 ms, p95 136 ms, max 183 ms.
+    Within Constitution VI's 300 ms.
+  - Time to first byte from Lithuania (`curl`, through the CDN with a unique query): p50 0.20 s,
+    48th of 50 0.34 s, with a 0.03 s connect time; the rest is TLS and the edge.
+  - A repeated request is served by the CDN (`x-vercel-cache: HIT`); the browser receives
+    `public, max-age=300`.
 
 ## 6. Region and latency (SC-004)
 
