@@ -149,7 +149,7 @@ starts never contact cinemas, and list responses are cached by the CDN.
 
 ### Tests for User Story 1 ⚠️ (write first, confirm they fail)
 
-- [ ] T013 [P] [US1] Add config tests to `apps/api/tests/unit/config.test.ts`.
+- [X] T013 [P] [US1] Add config tests to `apps/api/tests/unit/config.test.ts`.
   - **Turso on Vercel**: `{ SEANSAI_CONTACT, VERCEL: '1', NODE_ENV: 'production', TURSO_DATABASE_URL: 'libsql://seansai-x.turso.io', TURSO_AUTH_TOKEN: 't' }` gives:
     - `db` = `{ url: 'libsql://seansai-x.turso.io', authToken: 't' }`;
     - `refreshMode` = `'cron'`;
@@ -162,11 +162,11 @@ starts never contact cinemas, and list responses are cached by the CDN.
     - the live default ends with `apps/api/data/seansai.sqlite` and starts with `file:`;
     - defaults include `refreshMode: 'scheduler'`.
   - Delete the `/tmp` test added in commit `156fa6c`.
-- [ ] T014 [P] [US1] Change the expected list cache header to `'public, max-age=300, s-maxage=300'` in `apps/api/tests/integration/movies.test.ts:87`, `apps/api/tests/integration/cities.test.ts:39` and `apps/api/tests/integration/server.test.ts:101`. In `apps/api/tests/integration/screenings.test.ts`, add the same assertion for `GET /api/v1/movies/:id/screenings` ([contracts/hosting.md](./contracts/hosting.md#api-response-caching-change-to-feature-001s-public-api)).
-- [ ] T015 [US1] Add N+1 regression tests: `vi.spyOn(Repository.prototype, 'getSource')` is never called and `listSources` is called exactly once per request for:
+- [X] T014 [P] [US1] Change the expected list cache header to `'public, max-age=300, s-maxage=300'` in `apps/api/tests/integration/movies.test.ts:87`, `apps/api/tests/integration/cities.test.ts:39` and `apps/api/tests/integration/server.test.ts:101`. In `apps/api/tests/integration/screenings.test.ts`, add the same assertion for `GET /api/v1/movies/:id/screenings` ([contracts/hosting.md](./contracts/hosting.md#api-response-caching-change-to-feature-001s-public-api)).
+- [X] T015 [US1] Add N+1 regression tests: `vi.spyOn(Repository.prototype, 'getSource')` is never called and `listSources` is called exactly once per request for:
   - `GET /api/v1/movies?city=all` in `apps/api/tests/integration/movies.test.ts`;
   - `GET /api/v1/health` in `apps/api/tests/integration/health.test.ts`.
-- [ ] T016 [P] [US1] Create `apps/api/tests/unit/vercel-config.test.ts`. It reads the repository's `vercel.json` (`new URL('../../../../vercel.json', import.meta.url)`) and asserts the routing and headers that FR-001, FR-002 and FR-012 depend on, so they're tested in CI and not only by hand:
+- [X] T016 [P] [US1] Create `apps/api/tests/unit/vercel-config.test.ts`. It reads the repository's `vercel.json` (`new URL('../../../../vercel.json', import.meta.url)`) and asserts the routing and headers that FR-001, FR-002 and FR-012 depend on, so they're tested in CI and not only by hand:
   - **Top-level `rewrites`**: exactly two, in this order:
     1. `{ source: '/api/(.*)', destination: { service: 'api' } }`;
     2. `{ source: '/(.*)', destination: { service: 'web' } }` (the catch-all must be last).
@@ -181,7 +181,7 @@ starts never contact cinemas, and list responses are cached by the CDN.
 
   - **`regions`** equals `['fra1']`.
   - **No bindings**: no service has `bindings`.
-- [ ] T017 [P] [US1] Create `apps/api/tests/unit/startup.test.ts` for `startBackgroundRefresh` (T019), using `vi.useFakeTimers()` and a stub adapter whose `refresh` is a `vi.fn()`. This pins FR-007, US1 scenario 4 and SC-006.
+- [X] T017 [P] [US1] Create `apps/api/tests/unit/startup.test.ts` for `startBackgroundRefresh` (T019), using `vi.useFakeTimers()` and a stub adapter whose `refresh` is a `vi.fn()`. This pins FR-007, US1 scenario 4 and SC-006.
   - **`'cron'` mode**:
     - returns `null`;
     - after `vi.advanceTimersByTimeAsync(2 * 60 * 60 * 1000)`, `refresh` and `cleanup` have **never** been called;
@@ -190,7 +190,7 @@ starts never contact cinemas, and list responses are cached by the CDN.
 
 ### Implementation for User Story 1
 
-- [ ] T018 [US1] Change `apps/api/src/config.ts`.
+- [X] T018 [US1] Change `apps/api/src/config.ts`.
   - Replace `dbPath` with `db: { url: string; authToken: string | null }`. Add `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` and `VERCEL` to the env schema.
   - Choose `db.url` in this order:
     1. `TURSO_DATABASE_URL`, with `TURSO_AUTH_TOKEN`;
@@ -200,21 +200,21 @@ starts never contact cinemas, and list responses are cached by the CDN.
     5. otherwise `file:` + `DEFAULT_DB_PATH`.
   - Add `refreshMode: 'scheduler' | 'cron'`: `'cron'` when `VERCEL` is set and `SOURCES_MODE` is `live`.
   - Delete `VERCEL_DB_PATH`.
-- [ ] T019 [US1] Create `apps/api/src/refresh/startup.ts` (after T018, which adds `Config['refreshMode']`).
+- [X] T019 [US1] Create `apps/api/src/refresh/startup.ts` (after T018, which adds `Config['refreshMode']`).
   - `export function startBackgroundRefresh(mode: Config['refreshMode'], adapters: readonly SourceAdapter[], options: SchedulerOptions): Scheduler | null`.
   - In `'cron'` mode it logs `'Refresh runs from Vercel Cron; scheduler not started'` through `options.logger` and returns `null` without touching `refresh` or `cleanup`.
   - Otherwise it returns `startScheduler(adapters, options)`.
   - Add a _why_ comment: on Vercel every cold start would otherwise fetch from all cinemas (FR-007).
-- [ ] T020 [US1] Change `apps/api/src/main.ts`.
+- [X] T020 [US1] Change `apps/api/src/main.ts`.
   - Open the database with `await openDb(config.db.url, config.db.authToken)`.
   - Replace the direct `startScheduler(...)` call with `startBackgroundRefresh(config.refreshMode, enabledAdapters, {...})` from T019.
   - `shutdown` calls `scheduler?.stop()`.
-- [ ] T021 [P] [US1] In `apps/api/src/routes/http.ts`, make `setListCaching` set `cache-control: public, max-age=300, s-maxage=300`. Add a _why_ comment: the Vercel CDN caches only with `s-maxage` and strips it before the browser; self-hosted it has no effect.
-- [ ] T022 [US1] Remove the N+1 queries.
+- [X] T021 [P] [US1] In `apps/api/src/routes/http.ts`, make `setListCaching` set `cache-control: public, max-age=300, s-maxage=300`. Add a _why_ comment: the Vercel CDN caches only with `s-maxage` and strips it before the browser; self-hosted it has no effect.
+- [X] T022 [US1] Remove the N+1 queries.
   - `Queries.freshness` in `apps/api/src/db/queries.ts`: read all sources with one `await this.#repo.listSources()` and look them up in a `Map` by id.
   - `apps/api/src/routes/health.ts`: same, one `listSources()` per request.
-- [ ] T023 [US1] Add `"regions": ["fra1"]` at the top level of `vercel.json` ([research.md §6](./research.md#6-region-and-latency-sc-004)). Export the existing `SECURITY_HEADERS` constant from `apps/api/src/server.ts`, which T016 compares with `vercel.json`. T016 must now pass.
-- [ ] T024 [US1] Check locally.
+- [X] T023 [US1] Add `"regions": ["fra1"]` at the top level of `vercel.json` ([research.md §6](./research.md#6-region-and-latency-sc-004)). Export the existing `SECURITY_HEADERS` constant from `apps/api/src/server.ts`, which T016 compares with `vercel.json`. T016 must now pass.
+- [X] T024 [US1] Check locally.
   - `npm test -w @seansai/api && npm run typecheck && npm run lint` pass.
   - Run quickstart §2's non-cron rows under `vercel dev --local --listen 3333` with a temporary `.env` containing `SOURCES_MODE=fixtures`:
     - the movies API returns JSON;

@@ -210,12 +210,12 @@ export class Queries {
    * sources, and the cinemas without one for 3 hours or more (FR-014, FR-015).
    */
   async freshness(cinemas: readonly Cinema[], now: Date): Promise<Freshness> {
-    const sourceIds = [...new Set(cinemas.map((cinema) => cinema.sourceId))];
+    // One query for every source, however many cinemas are listed.
     const sources = new Map(
-      await Promise.all(sourceIds.map(async (id) => [id, await this.#repo.getSource(id)] as const)),
+      (await this.#repo.listSources()).map((source) => [source.id, source] as const),
     );
-    const successes = [...sources.values()]
-      .map((source) => source?.lastSuccessAt?.getTime())
+    const successes = [...new Set(cinemas.map((cinema) => cinema.sourceId))]
+      .map((id) => sources.get(id)?.lastSuccessAt?.getTime())
       .filter((time) => time !== undefined);
     const oldest = successes.length > 0 ? new Date(Math.min(...successes)) : now;
     return {

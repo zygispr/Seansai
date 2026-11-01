@@ -2,8 +2,6 @@ import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
 
 const DEFAULT_DB_PATH = fileURLToPath(new URL('../data/seansai.sqlite', import.meta.url));
-/** Vercel functions can write only under /tmp, and it lasts only as long as the instance. */
-const VERCEL_DB_PATH = '/tmp/seansai.sqlite';
 const LAST_SUCCESS_HOURS_PATTERN = /^FIXTURE_([A-Z0-9]+)_LAST_SUCCESS_HOURS$/;
 
 const sourceIdList = z
@@ -21,6 +19,9 @@ const EnvSchema = z
     PORT: z.coerce.number().int().min(1).max(65_535).default(3000),
     HOST: z.string().min(1).default('localhost'),
     DB_PATH: z.string().min(1).optional(),
+    /** Turso (libSQL) database; on Vercel the only place data outlives a function instance. */
+    TURSO_DATABASE_URL: z.string().min(1).optional(),
+    TURSO_AUTH_TOKEN: z.string().min(1).optional(),
     SOURCES_MODE: z.enum(['live', 'fixtures']).default('live'),
     FIXTURE_NOW: z.iso.datetime({ offset: true }).optional(),
     FIXTURE_FAIL: sourceIdList,
@@ -39,9 +40,14 @@ const EnvSchema = z
 export type Config = {
   port: number;
   host: string;
-  /** Fixture mode defaults to a fresh in-memory database, so runs are repeatable. */
-  dbPath: string;
+  /** libSQL URL: Turso, a `file:` path, or `:memory:` (fixture mode, so runs are repeatable). */
+  db: { url: string; authToken: string | null };
   sourcesMode: 'live' | 'fixtures';
+  /**
+   * `cron` on Vercel in live mode: functions do not run between requests, so a daily Vercel Cron
+   * Job refreshes the data. `scheduler` everywhere else: the server refreshes hourly itself.
+   */
+  refreshMode: 'scheduler' | 'cron';
   /** Fixed clock for fixture mode; null means the capture instant or the real clock. */
   fixtureNow: Date | null;
   /** Sources whose fixture client fails every request (resilience testing). */
@@ -79,12 +85,12 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   }
   const values = parsed.data;
   const onVercel = values.VERCEL !== undefined;
-  const liveDbPath = onVercel ? VERCEL_DB_PATH : DEFAULT_DB_PATH;
   return {
     port: values.PORT,
     host: values.HOST,
-    dbPath: values.DB_PATH ?? (values.SOURCES_MODE === 'fixtures' ? ':memory:' : liveDbPath),
+    db: chooseDb(values, onVercel),
     sourcesMode: values.SOURCES_MODE,
+    refreshMode: onVercel && values.SOURCES_MODE === 'live' ? 'cron' : 'scheduler',
     fixtureNow: values.FIXTURE_NOW ? new Date(values.FIXTURE_NOW) : null,
     fixtureFail: values.FIXTURE_FAIL,
     fixtureLastSuccessHours: parseLastSuccessHours(env),
@@ -92,4 +98,17 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     disabledSources: values.DISABLED_SOURCES,
     serveWebApp: values.NODE_ENV === 'production' && !onVercel,
   };
+}
+
+function chooseDb(values: z.infer<typeof EnvSchema>, onVercel: boolean): Config['db'] {
+  if (values.TURSO_DATABASE_URL !== undefined) {
+    return { url: values.TURSO_DATABASE_URL, authToken: values.TURSO_AUTH_TOKEN ?? null };
+  }
+  if (values.DB_PATH !== undefined) return { url: `file:${values.DB_PATH}`, authToken: null };
+  if (values.SOURCES_MODE === 'fixtures') return { url: ':memory:', authToken: null };
+  if (onVercel) {
+    // A file would vanish with the function instance, so every visitor could see different data.
+    throw new Error('Invalid configuration: TURSO_DATABASE_URL is required on Vercel');
+  }
+  return { url: `file:${DEFAULT_DB_PATH}`, authToken: null };
 }

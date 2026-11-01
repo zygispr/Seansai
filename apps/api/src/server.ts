@@ -29,9 +29,10 @@ const API_PREFIX = '/api/v1';
 
 /**
  * Sent with every response. The web app loads only its own scripts and styles (no inline code);
- * posters come from the cinemas' websites over HTTPS.
+ * posters come from the cinemas' websites over HTTPS. On Vercel the web service sends a copy
+ * from vercel.json; tests/unit/vercel-config.test.ts keeps the two equal.
  */
-const SECURITY_HEADERS = {
+export const SECURITY_HEADERS = {
   'content-security-policy': [
     "default-src 'self'",
     "script-src 'self'",

@@ -98,7 +98,7 @@ describe('buildServer', () => {
   test('list responses are cacheable for 5 minutes and carry an ETag', async () => {
     const first = await app.inject('/api/v1/test/list');
 
-    expect(first.headers['cache-control']).toBe('public, max-age=300');
+    expect(first.headers['cache-control']).toBe('public, max-age=300, s-maxage=300');
     const etag = first.headers.etag;
     expect(etag).toEqual(expect.any(String));
 

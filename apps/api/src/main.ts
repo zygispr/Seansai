@@ -6,7 +6,7 @@ import { createLogger } from './lib/logger.ts';
 import { todayIn } from './lib/time.ts';
 import { loadAliases } from './matching/match.ts';
 import { refreshSource } from './refresh/refresh-source.ts';
-import { startScheduler } from './refresh/scheduler.ts';
+import { startBackgroundRefresh } from './refresh/startup.ts';
 import { cinemaRegistry } from './registry/cinemas.ts';
 import { buildServer } from './server.ts';
 import { adapters, findSourceConfig, logRobotsOverrides, sourceConfigs } from './sources/index.ts';
@@ -19,7 +19,7 @@ async function main(): Promise<void> {
   const config = loadConfig();
   const logger = createLogger();
   const clock = createClock(config);
-  const db = await openDb(config.dbPath === ':memory:' ? ':memory:' : `file:${config.dbPath}`);
+  const db = await openDb(config.db.url, config.db.authToken);
   const repo = new Repository(db);
 
   if (config.sourcesMode === 'fixtures') {
@@ -47,7 +47,7 @@ async function main(): Promise<void> {
   });
   await server.listen({ port: config.port, host: config.host });
 
-  const scheduler = startScheduler(enabledAdapters, {
+  const scheduler = startBackgroundRefresh(config.refreshMode, enabledAdapters, {
     mode: config.sourcesMode,
     clock,
     logger,
@@ -85,7 +85,7 @@ async function main(): Promise<void> {
     if (shuttingDown) return;
     shuttingDown = true;
     logger.info({ signal }, 'Shutting down');
-    scheduler.stop();
+    scheduler?.stop();
     await server.close();
     db.close();
   };

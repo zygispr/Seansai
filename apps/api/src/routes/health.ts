@@ -15,18 +15,19 @@ export const healthRoutes: FastifyPluginAsync<HealthRouteOptions> = (app, option
   app.get('/health', async (_request, reply): Promise<HealthResponse> => {
     reply.header('cache-control', 'no-store');
     const now = options.now();
+    const sources = new Map(
+      (await options.repo.listSources()).map((source) => [source.id, source] as const),
+    );
     return {
       status: 'ok',
-      sources: await Promise.all(
-        options.sourceIds.map(async (id) => {
-          const source = await options.repo.getSource(id);
-          return {
-            id,
-            status: deriveSourceStatus(source, now),
-            lastSuccessAt: source?.lastSuccessAt ? formatInstant(source.lastSuccessAt) : null,
-          };
-        }),
-      ),
+      sources: options.sourceIds.map((id) => {
+        const source = sources.get(id);
+        return {
+          id,
+          status: deriveSourceStatus(source, now),
+          lastSuccessAt: source?.lastSuccessAt ? formatInstant(source.lastSuccessAt) : null,
+        };
+      }),
     };
   });
   return Promise.resolve();

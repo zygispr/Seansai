@@ -90,6 +90,7 @@ describe('GET /movies/{id}/screenings', () => {
     const body = ScreeningsResponseSchema.parse(response.json());
     expect(body.date).toBe(TODAY);
     expect(body.screenings).toHaveLength(3);
+    expect(response.headers['cache-control']).toBe('public, max-age=300, s-maxage=300');
   });
 
   test('a future date returns that day’s full list', async () => {

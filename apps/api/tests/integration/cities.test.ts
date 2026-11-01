@@ -36,7 +36,7 @@ test('lists every city with a supported cinema, with Lithuanian names by default
     { id: 'marijampole', name: 'Marijampolė', cinemaCount: 1 },
     { id: 'gargzdai', name: 'Gargždai', cinemaCount: 1 },
   ]);
-  expect(response.headers['cache-control']).toBe('public, max-age=300');
+  expect(response.headers['cache-control']).toBe('public, max-age=300, s-maxage=300');
 });
 
 test('names cities in English with lang=en', async () => {

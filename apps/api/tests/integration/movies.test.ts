@@ -1,5 +1,6 @@
 import { ErrorResponseSchema, MoviesResponseSchema } from '@seansai/shared';
-import { afterEach, beforeEach, expect, test } from 'vitest';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
+import { Repository } from '../../src/db/repository.ts';
 import { startCatalogServer } from '../helpers/catalog.ts';
 
 let server: Awaited<ReturnType<typeof startCatalogServer>>;
@@ -9,6 +10,7 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
+  vi.restoreAllMocks();
   await server.close();
 });
 
@@ -84,6 +86,17 @@ test('reports freshness: the oldest update and the cinemas whose data is stale',
       },
     ],
   });
-  expect(response.headers['cache-control']).toBe('public, max-age=300');
+  expect(response.headers['cache-control']).toBe('public, max-age=300, s-maxage=300');
   expect(response.headers.etag).toEqual(expect.any(String));
+});
+
+test('reads every source in one query, however many cinemas are listed', async () => {
+  const getSource = vi.spyOn(Repository.prototype, 'getSource');
+  const listSources = vi.spyOn(Repository.prototype, 'listSources');
+
+  const response = await server.app.inject('/api/v1/movies?city=all');
+
+  expect(response.statusCode).toBe(200);
+  expect(getSource).not.toHaveBeenCalled();
+  expect(listSources).toHaveBeenCalledTimes(1);
 });

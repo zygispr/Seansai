@@ -1,6 +1,6 @@
 import { HealthResponseSchema } from '@seansai/shared';
 import type { FastifyInstance } from 'fastify';
-import { afterEach, beforeEach, expect, test } from 'vitest';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { Repository } from '../../src/db/repository.ts';
 import { buildServer } from '../../src/server.ts';
 import { createTempDb } from '../helpers/temp-db.ts';
@@ -26,6 +26,7 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
+  vi.restoreAllMocks();
   await app.close();
   cleanup();
 });
@@ -61,4 +62,14 @@ test('reports each source status with its last success time in Vilnius time', as
     ],
   });
   expect(response.headers['cache-control']).toBe('no-store');
+});
+
+test('reads every source in one query', async () => {
+  const getSource = vi.spyOn(Repository.prototype, 'getSource');
+  const listSources = vi.spyOn(Repository.prototype, 'listSources');
+
+  await app.inject('/api/v1/health');
+
+  expect(getSource).not.toHaveBeenCalled();
+  expect(listSources).toHaveBeenCalledTimes(1);
 });
