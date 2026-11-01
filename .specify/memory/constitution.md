@@ -104,12 +104,34 @@ cheaper than retrofitting it.
 **Rationale**: Keeping scale in mind avoids dead-end designs while simplicity prevents paying for
 capacity that is not yet needed.
 
+### VIII. Best Practices & Code Conventions
+
+- Code MUST follow the established best practices of the language, framework, and platform in
+  use, as described in their official documentation and style guides. Idiomatic code is preferred
+  over clever code; framework-recommended patterns are used rather than worked around.
+- Project conventions are codified in tooling configuration (formatter, linter rules, compiler
+  settings) wherever possible; conventions tooling cannot enforce MUST be written down in the
+  project docs. Both MUST be followed.
+- New code MUST match the conventions of the surrounding code: naming and casing, file and module
+  layout, import style, error-handling patterns, and test structure. Mixing styles within the
+  codebase is not allowed.
+- Changing a convention MUST be a deliberate, documented decision applied consistently across the
+  affected code, not introduced piecemeal by individual changes.
+- Deprecated APIs and documented anti-patterns MUST NOT be introduced; when a dependency marks an
+  API as deprecated, new code uses its recommended replacement.
+- Commit messages MUST follow the Conventional Commits format (`type(scope): summary`) already in
+  use in the repository history.
+
+**Rationale**: Shared conventions and community best practices make the codebase predictable to
+every contributor, reduce review friction, and let knowledge from official docs apply directly.
+
 ## Quality Standards
 
 - **Definition of Done**: a change is done only when it meets its acceptance criteria, has passing
   tests (Principle IV), passes lint/format/type checks (Principle I), handles all UX states
-  (Principle V), stays within its performance budgets (Principle VI), and has updated user- or
-  developer-facing documentation where behaviour changed.
+  (Principle V), stays within its performance budgets (Principle VI), follows project conventions
+  and best practices (Principle VIII), and has updated user- or developer-facing documentation
+  where behaviour changed.
 - **Security baseline**: secrets MUST NOT be committed to the repository; all external input MUST be
   validated; dependencies with known critical vulnerabilities MUST be upgraded or replaced before
   release.
@@ -120,7 +142,7 @@ capacity that is not yet needed.
 
 1. **Specify** (`/speckit-specify`): define user value, user stories, and measurable acceptance
    criteria. No implementation details.
-2. **Plan** (`/speckit-plan`): the plan MUST pass the Constitution Check against all seven
+2. **Plan** (`/speckit-plan`): the plan MUST pass the Constitution Check against all eight
    principles, declare performance budgets and expected load, and justify any complexity.
 3. **Tasks** (`/speckit-tasks`): test tasks MUST be included for every user story.
 4. **Implement** (`/speckit-implement`): work in small, focused, independently reviewable commits;
@@ -145,4 +167,4 @@ capacity that is not yet needed.
 - The constitution SHOULD be reviewed at least once per quarter to confirm it still serves the
   project.
 
-**Version**: 1.0.0 | **Ratified**: 2026-10-30 | **Last Amended**: 2026-10-30
+**Version**: 1.1.0 | **Ratified**: 2026-10-30 | **Last Amended**: 2026-11-01
