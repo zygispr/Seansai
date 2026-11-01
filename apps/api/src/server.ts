@@ -1,7 +1,8 @@
 import { constants as zlib } from 'node:zlib';
 import fastifyCompress from '@fastify/compress';
 import fastifyEtag from '@fastify/etag';
-import fastifyStatic from '@fastify/static';
+// Types only (reply.sendFile); the plugin itself is imported on demand in buildServer.
+import type {} from '@fastify/static';
 import Fastify, { type FastifyBaseLogger, type FastifyInstance } from 'fastify';
 import type { Db } from './db/index.ts';
 import { Queries } from './db/queries.ts';
@@ -97,7 +98,9 @@ export function buildServer(options: ServerOptions): FastifyInstance {
   });
 
   if (webDistDir !== null) {
-    void app.register(fastifyStatic, {
+    // Loaded only when serving the web app (self-hosted): @fastify/static require()s an ES module,
+    // which Vercel's function loader cannot do, and on Vercel the web app is its own service.
+    void app.register(import('@fastify/static'), {
       root: webDistDir,
       // Serves the .br or .gz copy written by the web build when the browser accepts it.
       preCompressed: true,
