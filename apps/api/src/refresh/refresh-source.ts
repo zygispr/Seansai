@@ -67,6 +67,11 @@ export async function refreshSource(
     return { status: 'disabled' };
   }
 
+  // Reserved before fetching, so sources store in the order they started and the result does not
+  // depend on which cinema answered first: the first listing of a film sets its id and matching
+  // details. One at a time from reading the movies to storing them, or two sources listing a new
+  // film at once would each miss the other's and create it twice, for good. Fetching stays parallel.
+  const turn = repo.reserveTurn();
   try {
     ctx.http.beginCycle();
     const result = await adapter.fetchScreenings({
@@ -89,10 +94,7 @@ export async function refreshSource(
       logger.debug({ source, reason: item.reason, raw: item.raw }, 'Adapter skipped an item');
     }
 
-    // One source at a time from reading the movies to storing them: otherwise two sources listing
-    // a new film at once would each miss the other's and create it twice, for good. Fetching above
-    // stays parallel.
-    const { newReviews } = await repo.exclusive(async () => {
+    const { newReviews } = await turn.run(async () => {
       const { movies, records, reviews } = matchScreenings(
         source,
         known,
@@ -111,6 +113,7 @@ export async function refreshSource(
     logger.info({ source, ...outcome }, 'Source refreshed');
     return outcome;
   } catch (error) {
+    turn.skip();
     const message = error instanceof Error ? error.message : String(error);
     await repo.recordSourceAttempt(source, now, message);
     logger.error({ source, err: error }, 'Source refresh failed; previous data kept');

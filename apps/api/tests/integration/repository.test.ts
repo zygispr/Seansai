@@ -388,26 +388,54 @@ describe('storeRefresh: running time', () => {
   });
 });
 
-describe('exclusive', () => {
-  test('failed work rejects only for its caller, and the work queued behind it still runs', async () => {
-    const failing = repo.exclusive(() => Promise.reject(new Error('store failed')));
-    const next = repo.exclusive(() => Promise.resolve('stored'));
+describe('reserveTurn', () => {
+  test('failed work rejects only for its caller, and the next turn still runs', async () => {
+    const failing = repo.reserveTurn().run(() => Promise.reject(new Error('store failed')));
+    const next = repo.reserveTurn().run(() => Promise.resolve('stored'));
 
     await expect(failing).rejects.toThrow('store failed');
     await expect(next).resolves.toBe('stored');
   });
 
-  test('runs one piece of work at a time, in the order asked', async () => {
+  test('turns run one at a time, in the order reserved, whenever their work arrives', async () => {
     const events: string[] = [];
     const work = (name: string, ms: number) => async () => {
       events.push(`${name} start`);
       await new Promise((resolve) => setTimeout(resolve, ms));
       events.push(`${name} end`);
     };
+    const first = repo.reserveTurn();
+    const second = repo.reserveTurn();
 
-    await Promise.all([repo.exclusive(work('slow', 20)), repo.exclusive(work('fast', 0))]);
+    const secondDone = second.run(work('second', 0));
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    expect(events).toEqual([]);
+    await Promise.all([first.run(work('first', 20)), secondDone]);
 
-    expect(events).toEqual(['slow start', 'slow end', 'fast start', 'fast end']);
+    expect(events).toEqual(['first start', 'first end', 'second start', 'second end']);
+  });
+
+  test('a skipped turn lets the next one run, but not before the turn ahead of it', async () => {
+    const events: string[] = [];
+    const first = repo.reserveTurn();
+    const skipped = repo.reserveTurn();
+    const third = repo.reserveTurn();
+
+    skipped.skip();
+    const thirdDone = third.run(async () => {
+      events.push('third');
+      await Promise.resolve();
+    });
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    expect(events).toEqual([]);
+
+    await first.run(async () => {
+      events.push('first');
+      await Promise.resolve();
+    });
+    await thirdDone;
+
+    expect(events).toEqual(['first', 'third']);
   });
 });
 

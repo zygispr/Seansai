@@ -33,6 +33,20 @@ function withLatency(db: Db): Db {
   });
 }
 
+const SLOW_LAST: readonly string[] = [
+  'cinamon',
+  'romuva',
+  'spindulys',
+  'minija',
+  'garsas',
+  'vue',
+  'skalvija',
+  'apollo',
+  'pasaka',
+  'atlantis',
+  'forum',
+];
+
 async function refreshAll(
   order: 'forward' | 'reverse' | 'parallel',
 ): Promise<{ db: Db; cleanup: () => void }> {
@@ -52,8 +66,20 @@ async function refreshAll(
       disabledSources: [],
     });
   if (order === 'parallel') {
-    // As the daily refresh and the scheduler's startup run do it.
-    await Promise.all(adapters.map(refresh));
+    // As the daily refresh and the scheduler's startup run do it, with cinemas answering in an
+    // order that used to split "Forgotten Island" into three movies.
+    await Promise.all(
+      adapters.map((adapter) => {
+        const answersAfterMs = 20 * SLOW_LAST.indexOf(adapter.id);
+        return refresh({
+          ...adapter,
+          fetchScreenings: async (context) => {
+            await new Promise((resolve) => setTimeout(resolve, answersAfterMs));
+            return adapter.fetchScreenings(context);
+          },
+        });
+      }),
+    );
     return temp;
   }
   for (const adapter of order === 'forward' ? adapters : [...adapters].reverse()) {

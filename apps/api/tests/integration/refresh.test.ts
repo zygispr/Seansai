@@ -244,6 +244,40 @@ describe('refreshSource', () => {
     expect(await storedScreenings()).toHaveLength(2);
   });
 
+  test('sources store in the order they started, whichever fetch finishes first', async () => {
+    const slowApollo: SourceAdapter = {
+      id: 'apollo',
+      fetchScreenings: async () => {
+        await new Promise((resolve) => setTimeout(resolve, 30));
+        return { screenings: [screening({ title: 'Pirmasis' })], skipped: [] };
+      },
+    };
+    const fastForum = listingsFrom('forum', [
+      screening({ cinemaId: 'forum-vingis', title: 'Antrasis' }),
+    ]);
+
+    await Promise.all([refreshSource(slowApollo, context()), refreshSource(fastForum, context())]);
+
+    // The first title stored stays.
+    expect((await db.execute('SELECT title FROM movies')).rows).toEqual([{ title: 'Pirmasis' }]);
+  });
+
+  test('a source whose fetch fails does not hold up the ones behind it', async () => {
+    const broken: SourceAdapter = {
+      id: 'apollo',
+      fetchScreenings: () => Promise.reject(new Error('cinema down')),
+    };
+    const forum = listingsFrom('forum', [screening({ cinemaId: 'forum-vingis' })]);
+
+    const [first, second] = await Promise.all([
+      refreshSource(broken, context()),
+      refreshSource(forum, context()),
+    ]);
+
+    expect(first.status).toBe('failed');
+    expect(second.status).toBe('success');
+  });
+
   test('a film stays one movie when its most common running time moves away from a listing', async () => {
     const noYear = { title: 'Kasėjas', originalTitle: null, year: null };
     const sources = [

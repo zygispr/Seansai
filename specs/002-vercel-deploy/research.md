@@ -51,7 +51,9 @@ measurements come from the developer's live database on the same day.
   - **Without a transaction around them, reading the movies and storing a refresh can interleave.**
     Two sources listing a new film at once would each create it, and the duplicates would last.
     `refreshSource` therefore runs read-match-store one source at a time within a process
-    (`Repository.exclusive`), while fetching stays parallel. A manual run overlapping the cron run
+    (`Repository.reserveTurn`), while fetching stays parallel. The turn is reserved before fetching,
+    so sources store in a fixed order: the first listing of a film sets its id and matching details,
+    and an order set by network timing split films in some runs. A manual run overlapping the cron run
     on another function instance isn't covered. That is rare, and any duplicates it creates are
     removed with the film, 30 days after its last screening.
   - **Foreign-key enforcement is off by default** in Turso, and a per-connection

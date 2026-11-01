@@ -194,6 +194,12 @@ const SQL = {
     ON CONFLICT (movie_id_a, movie_id_b) DO NOTHING`,
 } as const;
 
+/** A place in the repository's queue: run work in it, or give it up. */
+export type Turn = {
+  run<T>(work: () => Promise<T>): Promise<T>;
+  skip(): void;
+};
+
 /** The movie's upsert, then one insert per title it is known by (its own match key included). */
 function movieStatements(movie: MovieRecord, keys: readonly string[]): InStatement[] {
   return [
@@ -295,22 +301,36 @@ function successStatement(sourceId: string, at: Date): InStatement {
  */
 export class Repository {
   readonly #db: Db;
-  /** Settles when the latest `exclusive` work has; never rejects. */
-  #exclusiveTail: Promise<unknown> = Promise.resolve();
+  /** Settles when the latest reserved turn is over; never rejects. */
+  #lastTurn: Promise<void> = Promise.resolve();
 
   constructor(db: Db) {
     this.#db = db;
   }
 
   /**
-   * Runs `work` after all earlier `exclusive` work on this repository has settled. Only this
-   * process is covered: another server instance can still interleave with it.
+   * Takes the next place in the queue now; the work can come later. Turns run one at a time, in the
+   * order reserved. Only this process is covered: another server instance can still interleave.
    */
-  exclusive<T>(work: () => Promise<T>): Promise<T> {
-    const result = this.#exclusiveTail.then(work);
-    // The caller gets `result` and its error; the queue only needs to move on.
-    this.#exclusiveTail = result.catch(() => undefined);
-    return result;
+  reserveTurn(): Turn {
+    const previous = this.#lastTurn;
+    let finish: () => void = () => undefined;
+    this.#lastTurn = new Promise((resolve) => {
+      finish = resolve;
+    });
+    return {
+      run: async (work) => {
+        await previous;
+        try {
+          return await work();
+        } finally {
+          finish();
+        }
+      },
+      skip: () => {
+        void previous.then(finish);
+      },
+    };
   }
 
   async listMovieIdentities(): Promise<MovieIdentity[]> {
