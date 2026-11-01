@@ -65,6 +65,23 @@ describe('resolveMovie', () => {
     expect(result.reviews).toEqual([]);
   });
 
+  test('a Sunday series listing joins the film, and a new one is stored without the label', () => {
+    const series = listing({
+      title: 'Šeimų sekmadienis: Kasėjas (dubliuotas)',
+      originalTitle: 'Šeimų sekmadienis: Digger (2026)',
+    });
+
+    expect(resolveMovie(series, [digger], []).movie.id).toBe('digger-2026');
+    expect(resolveMovie(series, [], []).movie).toMatchObject({
+      id: 'digger-2026',
+      title: 'Kasėjas (dubliuotas)',
+      originalTitle: 'Digger (2026)',
+    });
+    expect(
+      resolveMovie(listing({ title: 'Kasėjas | Sekmadienis su vaikais' }), [], []).movie.title,
+    ).toBe('Kasėjas');
+  });
+
   test('keeps listings separate when one year is missing and durations differ by more than 15 minutes', () => {
     const result = resolveMovie(listing({ year: null, durationMinutes: 117 }), [digger], []);
 

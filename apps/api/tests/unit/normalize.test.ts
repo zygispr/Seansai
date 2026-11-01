@@ -1,5 +1,10 @@
 import { describe, expect, test } from 'vitest';
-import { matchKeyOf, normalizeTitle, titleKeysOf } from '../../src/matching/normalize.ts';
+import {
+  matchKeyOf,
+  normalizeTitle,
+  titleKeysOf,
+  withoutSeriesLabel,
+} from '../../src/matching/normalize.ts';
 
 describe('normalizeTitle', () => {
   test('lower-cases and strips diacritics', () => {
@@ -42,6 +47,19 @@ describe('normalizeTitle', () => {
 });
 
 const noEnglish = { englishTitle: null };
+
+describe('withoutSeriesLabel', () => {
+  test.each([
+    ['Šeimų sekmadienis: Lobių ieškotojai (dubliuotas)', 'Lobių ieškotojai (dubliuotas)'],
+    ['ŠEIMŲ SEKMADIENIS: Lobių ieškotojai', 'Lobių ieškotojai'],
+    ['Bjurkis | Sekmadienis su vaikais', 'Bjurkis'],
+    ['Sekmadieniai', 'Sekmadieniai'],
+    ['Rozė | Scanorama', 'Rozė | Scanorama'],
+    ['Šeimų sekmadienis:', 'Šeimų sekmadienis:'],
+  ])('"%s" → "%s"', (title, expected) => {
+    expect(withoutSeriesLabel(title)).toBe(expected);
+  });
+});
 
 describe('matchKeyOf', () => {
   test('prefers the English title', () => {
@@ -103,6 +121,23 @@ describe('titleKeysOf', () => {
     expect(
       titleKeysOf({ title: 'Instruktorius', originalTitle: 'Instruktorius', englishTitle: null }),
     ).toEqual(['instruktorius']);
+  });
+
+  test('ignores the Sunday family series around a title', () => {
+    expect(
+      titleKeysOf({
+        title: 'Šeimų sekmadienis: Katinas su skrybele (dubliuotas)',
+        originalTitle: 'Šeimų sekmadienis: The Cat In The Hat (2026)',
+        englishTitle: null,
+      }),
+    ).toEqual(['cat in the hat', 'katinas su skrybele']);
+    expect(
+      titleKeysOf({
+        title: 'Katinas su skrybėle | Sekmadienis su vaikais',
+        originalTitle: null,
+        englishTitle: null,
+      }),
+    ).toEqual(['katinas su skrybele']);
   });
 
   test('ignores the Scanorama festival label, however a cinema spells it', () => {

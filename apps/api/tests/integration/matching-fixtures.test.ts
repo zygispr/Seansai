@@ -103,7 +103,7 @@ describe.each(['forward', 'reverse', 'parallel'] as const)(
       expect(shared.rows).toEqual([]);
       expect(
         (await db.execute('SELECT count(DISTINCT movie_id) AS movies FROM screenings')).rows[0],
-      ).toEqual({ movies: 230 });
+      ).toEqual({ movies: 228 });
     });
 
     test.each([
@@ -140,6 +140,23 @@ describe.each(['forward', 'reverse', 'parallel'] as const)(
       });
 
       expect(rows[0]?.minutes).toBe(minutes);
+    });
+
+    test.each(['Katinas su skrybėle', 'Lobių ieškotojai'])(
+      'Sunday series film "%s" is one movie at every cinema that shows it',
+      async (title) => {
+        expect(await moviesKnownAs(db, title)).toHaveLength(1);
+      },
+    );
+
+    test('no movie is stored under a Sunday series label', async () => {
+      const { rows } = await db.execute(
+        `SELECT title FROM movies
+         WHERE title LIKE '%ekmadienis:%' OR title LIKE '%Sekmadienis su vaikais%'
+            OR original_title LIKE '%ekmadienis:%'`,
+      );
+
+      expect(rows).toEqual([]);
     });
 
     test.each(['Aukso amžius', 'Rozė', 'Paukščių šneka', 'Zeitūno melodija'])(
