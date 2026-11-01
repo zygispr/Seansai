@@ -18,6 +18,7 @@ export type Db = Client;
 const migrations: readonly string[] = [
   readFileSync(new URL('./schema.sql', import.meta.url), 'utf8'),
   readFileSync(new URL('./migration-002-movie-keys.sql', import.meta.url), 'utf8'),
+  readFileSync(new URL('./migration-003-screening-duration.sql', import.meta.url), 'utf8'),
 ];
 
 /** How long a local write waits for another connection's lock before failing. */

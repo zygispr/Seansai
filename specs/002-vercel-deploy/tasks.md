@@ -330,6 +330,7 @@ from that night, and no manual action (spec US2, SC-003, quickstart §5).
   - Add `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` and `CRON_SECRET` to the variables table.
   - Change the layout line "SQLite" to "SQLite (libSQL client; Turso on Vercel)".
 - [X] T045 [P] [US2] Update `specs/001-cinema-showtimes/contracts/public-api.md` line 14 to state the list endpoints' `Cache-Control: public, max-age=300, s-maxage=300` and why, linking to [contracts/hosting.md](./contracts/hosting.md).
+- [X] T045a [US2] Owner decision (2026-11-01), from the review of T046: a movie shows its most common running time, for every film. Migration 3 adds `screenings.duration_minutes`; `storeRefresh` sets each listed movie's running time in the same batch. Merge alias added for Garsas's Sunday showing of _The Cat in the Hat_.
 - [ ] T046 [US2] Review before production (Constitution I, IV; development workflow step 5).
   - Commit `feat(api): daily refresh by Vercel Cron, 27-hour staleness on Vercel (002 US2)` (including T044 and T045) and push.
   - Run all quality gates (quickstart §1).

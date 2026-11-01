@@ -77,6 +77,7 @@ export function screeningRecord(overrides: Partial<ScreeningRecord> = {}): Scree
     cinemaId: 'apollo-akropolis',
     startsAt: new Date('2026-10-30T17:00:00Z'),
     localDate: '2026-10-30',
+    durationMinutes: 101,
     hall: '6 salė',
     format: '2D',
     spokenLanguage: 'en',

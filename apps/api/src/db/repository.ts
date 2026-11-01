@@ -33,6 +33,8 @@ export type ScreeningRecord = {
   startsAt: Date;
   /** Calendar date of `startsAt` in Europe/Vilnius. */
   localDate: string;
+  /** As this cinema lists it; cinemas disagree, so the movie shows the most common one. */
+  durationMinutes: number | null;
   hall: string | null;
   format: ScreeningFormat | null;
   spokenLanguage: string | null;
@@ -115,6 +117,14 @@ const STALE_MOVIE = `
   NOT EXISTS (SELECT 1 FROM screenings WHERE screenings.movie_id = movies.id)
   AND (last_screening_at IS NULL OR last_screening_at < @cutoff)`;
 
+/** The running time most of a movie's screenings list; a tie goes to the shorter one. */
+const MOST_COMMON_DURATION = `(
+  SELECT duration_minutes FROM screenings
+  WHERE movie_id = movies.id AND duration_minutes IS NOT NULL
+  GROUP BY duration_minutes
+  ORDER BY COUNT(*) DESC, duration_minutes
+  LIMIT 1)`;
+
 const SQL = {
   upsertMovie: `
     INSERT INTO movies (id, title, original_title, english_title, match_key, year,
@@ -136,16 +146,16 @@ const SQL = {
   addMovieKey: 'INSERT INTO movie_keys (movie_id, key) VALUES (?, ?) ON CONFLICT DO NOTHING',
   deleteFutureScreenings: 'DELETE FROM screenings WHERE source_id = ? AND starts_at >= ?',
   upsertScreening: `
-    INSERT INTO screenings (id, source_id, movie_id, cinema_id, starts_at, local_date, hall,
-                            format, spoken_language, subtitle_language, is_dubbed, ticket_url,
-                            source_title, refreshed_at)
-    VALUES (@id, @sourceId, @movieId, @cinemaId, @startsAt, @localDate, @hall, @format,
-            @spokenLanguage, @subtitleLanguage, @isDubbed, @ticketUrl, @sourceTitle,
+    INSERT INTO screenings (id, source_id, movie_id, cinema_id, starts_at, local_date,
+                            duration_minutes, hall, format, spoken_language, subtitle_language,
+                            is_dubbed, ticket_url, source_title, refreshed_at)
+    VALUES (@id, @sourceId, @movieId, @cinemaId, @startsAt, @localDate, @durationMinutes, @hall,
+            @format, @spokenLanguage, @subtitleLanguage, @isDubbed, @ticketUrl, @sourceTitle,
             @refreshedAt)
     ON CONFLICT (id) DO UPDATE SET
       movie_id = excluded.movie_id, cinema_id = excluded.cinema_id,
       starts_at = excluded.starts_at, local_date = excluded.local_date,
-      hall = excluded.hall, format = excluded.format,
+      duration_minutes = excluded.duration_minutes, hall = excluded.hall, format = excluded.format,
       spoken_language = excluded.spoken_language,
       subtitle_language = excluded.subtitle_language, is_dubbed = excluded.is_dubbed,
       ticket_url = excluded.ticket_url, source_title = excluded.source_title,
@@ -153,6 +163,9 @@ const SQL = {
   raiseLastScreening: `
     UPDATE movies SET last_screening_at = @startsAt
     WHERE id = @movieId AND (last_screening_at IS NULL OR last_screening_at < @startsAt)`,
+  settleDurations: `
+    UPDATE movies SET duration_minutes = ${MOST_COMMON_DURATION}
+    WHERE id IN (SELECT value FROM json_each(?)) AND ${MOST_COMMON_DURATION} IS NOT NULL`,
   recordAttempt: `
     INSERT INTO sources (id, last_attempt_at, last_error) VALUES (@id, @at, @error)
     ON CONFLICT (id) DO UPDATE SET last_attempt_at = @at, last_error = @error`,
@@ -202,8 +215,10 @@ function movieStatements(movie: MovieRecord, keys: readonly string[]): InStateme
 }
 
 /**
- * Deletes the source's screenings that start at or after `from`, upserts `screenings`, and raises
- * each movie's latest screening start.
+ * Deletes the source's screenings that start at or after `from`, upserts `screenings`, raises each
+ * movie's latest screening start, and sets each movie's running time to the most common one. The
+ * source refreshed last in a run recounts with every cinema's new data, so the result does not
+ * depend on which cinema came first.
  */
 function screeningStatements(
   sourceId: string,
@@ -226,6 +241,7 @@ function screeningStatements(
         cinemaId: screening.cinemaId,
         startsAt,
         localDate: screening.localDate,
+        durationMinutes: screening.durationMinutes,
         hall: screening.hall,
         format: screening.format,
         spokenLanguage: screening.spokenLanguage,
@@ -244,6 +260,7 @@ function screeningStatements(
       sql: SQL.raiseLastScreening,
       args: { startsAt, movieId },
     })),
+    { sql: SQL.settleDurations, args: [JSON.stringify([...latestStartByMovie.keys()])] },
   ];
 }
 

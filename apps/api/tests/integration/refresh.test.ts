@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import type { Db } from '../../src/db/index.ts';
 import { Repository } from '../../src/db/repository.ts';
+import { loadAliases } from '../../src/matching/match.ts';
 import { cinemaRegistry } from '../../src/registry/cinemas.ts';
 import { refreshSource, type RefreshContext } from '../../src/refresh/refresh-source.ts';
 import { FixtureHttpClient } from '../../src/sources/fixture-http.ts';
@@ -237,5 +238,45 @@ describe('refreshSource', () => {
     const movies = (await db.execute('SELECT id FROM movies')).rows;
     expect(movies).toHaveLength(1);
     expect(await storedScreenings()).toHaveLength(2);
+  });
+
+  test('a merged film shows the most common running time, even if a rare one came first', async () => {
+    const sundayShowing: SourceAdapter = {
+      id: 'forum',
+      fetchScreenings: () =>
+        Promise.resolve({
+          screenings: [
+            screening({
+              cinemaId: 'forum-vingis',
+              title: 'Katinas su skrybėle | Sekmadienis su vaikais',
+              originalTitle: 'The Cat in the Hat',
+              englishTitle: null,
+              year: null,
+              durationMinutes: 108,
+            }),
+          ],
+          skipped: [],
+        }),
+    };
+    const film = (sourceScreeningId: string) =>
+      screening({
+        sourceScreeningId,
+        title: 'Katinas su skrybėle',
+        originalTitle: 'The Cat in the Hat',
+        englishTitle: 'Cat in the Hat',
+        year: 2026,
+        durationMinutes: 91,
+      });
+
+    await refreshSource(sundayShowing, context({ aliases: loadAliases() }));
+    await refreshSource(
+      stubAdapter({ screenings: [film('1'), film('2')], skipped: [] }),
+      context({ aliases: loadAliases() }),
+    );
+
+    expect((await db.execute('SELECT duration_minutes AS d FROM movies')).rows).toEqual([
+      { d: 91 },
+    ]);
+    expect(await storedScreenings()).toHaveLength(3);
   });
 });

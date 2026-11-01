@@ -39,7 +39,7 @@ Seansai goes public on **Vercel's free Hobby plan**, with its data in **Turso's 
   production's data.
 - Docker and local development: a SQLite file through the same client.
 - Tests: `:memory:`.
-- Schema unchanged ([data-model.md](./data-model.md)).
+- Schema: `schema_migrations` and `screenings.duration_minutes` added ([data-model.md](./data-model.md)).
 
 **Testing**:
 - Vitest for unit and integration tests, now async.

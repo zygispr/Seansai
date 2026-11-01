@@ -125,6 +125,20 @@ describe.each(['forward', 'reverse', 'parallel'] as const)(
       expect(movies[0]?.englishTitle).toMatch(englishTitle);
     });
 
+    test.each([
+      ['Instruktorius', 90],
+      ['Forgotten Island', 109],
+      ['Aviukas Šonas ir baimės pilnos kelnės', 80],
+    ])('"%s" shows its most common running time, whatever the order', async (title, minutes) => {
+      const [movie] = await moviesKnownAs(db, title);
+      const { rows } = await db.execute({
+        sql: 'SELECT duration_minutes AS minutes FROM movies WHERE id = ?',
+        args: [movie?.id ?? null],
+      });
+
+      expect(rows[0]?.minutes).toBe(minutes);
+    });
+
     test.each(['Aukso amžius', 'Rozė', 'Paukščių šneka', 'Zeitūno melodija'])(
       'Scanorama film "%s" is one movie at every cinema that shows it',
       async (title) => {

@@ -59,7 +59,7 @@ describe('splitStatements', () => {
 
 describe('openDb', () => {
   test('records the migrations in a table, never in PRAGMA user_version (Turso rejects it)', async () => {
-    expect(await schemaVersion(db)).toBe(2);
+    expect(await schemaVersion(db)).toBe(3);
     expect(await userVersion(db)).toBe(0);
   });
 
@@ -67,7 +67,7 @@ describe('openDb', () => {
     db.close();
     db = await openDb(`file:${path}`);
 
-    expect(await schemaVersion(db)).toBe(2);
+    expect(await schemaVersion(db)).toBe(3);
   });
 
   test('a database migrated before the table existed is not migrated again', async () => {
@@ -89,6 +89,11 @@ describe('openDb', () => {
       (await reopened.execute("SELECT COUNT(*) AS count FROM sqlite_master WHERE name = 'movies'"))
         .rows[0]?.count,
     ).toBe(1);
+    // Only the migrations it lacks run.
+    expect(await schemaVersion(reopened)).toBe(3);
+    expect(
+      (await reopened.execute('PRAGMA table_info(screenings)')).rows.map((row) => row.name),
+    ).toContain('duration_minutes');
     reopened.close();
   });
 
@@ -97,7 +102,7 @@ describe('openDb', () => {
 
     const [first, second] = await Promise.all([openDb(url), openDb(url)]);
 
-    expect(await schemaVersion(first)).toBe(2);
+    expect(await schemaVersion(first)).toBe(3);
     expect(
       (await first.execute("SELECT COUNT(*) AS count FROM sqlite_master WHERE name = 'movies'"))
         .rows[0]?.count,
@@ -274,6 +279,48 @@ describe('deleteStaleMovies', () => {
       ).rows[0]?.count,
     ).toBe(0);
     expect(await count('match_reviews')).toBe(0);
+  });
+});
+
+describe('storeRefresh: running time', () => {
+  const duration = async (): Promise<unknown> =>
+    (await db.execute("SELECT duration_minutes AS d FROM movies WHERE id = 'digger-2026'")).rows[0]
+      ?.d;
+  const times = (prefix: string, ...minutes: Array<number | null>) =>
+    minutes.map((durationMinutes, index) =>
+      screeningRecord({ id: `${prefix}:${String(index)}`, sourceId: prefix, durationMinutes }),
+    );
+
+  test.each([
+    ['most common last', ['forum', [108]], ['apollo', [91, 91]]],
+    ['most common first', ['apollo', [91, 91]], ['forum', [108]]],
+  ] as const)('is the most common across cinemas, whichever came first (%s)', async (_, a, b) => {
+    await seedScreenings(repo, a[0], NOW, times(a[0], ...a[1]));
+    await seedScreenings(repo, b[0], NOW, times(b[0], ...b[1]));
+
+    expect(await duration()).toBe(91);
+  });
+
+  test('a tie goes to the shorter time, so the result does not depend on order', async () => {
+    await seedScreenings(repo, 'forum', NOW, times('forum', 108));
+    await seedScreenings(repo, 'apollo', NOW, times('apollo', 91));
+
+    expect(await duration()).toBe(91);
+  });
+
+  test('screenings without a time do not count, and none at all keeps the movie as it is', async () => {
+    await seedScreenings(repo, 'apollo', NOW, times('apollo', null, null));
+    expect(await duration()).toBe(101);
+
+    await seedScreenings(repo, 'forum', NOW, times('forum', 95));
+    expect(await duration()).toBe(95);
+  });
+
+  test('follows the cinemas when they change their listings', async () => {
+    await seedScreenings(repo, 'apollo', NOW, times('apollo', 91, 91));
+    await seedScreenings(repo, 'apollo', NOW, times('apollo', 93, 93));
+
+    expect(await duration()).toBe(93);
   });
 });
 

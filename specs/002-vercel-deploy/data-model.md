@@ -2,10 +2,18 @@
 
 **Feature**: [spec.md](./spec.md) | **Date**: 2026-10-31
 
-The **schema does not change**. The tables are `sources`, `movies`, `screenings`, `match_reviews`
-and `movie_keys`, as in [feature 001's data model](../001-cinema-showtimes/data-model.md) and
+The tables are `sources`, `movies`, `screenings`, `match_reviews` and `movie_keys`, as in
+[feature 001's data model](../001-cinema-showtimes/data-model.md) and
 `apps/api/src/db/schema.sql` plus `migration-002-movie-keys.sql`. This feature changes where the
-data lives, how it's written, and adds a few runtime-only values.
+data lives and how it's written, and adds a few runtime-only values. Two schema additions came out
+of the first deploy and the review:
+
+- `schema_migrations` records applied migrations, because Turso rejects writing
+  `PRAGMA user_version` ([research.md §2](./research.md#2-shared-data-store)).
+- `screenings.duration_minutes` (migration 3) keeps the running time each cinema lists. Cinemas
+  disagree, and a movie's `duration_minutes` used to be whichever listing was stored first. It is
+  now the most common value across the movie's screenings, the shorter one on a tie, so it no longer
+  depends on refresh order. Screenings without a time don't count; a movie with none keeps its value.
 
 ## Where the data lives
 
@@ -25,11 +33,14 @@ data lives, how it's written, and adds a few runtime-only values.
     is one transaction:
     - movie upserts and their match keys;
     - deleting the source's screenings from now on, then the screening upserts;
-    - `last_screening_at` raises;
+    - `last_screening_at` raises and the most common running time of each listed movie;
     - new match reviews;
     - the source's success record.
   - A failed batch leaves the source's previous data untouched.
   - A failed refresh writes only the source's attempt record (`last_attempt_at`, `last_error`).
+- **One source at a time from reading the movies to storing them.** Fetching is parallel, but
+  matching against the known movies and writing the result must not interleave, or two sources
+  would each create the same new film.
 - **Statement order inside the batch is fixed.** Movie upserts come in listing order, so the
   existing rule "the first source's title wins, later ones fill gaps" behaves as before.
 - **No reliance on foreign-key cascades.** Removing stale movies deletes their `movie_keys` and

@@ -147,6 +147,7 @@ function matchScreenings(
       cinemaId: screening.cinemaId,
       startsAt: screening.startsAt,
       localDate: localDateOf(screening.startsAt),
+      durationMinutes: screening.durationMinutes,
       hall: screening.hall,
       format: screening.format,
       spokenLanguage: screening.spokenLanguage,
