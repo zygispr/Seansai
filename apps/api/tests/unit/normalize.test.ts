@@ -56,6 +56,9 @@ describe('withoutSeriesLabel', () => {
     ['Sekmadieniai', 'Sekmadieniai'],
     ['Rozė | Scanorama', 'Rozė | Scanorama'],
     ['Šeimų sekmadienis:', 'Šeimų sekmadienis:'],
+    ['Šeimų sekmadienis: Rozė | Sekmadienis su vaikais', 'Rozė'],
+    ['Mano šeimų sekmadienis: filmas', 'Mano šeimų sekmadienis: filmas'],
+    ['Rozė | Sekmadienis su vaikais ir tėvais', 'Rozė | Sekmadienis su vaikais ir tėvais'],
   ])('"%s" → "%s"', (title, expected) => {
     expect(withoutSeriesLabel(title)).toBe(expected);
   });

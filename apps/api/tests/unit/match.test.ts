@@ -80,6 +80,10 @@ describe('resolveMovie', () => {
     expect(
       resolveMovie(listing({ title: 'Kasėjas | Sekmadienis su vaikais' }), [], []).movie.title,
     ).toBe('Kasėjas');
+    expect(
+      resolveMovie(listing({ englishTitle: 'Šeimų sekmadienis: Digger' }), [], []).movie
+        .englishTitle,
+    ).toBe('Digger');
   });
 
   test('keeps listings separate when one year is missing and durations differ by more than 15 minutes', () => {

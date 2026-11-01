@@ -5,7 +5,7 @@
 The tables are `sources`, `movies`, `screenings`, `match_reviews` and `movie_keys`, as in
 [feature 001's data model](../001-cinema-showtimes/data-model.md) and
 `apps/api/src/db/schema.sql` plus `migration-002-movie-keys.sql`. This feature changes where the
-data lives and how it's written, and adds a few runtime-only values. Two schema additions came out
+data lives and how it's written, and adds a few runtime-only values. Three schema additions came out
 of the first deploy and the review:
 
 - `schema_migrations` records applied migrations, because Turso rejects writing
