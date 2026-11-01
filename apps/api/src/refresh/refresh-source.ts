@@ -1,5 +1,10 @@
 import { z } from 'zod';
-import type { MovieIdentity, Repository, ScreeningRecord } from '../db/repository.ts';
+import type {
+  MovieIdentity,
+  Repository,
+  ScreeningRecord,
+  SourceRefresh,
+} from '../db/repository.ts';
 import type { Logger } from '../lib/logger.ts';
 import type { HttpClient } from '../lib/polite-http.ts';
 import { localDateOf } from '../lib/time.ts';
@@ -84,13 +89,18 @@ export async function refreshSource(
       logger.debug({ source, reason: item.reason, raw: item.raw }, 'Adapter skipped an item');
     }
 
-    const newReviews = repo.transaction(() => {
-      const reviews = storeScreenings(source, known, ctx);
-      const inserted = reviews.filter((review) =>
-        repo.insertMatchReview({ ...review, firstSeenAt: now }),
-      );
-      repo.recordSourceSuccess(source, now);
-      return inserted.length;
+    const { movies, records, reviews } = matchScreenings(
+      source,
+      known,
+      await repo.listMovieIdentities(),
+      ctx,
+    );
+    const { newReviews } = await repo.storeRefresh({
+      sourceId: source,
+      now,
+      movies,
+      screenings: records,
+      reviews,
     });
 
     const outcome = {
@@ -103,29 +113,33 @@ export async function refreshSource(
     return outcome;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    repo.recordSourceAttempt(source, now, message);
+    await repo.recordSourceAttempt(source, now, message);
     logger.error({ source, err: error }, 'Source refresh failed; previous data kept');
     return { status: 'failed', error: message };
   }
 }
 
-/** Matches each screening to a movie and writes them; returns the uncertain matches found. */
-function storeScreenings(
+/**
+ * Matches each screening to a movie, in memory: the movies to write (in listing order), the
+ * screening records and the uncertain matches found. Nothing is written here.
+ */
+function matchScreenings(
   source: string,
   screenings: readonly SourceScreening[],
+  identities: MovieIdentity[],
   ctx: RefreshContext,
-): MatchReview[] {
-  const { repo, now, aliases } = ctx;
-  const movies: MovieIdentity[] = repo.listMovieIdentities();
+): Pick<SourceRefresh, 'movies' | 'reviews'> & { records: ScreeningRecord[] } {
+  const { now, aliases } = ctx;
+  const movies: SourceRefresh['movies'] = [];
   const reviews: MatchReview[] = [];
   const records: ScreeningRecord[] = screenings.map((screening) => {
-    const resolution = resolveMovie(screening, movies, aliases);
+    const resolution = resolveMovie(screening, identities, aliases);
     const { movie, keys } = resolution;
-    repo.upsertMovie(movie, keys);
+    movies.push({ movie, keys });
     // Later listings in this refresh can match on the titles just learned.
-    const known = movies.find((existing) => existing.id === movie.id);
+    const known = identities.find((existing) => existing.id === movie.id);
     if (known) known.keys = [...new Set([...known.keys, ...keys])];
-    else movies.push({ ...movie, keys: [...new Set([movie.matchKey, ...keys])] });
+    else identities.push({ ...movie, keys: [...new Set([movie.matchKey, ...keys])] });
     reviews.push(...resolution.reviews);
     return {
       id: `${source}:${screening.sourceScreeningId}`,
@@ -144,6 +158,5 @@ function storeScreenings(
       refreshedAt: now,
     };
   });
-  repo.replaceSourceScreenings(source, now, records);
-  return reviews;
+  return { movies, records, reviews };
 }

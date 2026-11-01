@@ -38,7 +38,7 @@ function at(movieId: string, cinemaId: string, startsAt: string): ScreeningRecor
  * - Prasidėjęs has only a screening that already started.
  * Forum last succeeded 4 hours ago (stale); Apollo and Skalvija 1 hour ago.
  */
-export function seedCatalog(repo: Repository): void {
+export async function seedCatalog(repo: Repository): Promise<void> {
   nextId = 1;
   const movies = {
     zuikis: movieRecord({
@@ -70,7 +70,7 @@ export function seedCatalog(repo: Repository): void {
       matchKey: 'prasidejes',
     }),
   };
-  for (const movie of Object.values(movies)) repo.upsertMovie(movie);
+  for (const movie of Object.values(movies)) await repo.upsertMovie(movie);
 
   const screenings = [
     ...['11:00', '12:00', '13:00', '14:00', '15:00'].map((time) =>
@@ -91,23 +91,23 @@ export function seedCatalog(repo: Repository): void {
     at(movies.started.id, 'apollo-akropolis', '2026-10-30T08:00:00Z'), // already started
   ];
   for (const sourceId of ['apollo', 'forum', 'skalvija']) {
-    repo.replaceSourceScreenings(
+    await repo.replaceSourceScreenings(
       sourceId,
       new Date(0),
       screenings.filter((screening) => screening.sourceId === sourceId),
     );
   }
-  repo.recordSourceSuccess('apollo', hoursAgo(1));
-  repo.recordSourceSuccess('skalvija', hoursAgo(1));
-  repo.recordSourceSuccess('forum', hoursAgo(4));
+  await repo.recordSourceSuccess('apollo', hoursAgo(1));
+  await repo.recordSourceSuccess('skalvija', hoursAgo(1));
+  await repo.recordSourceSuccess('forum', hoursAgo(4));
 }
 
 /** A server over a seeded temporary database; call `close` after each test. */
-export function startCatalogServer(
+export async function startCatalogServer(
   sourceIds: readonly string[] = ['apollo', 'forum', 'skalvija'],
-): { app: FastifyInstance; close: () => Promise<void> } {
-  const temp = createTempDb();
-  seedCatalog(new Repository(temp.db));
+): Promise<{ app: FastifyInstance; close: () => Promise<void> }> {
+  const temp = await createTempDb();
+  await seedCatalog(new Repository(temp.db));
   const app = buildServer({
     db: temp.db,
     now: () => NOW,

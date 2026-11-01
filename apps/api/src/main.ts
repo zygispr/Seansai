@@ -19,13 +19,13 @@ async function main(): Promise<void> {
   const config = loadConfig();
   const logger = createLogger();
   const clock = createClock(config);
-  const db = openDb(config.dbPath);
+  const db = await openDb(config.dbPath === ':memory:' ? ':memory:' : `file:${config.dbPath}`);
   const repo = new Repository(db);
 
   if (config.sourcesMode === 'fixtures') {
     // Simulates sources whose last success was N hours ago (resilience scenario, FR-015).
     for (const [sourceId, hours] of Object.entries(config.fixtureLastSuccessHours)) {
-      repo.recordSourceSuccess(sourceId, new Date(clock().getTime() - hours * HOUR_MS));
+      await repo.recordSourceSuccess(sourceId, new Date(clock().getTime() - hours * HOUR_MS));
     }
   }
   logRobotsOverrides(logger);
@@ -65,9 +65,9 @@ async function main(): Promise<void> {
         disabledSources: config.disabledSources,
       });
     },
-    cleanup: (now) => {
-      const screenings = repo.deletePastScreenings(todayIn(now));
-      const movies = repo.deleteStaleMovies(now);
+    cleanup: async (now) => {
+      const screenings = await repo.deletePastScreenings(todayIn(now));
+      const movies = await repo.deleteStaleMovies(now);
       logger.info({ screenings, movies }, 'Daily cleanup removed past screenings and old movies');
     },
   });

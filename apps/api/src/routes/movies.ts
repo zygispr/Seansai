@@ -30,8 +30,10 @@ const MovieIdSchema = z
   .regex(/^[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*$/u);
 
 /** The movie, or a 404 `movie_not_found` (also for ids that cannot be movie ids). */
-export function findMovie(queries: Queries, movieId: string): MovieRecord {
-  const movie = MovieIdSchema.safeParse(movieId).success ? queries.getMovie(movieId) : undefined;
+export async function findMovie(queries: Queries, movieId: string): Promise<MovieRecord> {
+  const movie = MovieIdSchema.safeParse(movieId).success
+    ? await queries.getMovie(movieId)
+    : undefined;
   if (!movie) throw new ApiError(404, 'movie_not_found', 'There is no movie with this id.');
   return movie;
 }
@@ -41,33 +43,41 @@ export const moviesRoutes: FastifyPluginAsync<MoviesRouteOptions> = (app, { quer
   const codes = { city: 'invalid_city' } as const;
 
   /** The "currently showing" list for a city, ordered as FR-003 requires. */
-  app.get('/movies', (request, reply): MoviesResponse => {
+  app.get('/movies', async (request, reply): Promise<MoviesResponse> => {
     const { city } = parseQuery(QuerySchema, request.query, codes);
     const at = now();
     const cinemas = queries.cinemasIn(city);
+    const [listings, freshness] = await Promise.all([
+      queries.listMovies(cinemas, todayIn(at), at),
+      queries.freshness(cinemas, at),
+    ]);
     setListCaching(reply);
     return {
-      movies: queries.listMovies(cinemas, todayIn(at), at).map((listing) => ({
+      movies: listings.map((listing) => ({
         movie: movieSummary(listing.movie),
         screeningsToday: listing.screeningsToday,
         firstDate: listing.firstDate,
       })),
-      freshness: queries.freshness(cinemas, at),
+      freshness,
     };
   });
 
   /** Movie details plus the dates on which it has screenings in the city (US2). */
   app.get<{ Params: { movieId: string } }>(
     '/movies/:movieId',
-    (request, reply): MovieDetailResponse => {
+    async (request, reply): Promise<MovieDetailResponse> => {
       const { city } = parseQuery(QuerySchema, request.query, codes);
-      const movie = findMovie(queries, request.params.movieId);
+      const movie = await findMovie(queries, request.params.movieId);
       const at = now();
+      const [screeningDates, availableDates] = await Promise.all([
+        queries.screeningDates(movie.id, queries.cinemasIn(city), at),
+        queries.availableDates(todayIn(at)),
+      ]);
       setListCaching(reply);
       return {
         movie: { ...movieSummary(movie), genres: movie.genres, year: movie.year },
-        screeningDates: queries.screeningDates(movie.id, queries.cinemasIn(city), at),
-        availableDates: queries.availableDates(todayIn(at)),
+        screeningDates,
+        availableDates,
       };
     },
   );

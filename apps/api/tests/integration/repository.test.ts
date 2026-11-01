@@ -1,138 +1,255 @@
+import type { ScreeningFormat } from '@seansai/shared';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import type { Db } from '../../src/db/index.ts';
-import { Repository } from '../../src/db/repository.ts';
+import { openDb, splitStatements, type Db } from '../../src/db/index.ts';
+import { Repository, type SourceRefresh } from '../../src/db/repository.ts';
 import { createTempDb, movieRecord, screeningRecord } from '../helpers/temp-db.ts';
 
 const NOW = new Date('2026-10-30T10:00:00Z');
+/** Violates the schema's CHECK on `format`, so any write including it fails. */
+const INVALID_FORMAT = 'VHS' as unknown as ScreeningFormat;
 
 let db: Db;
+let path: string;
 let repo: Repository;
 let cleanup: () => void;
 
-beforeEach(() => {
-  ({ db, cleanup } = createTempDb());
+beforeEach(async () => {
+  ({ db, path, cleanup } = await createTempDb());
   repo = new Repository(db);
-  repo.upsertMovie(movieRecord());
+  await repo.upsertMovie(movieRecord());
 });
 
 afterEach(() => {
   cleanup();
 });
 
-const screeningIds = (): string[] =>
-  (db.prepare('SELECT id FROM screenings ORDER BY id').all() as Array<{ id: string }>).map(
-    (row) => row.id,
-  );
+const ids = async (sql: string): Promise<string[]> =>
+  ((await db.execute(sql)).rows as unknown as Array<{ id: string }>).map((row) => row.id);
+
+const screeningIds = () => ids('SELECT id FROM screenings ORDER BY id');
+
+const count = async (table: string): Promise<number> =>
+  Number((await db.execute(`SELECT COUNT(*) AS count FROM ${table}`)).rows[0]?.count);
+
+const userVersion = async (database: Db): Promise<number> =>
+  Number((await database.execute('PRAGMA user_version')).rows[0]?.user_version);
+
+describe('splitStatements', () => {
+  test('ignores comment lines and empty statements', () => {
+    expect(
+      splitStatements('-- a; b\nCREATE TABLE a (x);\n\n-- c\nCREATE INDEX i ON a (x);\n'),
+    ).toEqual(['CREATE TABLE a (x)', 'CREATE INDEX i ON a (x)']);
+  });
+});
+
+describe('openDb', () => {
+  test('reopening a database file does not run the migrations again', async () => {
+    db.close();
+    db = await openDb(`file:${path}`);
+
+    expect(await userVersion(db)).toBe(2);
+  });
+
+  test('two servers starting at once on a new database both migrate it safely', async () => {
+    const url = `file:${path}.fresh`;
+
+    const [first, second] = await Promise.all([openDb(url), openDb(url)]);
+
+    expect(await userVersion(first)).toBe(2);
+    expect(
+      (await first.execute("SELECT COUNT(*) AS count FROM sqlite_master WHERE name = 'movies'"))
+        .rows[0]?.count,
+    ).toBe(1);
+    first.close();
+    second.close();
+  });
+});
 
 describe('replaceSourceScreenings', () => {
-  test("replaces only that source's future screenings, so cancelled screenings disappear", () => {
-    repo.replaceSourceScreenings('apollo', NOW, [
+  test("replaces only that source's future screenings, so cancelled screenings disappear", async () => {
+    await repo.replaceSourceScreenings('apollo', NOW, [
       screeningRecord({ id: 'apollo:started', startsAt: new Date('2026-10-30T09:00:00Z') }),
       screeningRecord({ id: 'apollo:cancelled', startsAt: new Date('2026-10-30T15:00:00Z') }),
       screeningRecord({ id: 'apollo:kept', startsAt: new Date('2026-10-30T18:00:00Z') }),
     ]);
-    repo.replaceSourceScreenings('forum', NOW, [
+    await repo.replaceSourceScreenings('forum', NOW, [
       screeningRecord({ id: 'forum:1', sourceId: 'forum', cinemaId: 'forum-vingis' }),
     ]);
 
-    repo.replaceSourceScreenings('apollo', NOW, [
+    await repo.replaceSourceScreenings('apollo', NOW, [
       screeningRecord({ id: 'apollo:kept', startsAt: new Date('2026-10-30T18:00:00Z') }),
       screeningRecord({ id: 'apollo:new', startsAt: new Date('2026-10-31T18:00:00Z') }),
     ]);
 
     // The screening that already started stays until the daily cleanup removes past dates.
-    expect(screeningIds()).toEqual(['apollo:kept', 'apollo:new', 'apollo:started', 'forum:1']);
+    expect(await screeningIds()).toEqual([
+      'apollo:kept',
+      'apollo:new',
+      'apollo:started',
+      'forum:1',
+    ]);
   });
 
-  test('updates a screening that is published again with new details', () => {
-    repo.replaceSourceScreenings('apollo', NOW, [screeningRecord({ hall: '6 salė' })]);
-    repo.replaceSourceScreenings('apollo', NOW, [screeningRecord({ hall: '7 salė' })]);
+  test('updates a screening that is published again with new details', async () => {
+    await repo.replaceSourceScreenings('apollo', NOW, [screeningRecord({ hall: '6 salė' })]);
+    await repo.replaceSourceScreenings('apollo', NOW, [screeningRecord({ hall: '7 salė' })]);
 
-    expect(db.prepare('SELECT hall FROM screenings').all()).toEqual([{ hall: '7 salė' }]);
+    expect((await db.execute('SELECT hall FROM screenings')).rows).toEqual([{ hall: '7 salė' }]);
   });
 
-  test('applies all or nothing: a failing row leaves the previous data in place', () => {
-    repo.replaceSourceScreenings('apollo', NOW, [screeningRecord({ id: 'apollo:old' })]);
+  test('applies all or nothing: a failing row leaves the previous data in place', async () => {
+    await repo.replaceSourceScreenings('apollo', NOW, [screeningRecord({ id: 'apollo:old' })]);
 
-    expect(() => {
+    await expect(
       repo.replaceSourceScreenings('apollo', NOW, [
         screeningRecord({ id: 'apollo:fine' }),
-        screeningRecord({ id: 'apollo:orphan', movieId: 'no-such-movie' }),
-      ]);
-    }).toThrow();
+        screeningRecord({ id: 'apollo:invalid', format: INVALID_FORMAT }),
+      ]),
+    ).rejects.toThrow();
 
-    expect(screeningIds()).toEqual(['apollo:old']);
+    expect(await screeningIds()).toEqual(['apollo:old']);
   });
 
-  test("records each movie's latest screening start", () => {
-    repo.replaceSourceScreenings('apollo', NOW, [
+  test("records each movie's latest screening start", async () => {
+    await repo.replaceSourceScreenings('apollo', NOW, [
       screeningRecord({ id: 'apollo:1', startsAt: new Date('2026-11-02T18:00:00Z') }),
       screeningRecord({ id: 'apollo:2', startsAt: new Date('2026-11-01T18:00:00Z') }),
     ]);
 
-    expect(db.prepare('SELECT last_screening_at AS at FROM movies').get()).toEqual({
-      at: '2026-11-02T18:00:00.000Z',
-    });
+    expect((await db.execute('SELECT last_screening_at AS at FROM movies')).rows).toEqual([
+      { at: '2026-11-02T18:00:00.000Z' },
+    ]);
+  });
+});
+
+describe('storeRefresh', () => {
+  const refresh = (overrides: Partial<SourceRefresh> = {}): SourceRefresh => ({
+    sourceId: 'apollo',
+    now: NOW,
+    movies: [
+      { movie: movieRecord(), keys: ['kasejas'] },
+      { movie: movieRecord({ id: 'digger-2025', year: 2025 }), keys: [] },
+    ],
+    screenings: [screeningRecord({ startsAt: new Date('2026-10-30T17:00:00Z') })],
+    reviews: [
+      {
+        matchKey: 'digger',
+        movieIdA: 'digger-2025',
+        movieIdB: 'digger-2026',
+        reason: 'year 2025 vs 2026',
+      },
+    ],
+    ...overrides,
+  });
+
+  test('writes one source refresh and counts only the new reviews', async () => {
+    expect(await repo.storeRefresh(refresh())).toEqual({ newReviews: 1 });
+    expect(await repo.storeRefresh(refresh())).toEqual({ newReviews: 0 });
+
+    expect((await repo.getSource('apollo'))?.lastSuccessAt).toEqual(NOW);
+    expect(await screeningIds()).toEqual(['apollo:1']);
+    const identities = await repo.listMovieIdentities();
+    expect(identities.find((movie) => movie.id === 'digger-2026')?.keys.sort()).toEqual([
+      'digger',
+      'kasejas',
+    ]);
+  });
+
+  test('is all or nothing: a failing write leaves the previous refresh in place', async () => {
+    await repo.storeRefresh(refresh());
+    const later = new Date('2026-10-30T11:00:00Z');
+
+    await expect(
+      repo.storeRefresh(
+        refresh({
+          now: later,
+          screenings: [screeningRecord({ id: 'apollo:2', format: INVALID_FORMAT })],
+        }),
+      ),
+    ).rejects.toThrow();
+
+    expect(await screeningIds()).toEqual(['apollo:1']);
+    expect((await repo.getSource('apollo'))?.lastSuccessAt).toEqual(NOW);
+  });
+
+  test('two refreshes of the same source at once leave no duplicates', async () => {
+    const screenings = ['1', '2', '3'].map((id) => screeningRecord({ id: `apollo:${id}` }));
+
+    await Promise.all([
+      repo.storeRefresh(refresh({ screenings })),
+      repo.storeRefresh(refresh({ screenings })),
+    ]);
+
+    expect(await screeningIds()).toEqual(['apollo:1', 'apollo:2', 'apollo:3']);
   });
 });
 
 describe('deletePastScreenings', () => {
-  test('removes screenings whose calendar date is before today', () => {
-    repo.replaceSourceScreenings('apollo', new Date('2026-10-28T00:00:00Z'), [
+  test('removes screenings whose calendar date is before today', async () => {
+    await repo.replaceSourceScreenings('apollo', new Date('2026-10-28T00:00:00Z'), [
       screeningRecord({ id: 'apollo:yesterday', localDate: '2026-10-29' }),
       screeningRecord({ id: 'apollo:today', localDate: '2026-10-30' }),
       screeningRecord({ id: 'apollo:tomorrow', localDate: '2026-10-31' }),
     ]);
 
-    expect(repo.deletePastScreenings('2026-10-30')).toBe(1);
-    expect(screeningIds()).toEqual(['apollo:today', 'apollo:tomorrow']);
+    expect(await repo.deletePastScreenings('2026-10-30')).toBe(1);
+    expect(await screeningIds()).toEqual(['apollo:today', 'apollo:tomorrow']);
   });
 });
 
 describe('deleteStaleMovies', () => {
-  const movieIds = () =>
-    (db.prepare('SELECT id FROM movies ORDER BY id').all() as Array<{ id: string }>).map(
-      (row) => row.id,
-    );
+  const movieIds = () => ids('SELECT id FROM movies ORDER BY id');
   const setLastScreening = (id: string, at: string) =>
-    db.prepare('UPDATE movies SET last_screening_at = ? WHERE id = ?').run(at, id);
+    db.execute({ sql: 'UPDATE movies SET last_screening_at = ? WHERE id = ?', args: [at, id] });
 
-  test('deletes movies after 30 days without screenings', () => {
-    repo.upsertMovie(movieRecord({ id: 'old-2025', matchKey: 'old', year: 2025 }));
-    repo.upsertMovie(movieRecord({ id: 'recent-2026', matchKey: 'recent' }));
-    setLastScreening('old-2025', '2026-09-29T18:00:00.000Z');
-    setLastScreening('recent-2026', '2026-10-01T18:00:00.000Z');
+  test('deletes movies after 30 days without screenings', async () => {
+    await repo.upsertMovie(movieRecord({ id: 'old-2025', matchKey: 'old', year: 2025 }));
+    await repo.upsertMovie(movieRecord({ id: 'recent-2026', matchKey: 'recent' }));
+    await setLastScreening('old-2025', '2026-09-29T18:00:00.000Z');
+    await setLastScreening('recent-2026', '2026-10-01T18:00:00.000Z');
     // digger-2026 still has a screening, however old its last_screening_at says it is.
-    repo.replaceSourceScreenings('apollo', new Date('2026-09-01T00:00:00Z'), [screeningRecord()]);
-    setLastScreening('digger-2026', '2026-09-01T18:00:00.000Z');
+    await repo.replaceSourceScreenings('apollo', new Date('2026-09-01T00:00:00Z'), [
+      screeningRecord(),
+    ]);
+    await setLastScreening('digger-2026', '2026-09-01T18:00:00.000Z');
 
-    expect(repo.deleteStaleMovies(NOW)).toBe(1);
-    expect(movieIds()).toEqual(['digger-2026', 'recent-2026']);
+    expect(await repo.deleteStaleMovies(NOW)).toBe(1);
+    expect(await movieIds()).toEqual(['digger-2026', 'recent-2026']);
   });
 
-  test('also removes the match reviews of a deleted movie', () => {
-    repo.upsertMovie(movieRecord({ id: 'dune-1984', matchKey: 'dune', year: 1984 }));
-    repo.upsertMovie(movieRecord({ id: 'dune-2021', matchKey: 'dune', year: 2021 }));
-    repo.insertMatchReview({
+  test('leaves no keys or match reviews of a deleted movie behind', async () => {
+    await repo.upsertMovie(movieRecord({ id: 'dune-1984', matchKey: 'dune', year: 1984 }), [
+      'kopa',
+    ]);
+    await repo.upsertMovie(movieRecord({ id: 'dune-2021', matchKey: 'dune', year: 2021 }));
+    await repo.insertMatchReview({
       matchKey: 'dune',
       movieIdA: 'dune-1984',
       movieIdB: 'dune-2021',
       reason: 'year 1984 vs 2021',
       firstSeenAt: NOW,
     });
+    // Only the two Dune movies are stale: digger-2026 has a screening.
+    await repo.replaceSourceScreenings('apollo', NOW, [screeningRecord()]);
 
-    repo.deleteStaleMovies(NOW);
-
-    expect(db.prepare('SELECT COUNT(*) AS count FROM match_reviews').get()).toEqual({ count: 0 });
+    expect(await repo.deleteStaleMovies(NOW)).toBe(2);
+    expect(
+      (
+        await db.execute(
+          "SELECT COUNT(*) AS count FROM movie_keys WHERE movie_id IN ('dune-1984', 'dune-2021')",
+        )
+      ).rows[0]?.count,
+    ).toBe(0);
+    expect(await count('match_reviews')).toBe(0);
   });
 });
 
 describe('upsertMovie', () => {
-  test('keeps the first title and fills in details that were missing', () => {
-    repo.upsertMovie(
+  test('keeps the first title and fills in details that were missing', async () => {
+    await repo.upsertMovie(
       movieRecord({ id: 'kopa', matchKey: 'kopa', year: null, posterUrl: null, genres: [] }),
     );
-    repo.upsertMovie(
+    await repo.upsertMovie(
       movieRecord({
         id: 'kopa',
         matchKey: 'kopa',
@@ -143,7 +260,7 @@ describe('upsertMovie', () => {
       }),
     );
 
-    expect(repo.getMovie('kopa')).toMatchObject({
+    expect(await repo.getMovie('kopa')).toMatchObject({
       title: 'Kasėjas',
       posterUrl: 'https://cinema.lt/kopa.jpg',
       genres: ['sci-fi'],
@@ -152,9 +269,9 @@ describe('upsertMovie', () => {
 });
 
 describe('sources', () => {
-  test('records attempts and successes', () => {
-    repo.recordSourceAttempt('forum', NOW, 'Request to https://forum failed: HTTP 500');
-    expect(repo.getSource('forum')).toEqual({
+  test('records attempts and successes', async () => {
+    await repo.recordSourceAttempt('forum', NOW, 'Request to https://forum failed: HTTP 500');
+    expect(await repo.getSource('forum')).toEqual({
       id: 'forum',
       lastAttemptAt: NOW,
       lastSuccessAt: null,
@@ -162,8 +279,8 @@ describe('sources', () => {
     });
 
     const later = new Date('2026-10-30T11:00:00Z');
-    repo.recordSourceSuccess('forum', later);
-    expect(repo.getSource('forum')).toEqual({
+    await repo.recordSourceSuccess('forum', later);
+    expect(await repo.getSource('forum')).toEqual({
       id: 'forum',
       lastAttemptAt: later,
       lastSuccessAt: later,
@@ -171,16 +288,19 @@ describe('sources', () => {
     });
 
     const failedAgain = new Date('2026-10-30T12:00:00Z');
-    repo.recordSourceAttempt('forum', failedAgain, 'timeout');
-    expect(repo.getSource('forum')).toMatchObject({ lastSuccessAt: later, lastError: 'timeout' });
-    expect(repo.listSources().map((source) => source.id)).toEqual(['forum']);
+    await repo.recordSourceAttempt('forum', failedAgain, 'timeout');
+    expect(await repo.getSource('forum')).toMatchObject({
+      lastSuccessAt: later,
+      lastError: 'timeout',
+    });
+    expect((await repo.listSources()).map((source) => source.id)).toEqual(['forum']);
   });
 });
 
 describe('insertMatchReview', () => {
-  test('logs each pair once', () => {
-    repo.upsertMovie(movieRecord({ id: 'dune-1984', matchKey: 'dune', year: 1984 }));
-    repo.upsertMovie(movieRecord({ id: 'dune-2021', matchKey: 'dune', year: 2021 }));
+  test('logs each pair once', async () => {
+    await repo.upsertMovie(movieRecord({ id: 'dune-1984', matchKey: 'dune', year: 1984 }));
+    await repo.upsertMovie(movieRecord({ id: 'dune-2021', matchKey: 'dune', year: 2021 }));
     const review = {
       matchKey: 'dune',
       movieIdA: 'dune-1984',
@@ -189,7 +309,7 @@ describe('insertMatchReview', () => {
       firstSeenAt: NOW,
     };
 
-    expect(repo.insertMatchReview(review)).toBe(true);
-    expect(repo.insertMatchReview({ ...review, firstSeenAt: new Date() })).toBe(false);
+    expect(await repo.insertMatchReview(review)).toBe(true);
+    expect(await repo.insertMatchReview({ ...review, firstSeenAt: new Date() })).toBe(false);
   });
 });

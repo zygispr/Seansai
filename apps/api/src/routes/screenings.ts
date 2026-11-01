@@ -23,7 +23,7 @@ export const screeningsRoutes: FastifyPluginAsync<ScreeningsRouteOptions> = (
 
   app.get<{ Params: { movieId: string } }>(
     '/movies/:movieId/screenings',
-    (request, reply): ScreeningsResponse => {
+    async (request, reply): Promise<ScreeningsResponse> => {
       const query = parseQuery(QuerySchema, request.query, {
         city: 'invalid_city',
         date: 'invalid_date',
@@ -31,16 +31,23 @@ export const screeningsRoutes: FastifyPluginAsync<ScreeningsRouteOptions> = (
       const { city, lang } = query;
       const at = now();
       const date = query.date ?? todayIn(at);
-      if (!queries.availableDates(todayIn(at)).includes(date)) {
+      if (!(await queries.availableDates(todayIn(at))).includes(date)) {
         throw new ApiError(
           400,
           'invalid_date',
           'date must be between today and the last published date',
         );
       }
-      const movie = findMovie(queries, request.params.movieId);
+      const movie = await findMovie(queries, request.params.movieId);
       const cinemas = queries.cinemasIn(city);
-      const screenings = queries.listScreenings(movie.id, cinemas, date, at);
+      const [screenings, freshness] = await Promise.all([
+        queries.listScreenings(movie.id, cinemas, date, at),
+        queries.freshness(cinemas, at),
+      ]);
+      const nextDateWithScreenings =
+        screenings.length === 0
+          ? await queries.nextDateWithScreenings(movie.id, cinemas, date, at)
+          : null;
       setListCaching(reply);
       return {
         date,
@@ -57,11 +64,8 @@ export const screeningsRoutes: FastifyPluginAsync<ScreeningsRouteOptions> = (
             },
           };
         }),
-        nextDateWithScreenings:
-          screenings.length === 0
-            ? queries.nextDateWithScreenings(movie.id, cinemas, date, at)
-            : null,
-        freshness: queries.freshness(cinemas, at),
+        nextDateWithScreenings,
+        freshness,
       };
     },
   );

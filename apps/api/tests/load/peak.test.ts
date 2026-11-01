@@ -7,11 +7,11 @@ import { largeMovieIds, startLargeCatalogServer } from '../helpers/large-catalog
  * SC-007: peaks of 100 people at once. 100 connections for 20 s against the real server, mixing
  * the movie list with screening timelines of 10 movies.
  */
-let server: ReturnType<typeof startLargeCatalogServer>;
+let server: Awaited<ReturnType<typeof startLargeCatalogServer>>;
 let baseUrl: string;
 
 beforeAll(async () => {
-  server = startLargeCatalogServer();
+  server = await startLargeCatalogServer();
   baseUrl = await server.app.listen({ port: 0, host: '127.0.0.1' });
 });
 

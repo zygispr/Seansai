@@ -60,11 +60,11 @@ function context(overrides: Partial<RefreshContext> = {}): RefreshContext {
   };
 }
 
-const storedScreenings = () =>
-  db.prepare('SELECT id, movie_id, cinema_id, local_date FROM screenings ORDER BY id').all();
+const storedScreenings = async () =>
+  (await db.execute('SELECT id, movie_id, cinema_id, local_date FROM screenings ORDER BY id')).rows;
 
-beforeEach(() => {
-  ({ db, cleanup } = createTempDb());
+beforeEach(async () => {
+  ({ db, cleanup } = await createTempDb());
   repo = new Repository(db);
   log = createTestLogger();
 });
@@ -92,7 +92,7 @@ describe('refreshSource', () => {
     const outcome = await refreshSource(adapter, context());
 
     expect(outcome).toEqual({ status: 'success', stored: 2, skipped: 1, newReviews: 0 });
-    expect(storedScreenings()).toEqual([
+    expect(await storedScreenings()).toEqual([
       {
         id: 'apollo:1',
         movie_id: 'digger-2026',
@@ -106,7 +106,7 @@ describe('refreshSource', () => {
         local_date: '2026-10-31',
       },
     ]);
-    expect(repo.getSource('apollo')).toMatchObject({ lastSuccessAt: NOW, lastError: null });
+    expect(await repo.getSource('apollo')).toMatchObject({ lastSuccessAt: NOW, lastError: null });
     expect(log.lines()).toContainEqual(
       expect.objectContaining({ source: 'apollo', stored: 2, skipped: 1, newReviews: 0 }),
     );
@@ -134,7 +134,7 @@ describe('refreshSource', () => {
     expect(adapter.fetchScreeningsMock).toHaveBeenCalledWith(
       expect.objectContaining({ now: capturedAt }),
     );
-    expect(repo.listSources()[0]?.lastAttemptAt).toEqual(NOW);
+    expect((await repo.listSources())[0]?.lastAttemptAt).toEqual(NOW);
   });
 
   test('a result failing SourceScreeningSchema keeps the previous data and records the error', async () => {
@@ -149,8 +149,8 @@ describe('refreshSource', () => {
     );
 
     expect(outcome).toMatchObject({ status: 'failed' });
-    expect(storedScreenings()).toEqual([expect.objectContaining({ id: 'apollo:1' })]);
-    expect(repo.getSource('apollo')).toMatchObject({
+    expect(await storedScreenings()).toEqual([expect.objectContaining({ id: 'apollo:1' })]);
+    expect(await repo.getSource('apollo')).toMatchObject({
       lastAttemptAt: LATER,
       lastSuccessAt: NOW,
       lastError: expect.stringContaining('ticketUrl') as unknown,
@@ -166,8 +166,8 @@ describe('refreshSource', () => {
     );
 
     expect(outcome).toEqual({ status: 'failed', error: 'Blocked by www.apollokinas.lt: HTTP 403' });
-    expect(storedScreenings()).toHaveLength(1);
-    expect(repo.getSource('apollo')).toMatchObject({
+    expect(await storedScreenings()).toHaveLength(1);
+    expect(await repo.getSource('apollo')).toMatchObject({
       lastSuccessAt: NOW,
       lastError: 'Blocked by www.apollokinas.lt: HTTP 403',
     });
@@ -187,7 +187,7 @@ describe('refreshSource', () => {
     );
 
     expect(outcome).toMatchObject({ status: 'success', stored: 1, skipped: 1 });
-    expect(storedScreenings()).toEqual([expect.objectContaining({ id: 'apollo:1' })]);
+    expect(await storedScreenings()).toEqual([expect.objectContaining({ id: 'apollo:1' })]);
     expect(log.lines()).toContainEqual(
       expect.objectContaining({ source: 'apollo', cinemaId: 'apollo-new-mall', level: 40 }),
     );
@@ -201,9 +201,9 @@ describe('refreshSource', () => {
     expect(await refreshSource(adapter, context())).toMatchObject({ newReviews: 1 });
     expect(await refreshSource(adapter, context({ now: LATER }))).toMatchObject({ newReviews: 0 });
 
-    expect(db.prepare('SELECT movie_id_a, movie_id_b, reason FROM match_reviews').all()).toEqual([
-      { movie_id_a: 'dune-1984', movie_id_b: 'dune-2021', reason: 'year 1984 vs 2021' },
-    ]);
+    expect(
+      (await db.execute('SELECT movie_id_a, movie_id_b, reason FROM match_reviews')).rows,
+    ).toEqual([{ movie_id_a: 'dune-1984', movie_id_b: 'dune-2021', reason: 'year 1984 vs 2021' }]);
   });
 
   test('skips a source listed in DISABLED_SOURCES', async () => {
@@ -213,6 +213,6 @@ describe('refreshSource', () => {
 
     expect(outcome).toEqual({ status: 'disabled' });
     expect(adapter.fetchScreeningsMock).not.toHaveBeenCalled();
-    expect(repo.getSource('apollo')).toBeUndefined();
+    expect(await repo.getSource('apollo')).toBeUndefined();
   });
 });

@@ -13,7 +13,7 @@ export type SchedulerOptions = {
   /** Refreshes one source; expected to record its own failures. */
   refresh: (adapter: SourceAdapter, now: Date) => Promise<unknown>;
   /** Removes past screenings and stale movies. */
-  cleanup: (now: Date) => void;
+  cleanup: (now: Date) => Promise<void>;
   random?: () => number;
 };
 
@@ -68,17 +68,17 @@ export function startScheduler(
     return next.getTime() - now.getTime();
   };
 
-  const runCleanup = (): void => {
+  const runCleanup = async (): Promise<void> => {
     try {
-      cleanup(clock());
+      await cleanup(clock());
     } catch (error) {
       logger.error({ err: error }, 'Daily cleanup failed');
     }
-    schedule(msUntilNextCleanup(), runCleanup);
+    schedule(msUntilNextCleanup(), () => void runCleanup());
   };
 
   const startupRun = Promise.all(adapters.map(runRefresh)).then(() => undefined);
-  if (mode === 'live') schedule(msUntilNextCleanup(), runCleanup);
+  if (mode === 'live') schedule(msUntilNextCleanup(), () => void runCleanup());
 
   return {
     startupRun,

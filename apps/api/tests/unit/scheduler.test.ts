@@ -17,7 +17,7 @@ function options(overrides: Partial<SchedulerOptions> = {}): SchedulerOptions {
     clock: () => new Date(),
     logger: createTestLogger().logger,
     refresh: vi.fn(() => Promise.resolve()),
-    cleanup: vi.fn(),
+    cleanup: vi.fn(() => Promise.resolve()),
     random: () => 0.5,
     ...overrides,
   };
@@ -103,6 +103,22 @@ describe('startScheduler', () => {
 
     await vi.advanceTimersByTimeAsync(24 * 60 * MINUTE);
     expect(opts.cleanup).toHaveBeenCalledTimes(2);
+    scheduler.stop();
+  });
+
+  test('logs a failed cleanup and still schedules the next one', async () => {
+    const log = createTestLogger();
+    const cleanup = vi.fn(() => Promise.reject(new Error('database is locked')));
+    const scheduler = startScheduler([], options({ logger: log.logger, cleanup }));
+
+    await vi.advanceTimersByTimeAsync(16 * 60 * MINUTE);
+    expect(cleanup).toHaveBeenCalledTimes(1);
+    expect(log.lines()).toContainEqual(
+      expect.objectContaining({ level: 50, msg: 'Daily cleanup failed' }),
+    );
+
+    await vi.advanceTimersByTimeAsync(24 * 60 * MINUTE);
+    expect(cleanup).toHaveBeenCalledTimes(2);
     scheduler.stop();
   });
 

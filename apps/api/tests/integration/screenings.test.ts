@@ -6,10 +6,10 @@ import {
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { startCatalogServer, TODAY } from '../helpers/catalog.ts';
 
-let server: ReturnType<typeof startCatalogServer>;
+let server: Awaited<ReturnType<typeof startCatalogServer>>;
 
-beforeEach(() => {
-  server = startCatalogServer();
+beforeEach(async () => {
+  server = await startCatalogServer();
 });
 
 afterEach(async () => {

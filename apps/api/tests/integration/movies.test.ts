@@ -2,10 +2,10 @@ import { ErrorResponseSchema, MoviesResponseSchema } from '@seansai/shared';
 import { afterEach, beforeEach, expect, test } from 'vitest';
 import { startCatalogServer } from '../helpers/catalog.ts';
 
-let server: ReturnType<typeof startCatalogServer>;
+let server: Awaited<ReturnType<typeof startCatalogServer>>;
 
-beforeEach(() => {
-  server = startCatalogServer();
+beforeEach(async () => {
+  server = await startCatalogServer();
 });
 
 afterEach(async () => {

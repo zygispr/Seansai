@@ -19,7 +19,7 @@ import { createTestLogger } from '../helpers/test-logger.ts';
  * into one database, in both orders, and films that several cinemas show become one movie each.
  */
 async function refreshAll(order: 'forward' | 'reverse'): Promise<{ db: Db; cleanup: () => void }> {
-  const temp = createTempDb();
+  const temp = await createTempDb();
   const repo = new Repository(temp.db);
   const now = readFixtureNow() ?? new Date();
   for (const adapter of order === 'forward' ? adapters : [...adapters].reverse()) {
@@ -41,15 +41,15 @@ async function refreshAll(order: 'forward' | 'reverse'): Promise<{ db: Db; clean
 const SHOWN = 'EXISTS (SELECT 1 FROM screenings WHERE screenings.movie_id = movie_keys.movie_id)';
 
 /** Shown movies known by this title (in any language), with their English titles. */
-function moviesKnownAs(db: Db, title: string) {
+async function moviesKnownAs(db: Db, title: string) {
   const [key] = titleKeysOf({ title, originalTitle: null, englishTitle: null });
-  return db
-    .prepare(
-      `SELECT movies.id, movies.english_title AS englishTitle FROM movie_keys
-       JOIN movies ON movies.id = movie_keys.movie_id
-       WHERE key = ? AND ${SHOWN}`,
-    )
-    .all(key) as Array<{ id: string; englishTitle: string | null }>;
+  const { rows } = await db.execute({
+    sql: `SELECT movies.id, movies.english_title AS englishTitle FROM movie_keys
+          JOIN movies ON movies.id = movie_keys.movie_id
+          WHERE key = ? AND ${SHOWN}`,
+    args: [key ?? null],
+  });
+  return rows as unknown as Array<{ id: string; englishTitle: string | null }>;
 }
 
 describe.each(['forward', 'reverse'] as const)('all fixtures, refreshed %s', (order) => {
@@ -64,18 +64,16 @@ describe.each(['forward', 'reverse'] as const)('all fixtures, refreshed %s', (or
     cleanup();
   });
 
-  test('no two shown movies share a title', () => {
-    const shared = db
-      .prepare(
-        `SELECT key, group_concat(movie_id, ', ') AS movies FROM movie_keys
-         WHERE ${SHOWN} GROUP BY key HAVING count(*) > 1`,
-      )
-      .all();
+  test('no two shown movies share a title', async () => {
+    const shared = await db.execute(
+      `SELECT key, group_concat(movie_id, ', ') AS movies FROM movie_keys
+       WHERE ${SHOWN} GROUP BY key HAVING count(*) > 1`,
+    );
 
-    expect(shared).toEqual([]);
-    expect(db.prepare('SELECT count(DISTINCT movie_id) AS movies FROM screenings').get()).toEqual({
-      movies: 230,
-    });
+    expect(shared.rows).toEqual([]);
+    expect(
+      (await db.execute('SELECT count(DISTINCT movie_id) AS movies FROM screenings')).rows[0],
+    ).toEqual({ movies: 230 });
   });
 
   test.each([
@@ -93,8 +91,8 @@ describe.each(['forward', 'reverse'] as const)('all fixtures, refreshed %s', (or
     ['Kita mamytė', /^Other Mommy$/],
     // Forum's "Odisėja" and the same film at other cinemas.
     ['Odisėja', /^The Odyssey$/],
-  ])('"%s" is one movie, under its English title', (title, englishTitle) => {
-    const movies = moviesKnownAs(db, title);
+  ])('"%s" is one movie, under its English title', async (title, englishTitle) => {
+    const movies = await moviesKnownAs(db, title);
 
     expect(movies).toHaveLength(1);
     expect(movies[0]?.englishTitle).toMatch(englishTitle);
@@ -102,8 +100,8 @@ describe.each(['forward', 'reverse'] as const)('all fixtures, refreshed %s', (or
 
   test.each(['Aukso amžius', 'Rozė', 'Paukščių šneka', 'Zeitūno melodija'])(
     'Scanorama film "%s" is one movie at every cinema that shows it',
-    (title) => {
-      expect(moviesKnownAs(db, title)).toHaveLength(1);
+    async (title) => {
+      expect(await moviesKnownAs(db, title)).toHaveLength(1);
     },
   );
 });

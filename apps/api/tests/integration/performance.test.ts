@@ -6,10 +6,10 @@ import { largeMovieIds, startLargeCatalogServer } from '../helpers/large-catalog
 const P95_BUDGET_MS = 50;
 const REQUESTS = 200;
 
-let server: ReturnType<typeof startLargeCatalogServer>;
+let server: Awaited<ReturnType<typeof startLargeCatalogServer>>;
 
-beforeAll(() => {
-  server = startLargeCatalogServer();
+beforeAll(async () => {
+  server = await startLargeCatalogServer();
 });
 
 afterAll(async () => {

@@ -39,7 +39,7 @@ Run API commands from the repository root with `-w @seansai/api`, or inside `app
 
 **Purpose**: Swap the database client. The build stays red until Phase 2 is complete.
 
-- [ ] T001 Replace the database dependency in `apps/api/package.json` and `package-lock.json`:
+- [X] T001 Replace the database dependency in `apps/api/package.json` and `package-lock.json`:
   - run `npm uninstall -w @seansai/api better-sqlite3 @types/better-sqlite3`;
   - run `npm install -w @seansai/api @libsql/client`;
   - confirm `better-sqlite3` no longer appears in `apps/api/package.json`.
@@ -56,10 +56,10 @@ each source refresh as one batch ([research.md §2](./research.md#2-shared-data-
 
 ### Tests for the data layer ⚠️ (write first, confirm they fail)
 
-- [ ] T002 [P] Make the test helpers async.
+- [X] T002 [P] Make the test helpers async.
   - `apps/api/tests/helpers/temp-db.ts`: `createTempDb(): Promise<{ db: Db; path: string; cleanup: () => void }>`, opening `openDb(\`file:${path}\`)`. `cleanup`calls`db.close()` and then removes the temporary directory.
   - `apps/api/tests/helpers/catalog.ts` and `apps/api/tests/helpers/large-catalog.ts`: seed through `await repo.upsertMovie(...)`, `await repo.replaceSourceScreenings(...)` and `await repo.recordSourceSuccess(...)`, and become `async`.
-- [ ] T003 [P] Add data-layer tests to `apps/api/tests/integration/repository.test.ts` and convert the existing ones to `await`.
+- [X] T003 [P] Add data-layer tests to `apps/api/tests/integration/repository.test.ts` and convert the existing ones to `await`.
   - `splitStatements` ignores comments and empty statements: `'-- a; b\nCREATE TABLE a (x);\n\n-- c\nCREATE INDEX i ON a (x);\n'` → `['CREATE TABLE a (x)', 'CREATE INDEX i ON a (x)']`.
   - Reopening a database file doesn't run migrations again: close it, reopen it with `openDb('file:' + path)`, and `PRAGMA user_version` is `2` with no error thrown.
   - Two servers starting at once migrate safely (U1): on a fresh temporary file, `await Promise.all([openDb(url), openDb(url)])` resolves both. `PRAGMA user_version` is `2`, and `SELECT COUNT(*) FROM sqlite_master WHERE name = 'movies'` is `1`.
@@ -80,7 +80,7 @@ each source refresh as one batch ([research.md §2](./research.md#2-shared-data-
 
 ### Implementation for the data layer
 
-- [ ] T004 Rewrite `apps/api/src/db/index.ts`.
+- [X] T004 Rewrite `apps/api/src/db/index.ts`.
   - `export type Db = Client` (from `@libsql/client`).
   - `export async function openDb(url: string, authToken: string | null = null): Promise<Db>`:
     - for `file:` URLs, create the parent directory and run `PRAGMA journal_mode = WAL` and `PRAGMA busy_timeout = 5000`, so a second starting server waits for the first one's migration instead of failing;
@@ -90,7 +90,7 @@ each source refresh as one batch ([research.md §2](./research.md#2-shared-data-
     - Comment _why_: two new Vercel function instances can start against the same database at once.
   - `export function splitStatements(sql: string): string[]`: drop `--` comment lines, split on `;`, trim, drop empty strings.
   - Comment _why_ `PRAGMA foreign_keys` isn't set: Turso remote requests don't keep it, so deletes are explicit.
-- [ ] T005 Rewrite `apps/api/src/db/repository.ts` as async on `Db`.
+- [X] T005 Rewrite `apps/api/src/db/repository.ts` as async on `Db`.
   - Every public method returns a Promise: `upsertMovie`, `getMovie`, `listMovieIdentities`, `replaceSourceScreenings`, `recordSourceAttempt`, `recordSourceSuccess`, `getSource`, `listSources`, `deletePastScreenings` → `Promise<number>`, `deleteStaleMovies` → `Promise<number>`, `insertMatchReview` → `Promise<boolean>`.
   - Keep the SQL text unchanged, as constants built into `InStatement`s by private helpers. Pass `null`, never `undefined`. Cast rows with `as unknown as RowType[]`.
   - Add `export type SourceRefresh = { sourceId: string; now: Date; movies: Array<{ movie: MovieRecord; keys: readonly string[] }>; screenings: ScreeningRecord[]; reviews: Array<Omit<MatchReviewRecord, 'firstSeenAt'>> }`.
@@ -104,27 +104,27 @@ each source refresh as one batch ([research.md §2](./research.md#2-shared-data-
   - `newReviews` = review inserts with `rowsAffected > 0`.
   - `deleteStaleMovies`: one batch that deletes the stale movies' `movie_keys` and `match_reviews` rows, then the movies. It returns the movies delete's `rowsAffected`.
   - Remove `transaction()` and the `better-sqlite3` import. Comment _why_: Turso interactive transactions time out after 5 s and cost a round trip per statement.
-- [ ] T006 Make `apps/api/src/db/queries.ts` async on `Db`.
+- [X] T006 Make `apps/api/src/db/queries.ts` async on `Db`.
   - These return Promises: `listMovies`, `getMovie`, `screeningDates`, `availableDates`, `listScreenings`, `nextDateWithScreenings`, `freshness`.
   - These stay synchronous: `cinemasIn`, `listCities`, `isCity`.
   - Replace the prepared `Statement`s with SQL constants executed through `db.execute({ sql, args })`.
-- [ ] T007 Update `apps/api/src/refresh/refresh-source.ts`.
+- [X] T007 Update `apps/api/src/refresh/refresh-source.ts`.
   - `storeScreenings` becomes synchronous and write-free. It takes the `MovieIdentity[]` from `await repo.listMovieIdentities()` and returns `{ movies, records, reviews }`.
   - `refreshSource` then calls `await repo.storeRefresh({ sourceId, now, movies, screenings: records, reviews })` and takes `newReviews` from its result.
   - The failure path awaits `repo.recordSourceAttempt(...)`.
-- [ ] T008 [P] Make the scheduler's cleanup async.
+- [X] T008 [P] Make the scheduler's cleanup async.
   - In `apps/api/src/refresh/scheduler.ts`, change `SchedulerOptions.cleanup` to `(now: Date) => Promise<void>`. `runCleanup` awaits it inside its existing try/catch and logs `'Daily cleanup failed'` on rejection.
   - Update `apps/api/tests/unit/scheduler.test.ts` so the cleanup mock resolves, and add a test that a rejected cleanup is logged and the next cleanup is still scheduled.
-- [ ] T009 [P] Make the route handlers in `apps/api/src/routes/health.ts`, `apps/api/src/routes/movies.ts` and `apps/api/src/routes/screenings.ts` `async` and await the repo and queries calls. `findMovie(queries, movieId)` becomes `async` and returns `Promise<MovieRecord>`.
-- [ ] T010 Update `apps/api/src/main.ts`:
+- [X] T009 [P] Make the route handlers in `apps/api/src/routes/health.ts`, `apps/api/src/routes/movies.ts` and `apps/api/src/routes/screenings.ts` `async` and await the repo and queries calls. `findMovie(queries, movieId)` becomes `async` and returns `Promise<MovieRecord>`.
+- [X] T010 Update `apps/api/src/main.ts`:
   - `const db = await openDb(config.dbPath === ':memory:' ? ':memory:' : \`file:${config.dbPath}\`)`(US1 replaces this with`config.db`);
   - await `repo.recordSourceSuccess(...)` in the fixture loop;
   - the scheduler's `cleanup` becomes an `async` callback awaiting `deletePastScreenings` and `deleteStaleMovies`.
-- [ ] T011 Convert the remaining API tests to `await` the async helpers, repo and queries:
+- [X] T011 Convert the remaining API tests to `await` the async helpers, repo and queries:
   - `apps/api/tests/integration/{health,cities,movies,screenings,refresh,matching-fixtures,performance,server}.test.ts`;
   - `apps/api/tests/load/peak.test.ts`.
     Assertions don't change.
-- [ ] T012 Verify, then commit.
+- [X] T012 Verify, then commit.
   - `npm test -w @seansai/api` passes.
   - `npm run test:load` passes with p95 < 300 ms.
   - `npm run typecheck && npm run lint` pass.

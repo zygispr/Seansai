@@ -5,10 +5,10 @@ import { openDb, type Db } from '../../src/db/index.ts';
 import type { MovieRecord, ScreeningRecord } from '../../src/db/repository.ts';
 
 /** A migrated SQLite database in a fresh temporary file; `cleanup` closes and deletes it. */
-export function createTempDb(): { db: Db; path: string; cleanup: () => void } {
+export async function createTempDb(): Promise<{ db: Db; path: string; cleanup: () => void }> {
   const dir = mkdtempSync(join(tmpdir(), 'seansai-test-'));
   const path = join(dir, 'test.sqlite');
-  const db = openDb(path);
+  const db = await openDb(`file:${path}`);
   return {
     db,
     path,

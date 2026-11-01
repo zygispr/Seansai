@@ -22,12 +22,12 @@ export const largeMovieIds = Array.from(
 );
 
 /** Fills the database with SCREENING_COUNT screenings of MOVIE_COUNT movies, deterministically. */
-export function seedLargeCatalog(repo: Repository): void {
-  largeMovieIds.forEach((id, index) => {
-    repo.upsertMovie(
+export async function seedLargeCatalog(repo: Repository): Promise<void> {
+  for (const [index, id] of largeMovieIds.entries()) {
+    await repo.upsertMovie(
       movieRecord({ id, title: `Filmas ${String(index)}`, matchKey: `filmas ${String(index)}` }),
     );
-  });
+  }
   const cinemas = cinemaRegistry.all();
   const bySource = new Map<string, ScreeningRecord[]>();
   for (let n = 0; n < SCREENING_COUNT; n++) {
@@ -47,15 +47,18 @@ export function seedLargeCatalog(repo: Repository): void {
     bySource.set(cinema.sourceId, [...(bySource.get(cinema.sourceId) ?? []), screening]);
   }
   for (const [sourceId, screenings] of bySource) {
-    repo.replaceSourceScreenings(sourceId, new Date(0), screenings);
-    repo.recordSourceSuccess(sourceId, NOW);
+    await repo.replaceSourceScreenings(sourceId, new Date(0), screenings);
+    await repo.recordSourceSuccess(sourceId, NOW);
   }
 }
 
 /** A server over the large catalog; logs only warnings, so long runs do not fill memory. */
-export function startLargeCatalogServer(): { app: FastifyInstance; close: () => Promise<void> } {
-  const temp = createTempDb();
-  seedLargeCatalog(new Repository(temp.db));
+export async function startLargeCatalogServer(): Promise<{
+  app: FastifyInstance;
+  close: () => Promise<void>;
+}> {
+  const temp = await createTempDb();
+  await seedLargeCatalog(new Repository(temp.db));
   const app = buildServer({
     db: temp.db,
     now: () => NOW,

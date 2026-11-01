@@ -9,7 +9,7 @@ afterEach(async () => {
 });
 
 test('lists every city with a supported cinema, with Lithuanian names by default', async () => {
-  const server = startCatalogServer([
+  const server = await startCatalogServer([
     'apollo',
     'forum',
     'pasaka',
@@ -40,7 +40,7 @@ test('lists every city with a supported cinema, with Lithuanian names by default
 });
 
 test('names cities in English with lang=en', async () => {
-  const server = startCatalogServer();
+  const server = await startCatalogServer();
   close = server.close;
 
   const response = await server.app.inject('/api/v1/cities?lang=en');
@@ -53,7 +53,7 @@ test('names cities in English with lang=en', async () => {
 });
 
 test('leaves out cities whose cinemas all come from inactive sources', async () => {
-  const server = startCatalogServer(['apollo']);
+  const server = await startCatalogServer(['apollo']);
   close = server.close;
 
   const response = await server.app.inject('/api/v1/cities');

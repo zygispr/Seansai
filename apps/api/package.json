@@ -15,8 +15,8 @@
     "@fastify/compress": "^9.3.0",
     "@fastify/etag": "^6.2.1",
     "@fastify/static": "^10.1.8",
+    "@libsql/client": "^0.18.0",
     "@seansai/shared": "*",
-    "better-sqlite3": "^13.0.3",
     "cheerio": "^1.2.0",
     "fast-xml-parser": "^5.11.2",
     "fastify": "^5.12.7",
@@ -26,7 +26,6 @@
   },
   "devDependencies": {
     "@types/autocannon": "^7.12.7",
-    "@types/better-sqlite3": "^9.6.0",
     "autocannon": "^8.0.0",
     "pino-pretty": "^13.2.0",
     "vitest": "^5.0.5"

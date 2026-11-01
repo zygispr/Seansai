@@ -13,8 +13,8 @@ let app: FastifyInstance;
 let repo: Repository;
 let cleanup: () => void;
 
-beforeEach(() => {
-  const temp = createTempDb();
+beforeEach(async () => {
+  const temp = await createTempDb();
   cleanup = temp.cleanup;
   repo = new Repository(temp.db);
   app = buildServer({
@@ -45,10 +45,10 @@ test('reports every configured source as stale before its first refresh', async 
 });
 
 test('reports each source status with its last success time in Vilnius time', async () => {
-  repo.recordSourceSuccess('apollo', hoursAgo(1));
-  repo.recordSourceSuccess('forum', hoursAgo(2));
-  repo.recordSourceAttempt('forum', hoursAgo(0), 'HTTP 500');
-  repo.recordSourceSuccess('vue', hoursAgo(4));
+  await repo.recordSourceSuccess('apollo', hoursAgo(1));
+  await repo.recordSourceSuccess('forum', hoursAgo(2));
+  await repo.recordSourceAttempt('forum', hoursAgo(0), 'HTTP 500');
+  await repo.recordSourceSuccess('vue', hoursAgo(4));
 
   const response = await app.inject('/api/v1/health');
 
