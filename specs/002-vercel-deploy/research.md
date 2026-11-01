@@ -107,8 +107,9 @@ measurements come from the developer's live database on the same day.
   - Hobby functions run for at most **300 s**.
   - Sources are refreshed in parallel. The longest is a Fliko site or Forum: about 9–12 pages at
     ≥ 500 ms apart, so roughly 10–30 s.
-  - The worst case is one source timing out at 15 s on each of its 12 pages: 180 s, still under
-    the limit.
+  - The worst case is one source timing out at 15 s on each of its 12 pages: 180 s, plus the store
+    time of the sources behind it, since sources store in turn. Still under the limit, though remote
+    store time is unmeasured until the first production run.
   - Measured on the first manual refresh (quickstart §4).
 - **Risk**: the services documentation doesn't mention `crons`. The configuration reference lists
   no per-service cron key, so a top-level `crons` entry routed through the public rewrites is the

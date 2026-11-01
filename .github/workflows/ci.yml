@@ -71,7 +71,9 @@ jobs:
           check
           docker rm --force seansai
           # Every source fails now, so movies can only come from the database on the volume.
-          start --env "FIXTURE_FAIL=$(ls apps/api/tests/fixtures | grep --invert-match README | paste -sd,)"
+          failing=$(ls apps/api/tests/fixtures | grep --invert-match README | paste -sd,)
+          [ -n "$failing" ]
+          start --env "FIXTURE_FAIL=$failing"
           check
 
       - if: failure()

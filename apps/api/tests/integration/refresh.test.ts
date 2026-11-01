@@ -278,6 +278,36 @@ describe('refreshSource', () => {
     expect(second.status).toBe('success');
   });
 
+  test('a disabled source does not hold up the ones behind it', async () => {
+    const apollo = listingsFrom('apollo', [screening()]);
+    const forum = listingsFrom('forum', [screening({ cinemaId: 'forum-vingis' })]);
+
+    const [first, second] = await Promise.all([
+      refreshSource(apollo, context({ disabledSources: ['apollo'] })),
+      refreshSource(forum, context({ disabledSources: ['apollo'] })),
+    ]);
+
+    expect(first.status).toBe('disabled');
+    expect(second.status).toBe('success');
+  });
+
+  test('failing to record a failed fetch does not hold up the sources behind it', async () => {
+    const broken: SourceAdapter = {
+      id: 'apollo',
+      fetchScreenings: () => Promise.reject(new Error('cinema down')),
+    };
+    const forum = listingsFrom('forum', [screening({ cinemaId: 'forum-vingis' })]);
+    vi.spyOn(repo, 'recordSourceAttempt').mockRejectedValueOnce(new Error('database down'));
+
+    const [first, second] = await Promise.allSettled([
+      refreshSource(broken, context()),
+      refreshSource(forum, context()),
+    ]);
+
+    expect(first.status).toBe('rejected');
+    expect(second).toMatchObject({ status: 'fulfilled', value: { status: 'success' } });
+  });
+
   test('a film stays one movie when its most common running time moves away from a listing', async () => {
     const noYear = { title: 'Kasėjas', originalTitle: null, year: null };
     const sources = [

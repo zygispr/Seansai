@@ -25,8 +25,8 @@ export type Scheduler = {
 
 /**
  * Refreshes every source at startup, then each one every 60 minutes ± 5 minutes, independently,
- * so one slow or failing source never delays another (research.md §4). Cleans up daily at 04:00
- * Vilnius time. In fixture mode only the startup refresh runs.
+ * so a slow source delays others only in storing, and a failing one not at all (research.md §4).
+ * Cleans up daily at 04:00 Vilnius time. In fixture mode only the startup refresh runs.
  */
 export function startScheduler(
   adapters: readonly SourceAdapter[],

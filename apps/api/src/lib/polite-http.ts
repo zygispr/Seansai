@@ -58,6 +58,8 @@ export type PoliteHttpOptions = {
   fetch?: typeof globalThis.fetch;
 };
 
+type HttpReply = { ok: boolean; status: number; contentType: string; body: string };
+
 export class PoliteHttpClient implements HttpClient {
   readonly #sourceId: string;
   readonly #userAgent: string;
@@ -87,19 +89,17 @@ export class PoliteHttpClient implements HttpClient {
 
   async getText(url: string): Promise<string> {
     await this.#checkRobots(url);
-    const response = await this.#request(url);
-    await this.#throwIfBlocked(url, response);
-    if (!response.ok) {
-      throw new SourceRequestError(url, `HTTP ${String(response.status)}`, {
-        status: response.status,
-      });
+    const reply = await this.#request(url);
+    if (BLOCKING_STATUSES.has(reply.status)) {
+      throw new SourceBlockedError(url, `HTTP ${String(reply.status)}`);
     }
-    const body = await response.text();
-    const contentType = response.headers.get('content-type') ?? '';
-    if (contentType.includes('html') && CAPTCHA_MARKERS.some((marker) => marker.test(body))) {
+    if (!reply.ok) {
+      throw new SourceRequestError(url, `HTTP ${String(reply.status)}`, { status: reply.status });
+    }
+    if (reply.contentType.includes('html') && CAPTCHA_MARKERS.some((m) => m.test(reply.body))) {
       throw new SourceBlockedError(url, 'CAPTCHA or challenge page');
     }
-    return body;
+    return reply.body;
   }
 
   async getJson<T>(url: string, schema: z.ZodType<T>): Promise<T> {
@@ -133,33 +133,43 @@ export class PoliteHttpClient implements HttpClient {
 
   async #fetchRobots(origin: string): Promise<RobotsRules | null> {
     const robotsUrl = `${origin}/robots.txt`;
-    const response = await this.#request(robotsUrl);
-    if (response.ok) return robotsParser(robotsUrl, await response.text());
+    const reply = await this.#request(robotsUrl);
+    if (reply.ok) return robotsParser(robotsUrl, reply.body);
 
-    await response.body?.cancel();
     // RFC 9309 §2.3.1.3: an unavailable robots.txt (4xx) means no restrictions.
-    if (response.status >= 400 && response.status < 500) return null;
+    if (reply.status >= 400 && reply.status < 500) return null;
     // RFC 9309 §2.3.1.4: an unreachable robots.txt (5xx) means assume everything is disallowed.
     throw new SourceRequestError(
       robotsUrl,
-      `robots.txt unreachable (HTTP ${String(response.status)})`,
+      `robots.txt unreachable (HTTP ${String(reply.status)})`,
     );
   }
 
-  async #request(url: string): Promise<Response> {
+  /**
+   * One request with its body read, all within the timeout: a server can send its headers and then
+   * stall, and a stalled source would hold up every source storing after it.
+   */
+  async #request(url: string): Promise<HttpReply> {
     await this.#waitForTurn(new URL(url).host);
     const controller = new AbortController();
     const timeout = setTimeout(() => {
       controller.abort();
     }, TIMEOUT_MS);
     try {
-      return await this.#fetch(url, {
+      const response = await this.#fetch(url, {
         // An explicit language replaces fetch's default "Accept-Language: *", which makes Forum's
         // API answer its missing robots.txt with HTTP 500 (read as "disallow") instead of 404.
         headers: { 'user-agent': this.#userAgent, 'accept-language': 'lt' },
         signal: controller.signal,
         redirect: 'follow',
       });
+      if (!response.ok) await response.body?.cancel();
+      return {
+        ok: response.ok,
+        status: response.status,
+        contentType: response.headers.get('content-type') ?? '',
+        body: response.ok ? await response.text() : '',
+      };
     } catch (error) {
       const reason = controller.signal.aborted
         ? `timed out after ${String(TIMEOUT_MS)} ms`
@@ -183,12 +193,6 @@ export class PoliteHttpClient implements HttpClient {
     });
     this.#queueByHost.set(host, turn);
     return turn;
-  }
-
-  async #throwIfBlocked(url: string, response: Response): Promise<void> {
-    if (!BLOCKING_STATUSES.has(response.status)) return;
-    await response.body?.cancel();
-    throw new SourceBlockedError(url, `HTTP ${String(response.status)}`);
   }
 }
 
