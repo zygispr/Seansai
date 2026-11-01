@@ -33,3 +33,38 @@ jobs:
           name: playwright-report
           path: apps/web/playwright-report/
           if-no-files-found: ignore
+
+  # Self-hosting must keep working (002 FR-015). The saved fixtures are mounted, not in the image,
+  # so the refresh writes real data and CI never contacts a cinema.
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - run: docker build -t seansai .
+
+      - name: Serves data and the web app, also after a restart on the same volume
+        run: |
+          docker run --detach --name seansai --publish 3000:3000 \
+            --volume seansai-data:/data \
+            --volume "$PWD/apps/api/tests/fixtures:/app/apps/api/tests/fixtures:ro" \
+            --env SOURCES_MODE=fixtures seansai
+          check() {
+            for attempt in $(seq 1 30); do
+              curl --silent --fail 'http://localhost:3000/api/v1/movies?city=all' \
+                | grep --quiet '"movies":\[{' && break
+              if [ "$attempt" = 30 ]; then echo 'The movie list stayed empty'; exit 1; fi
+              sleep 2
+            done
+            curl --silent --show-error --fail http://localhost:3000/api/v1/health \
+              | grep --quiet '"status":"ok"'
+            curl --silent --show-error --fail http://localhost:3000/ | grep --quiet 'id="root"'
+            curl --silent --show-error --fail http://localhost:3000/lt/vilnius \
+              | grep --quiet 'id="root"'
+          }
+          check
+          docker restart seansai
+          check
+
+      - if: failure()
+        run: docker logs seansai
